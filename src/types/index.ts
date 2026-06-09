@@ -12,6 +12,11 @@ export interface DesignLayer {
   locked: boolean;
   view: TShirtView;
   pinterestUrl?: string;
+  textProps?: {
+    text: string;
+    font: string;
+    color: string;
+  };
 }
 
 export type TShirtView = 'front' | 'back';

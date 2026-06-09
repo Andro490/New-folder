@@ -330,6 +330,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
         height: Math.ceil(h * Math.min(w, printArea.width - 40) / w),
         rotation: 0, opacity: 1, visible: true, locked: false,
         view: view,
+        textProps: { text, font, color },
       });
       onClose();
     });
@@ -808,7 +809,15 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 setIsSubmitting(true);
                 // ── استخراج رابط Pinterest من الطبقات ──
                 const pLayer = allLayers.find(l => l.pinterestUrl);
-                const finalDesignLink = designLink || (pLayer && pLayer.pinterestUrl) ? pLayer?.pinterestUrl : 'لا يوجد رابط';
+                const designLinkFinal = designLink || pLayer?.pinterestUrl || 'لا يوجد رابط';
+
+                // ── استخراج طبقات النصوص ──
+                const textLayers = allLayers.filter(l => l.textProps);
+                const textSummary = textLayers.length > 0
+                  ? textLayers.map((l, i) =>
+                      `[${i + 1}] نص: "${l.textProps!.text}" | خط: ${l.textProps!.font.split(',')[0]} | لون: ${l.textProps!.color}`
+                    ).join('\n')
+                  : 'لا يوجد نص';
 
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
@@ -823,7 +832,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     color:         tshirtColor,
                     shippingType:  shipping,
                     paymentMethod: payMethod,
-                    designLink:    designLink || pLayer?.pinterestUrl || 'لا يوجد رابط',
+                    designLink:    designLinkFinal,
+                    textLayers:    textSummary,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),
