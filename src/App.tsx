@@ -20,8 +20,34 @@ function Editor() {
         const parsed: DesignLayer[] = JSON.parse(saved);
         // Blob URLs expire on refresh, so we fallback to the uploaded ImgBB URL if available
         return parsed.map(layer => {
-          if (layer.imageUrl.startsWith('blob:') && layer.pinterestUrl && layer.pinterestUrl.startsWith('http')) {
-            return { ...layer, imageUrl: layer.pinterestUrl };
+          if (layer.imageUrl.startsWith('blob:')) {
+            // If it's an old text layer saved as blob, regenerate it using textProps!
+            if (layer.textProps) {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d')!;
+              const { text, font, color } = layer.textProps;
+              const weight = font.includes('bold') ? 'bold' : 'normal';
+              const fontSize = 150; // default large size used in modal
+              ctx.font = `${weight} ${fontSize}px ${font}`;
+              const metrics = ctx.measureText(text);
+              const w = Math.ceil(metrics.width) + 20;
+              const h = Math.ceil(fontSize * 1.4) + 10;
+              
+              canvas.width = w;
+              canvas.height = h;
+              const ctx2 = canvas.getContext('2d')!;
+              ctx2.clearRect(0, 0, w, h);
+              ctx2.font = `${weight} ${fontSize}px ${font}`;
+              ctx2.fillStyle = color;
+              ctx2.textBaseline = 'middle';
+              ctx2.fillText(text, 10, h / 2);
+              
+              return { ...layer, imageUrl: canvas.toDataURL('image/png') };
+            }
+            // Otherwise fallback to pinterestUrl for images
+            if (layer.pinterestUrl && layer.pinterestUrl.startsWith('http')) {
+              return { ...layer, imageUrl: layer.pinterestUrl };
+            }
           }
           return layer;
         });
