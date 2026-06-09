@@ -713,9 +713,9 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
-        <div className="max-w-[1300px] mx-auto px-8 py-10 flex flex-col lg:flex-row justify-between gap-10 lg:gap-16">
-          {/* RIGHT/TOP: Form */}
-          <div className="w-full lg:w-[650px] lg:bg-[#0a0a0a] lg:border lg:border-[#1a1a1a] lg:p-10 lg:rounded-2xl lg:shadow-xl">
+        <div className="max-w-[1300px] mx-auto px-8 py-10 flex flex-col lg:flex-row justify-between gap-8">
+          {/* RIGHT/TOP: Form (Payment Info) */}
+          <div className="w-full lg:w-[58%] lg:bg-[#0a0a0a] lg:border lg:border-gray-700 lg:p-8 lg:rounded-lg">
             <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
 
             {/* Delivery info */}
@@ -838,7 +838,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           </div>
 
           {/* LEFT/BOTTOM: Order summary */}
-          <div className="w-full lg:w-[450px] shrink-0 lg:bg-[#0a0a0a] lg:border lg:border-[#1a1a1a] lg:p-10 lg:rounded-2xl lg:shadow-xl h-fit">
+          <div className="w-full lg:w-[38%] shrink-0 lg:bg-[#0a0a0a] lg:border lg:border-gray-700 lg:p-8 lg:rounded-lg h-fit">
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>تصميمك</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
               {[{ id: 'front', label: 'أمام' }, { id: 'back', label: 'خلف' }].map(side => (
