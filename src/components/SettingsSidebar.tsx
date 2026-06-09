@@ -463,7 +463,9 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      // ✅ text/plain هو الوحيد المسموح به مع no-cors
+      // application/json كان بيتحذف تلقائياً من المتصفح فيجي الطلب فاضي
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(orderData),
     });
   } catch (err) {
