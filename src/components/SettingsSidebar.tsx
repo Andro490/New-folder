@@ -920,6 +920,16 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                   console.warn('⚠️ فشل رفع صور التيشيرت:', imgErr);
                 }
 
+                // ── رفع صورة إيصال إنستاباي ──
+                let instapayProofUrl = 'لا توجد صورة';
+                if (payMethod === 'instapay' && paymentProof) {
+                  try {
+                    instapayProofUrl = await uploadToImgBB(paymentProof);
+                  } catch (proofErr) {
+                    console.warn('⚠️ فشل رفع إيصال إنستاباي:', proofErr);
+                  }
+                }
+
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
                   await sendOrderToSheet({
@@ -938,8 +948,10 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     // النصوص اللي أضافها العميل
                     textLayers:    textSummary,
                     // صور التيشيرت النهائية
-                    frontImage:    frontImageUrl,
-                    backImage:     backImageUrl,
+                    frontImage:     frontImageUrl,
+                    backImage:      backImageUrl,
+                    // إيصال إنستاباي
+                    instapayProof:  instapayProofUrl,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),
