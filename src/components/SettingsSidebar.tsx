@@ -96,7 +96,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/pinterest-image', {
+      const response = await fetch('/api/pinterest-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
@@ -107,7 +107,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
         throw new Error(data.error || 'فشل في جلب الصورة');
       }
 
-      const imageUrl = `http://localhost:3001/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+      const imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
       
       // Create layer
       const printArea = PRINT_AREA[view];
@@ -124,6 +124,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
         visible: true,
         locked: false,
         view: view,
+        pinterestUrl: url,
       });
       if (setDesignUrl) {
         setDesignUrl(url);
@@ -489,7 +490,7 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 }
 
 
-function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
+function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -760,6 +761,10 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                   return;
                 }
                 setIsSubmitting(true);
+                // ── استخراج رابط Pinterest من الطبقات ──
+                const pLayer = allLayers.find(l => l.pinterestUrl);
+                const finalDesignLink = pLayer ? pLayer.pinterestUrl : 'لا يوجد رابط';
+
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
                   await sendOrderToSheet({
@@ -773,7 +778,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     color:         tshirtColor,
                     shippingType:  shipping,
                     paymentMethod: payMethod,
-                    designLink:    designLink || 'لا يوجد رابط',
+                    designLink:    finalDesignLink,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),

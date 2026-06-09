@@ -11,6 +11,7 @@ export interface DesignLayer {
   visible: boolean;
   locked: boolean;
   view: TShirtView;
+  pinterestUrl?: string;
 }
 
 export type TShirtView = 'front' | 'back';
