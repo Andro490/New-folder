@@ -23,6 +23,9 @@ app.post('/api/submit-order', async (req, res) => {
         });
 
         console.log('✅ استجابة Google Script:', response.data);
+        if (response.data && response.data.status === 'error') {
+            return res.status(500).json({ success: false, error: response.data.message });
+        }
         res.json({ success: true, data: response.data });
     } catch (error) {
         console.error('❌ خطأ Google Script:', error.response?.data || error.message);
