@@ -85,33 +85,64 @@ interface PinterestModalProps {
   setDesignUrl?: (url: string) => void;
 }
 
+async function uploadToImgBB(fileOrBase64: File | string): Promise<string> {
+  const apiKey = '878a3e7d1975c224f0cfc02c0bd29299';
+  const formData = new FormData();
+  
+  if (typeof fileOrBase64 === 'string') {
+    const base64Data = fileOrBase64.includes('base64,') ? fileOrBase64.split('base64,')[1] : fileOrBase64;
+    formData.append('image', base64Data);
+  } else {
+    formData.append('image', fileOrBase64);
+  }
+
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  if (data.success) {
+    return data.data.url;
+  } else {
+    throw new Error('فشل رفع الصورة');
+  }
+}
+
 function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestModalProps) {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleFetch = async () => {
-    if (!url) return;
+    const trimmed = url.trim();
+    if (!trimmed) return;
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/pinterest-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      const data = await response.json();
-      
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'فشل في جلب الصورة');
+      let imageUrl = trimmed;
+      const isPinterest =
+        trimmed.includes('pinterest.com') ||
+        trimmed.includes('pin.it') ||
+        trimmed.includes('pinterest.');
+
+      if (isPinterest) {
+        const response = await fetch('/api/pinterest-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: trimmed })
+        });
+        const data = await response.json();
+        
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'فشل في جلب الصورة');
+        }
+        imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
       }
 
-      const imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
-      
       // Create layer
       const printArea = PRINT_AREA[view];
-      onAddLayer({
+      const newLayer = {
         id: uuidv4(),
         name: 'Pinterest Image',
         imageUrl,
@@ -124,12 +155,25 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
         visible: true,
         locked: false,
         view: view,
-        pinterestUrl: url,
-      });
+        pinterestUrl: isPinterest ? trimmed : (trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed),
+      };
+      
+      onAddLayer(newLayer);
       if (setDesignUrl) {
-        setDesignUrl(url);
+        setDesignUrl(newLayer.pinterestUrl);
       }
       onClose();
+
+      // Upload base64 strings in the background
+      if (!isPinterest && trimmed.startsWith('data:image')) {
+        uploadToImgBB(trimmed).then(publicUrl => {
+          // If we had onUpdateLayer we could update the layer, but we don't have it in props here.
+          // However, we can at least update the designUrl state so checkout uses the public url!
+          if (setDesignUrl) setDesignUrl(publicUrl);
+        }).catch(err => {
+          console.error("Failed to upload base64 to ImgBB", err);
+        });
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

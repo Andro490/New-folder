@@ -15,15 +15,40 @@ interface LayerSidebarProps {
   view: TShirtView;
 }
 
+async function uploadToImgBB(fileOrBase64: File | string): Promise<string> {
+  const apiKey = '878a3e7d1975c224f0cfc02c0bd29299';
+  const formData = new FormData();
+  
+  if (typeof fileOrBase64 === 'string') {
+    const base64Data = fileOrBase64.includes('base64,') ? fileOrBase64.split('base64,')[1] : fileOrBase64;
+    formData.append('image', base64Data);
+  } else {
+    formData.append('image', fileOrBase64);
+  }
+
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  if (data.success) {
+    return data.data.url;
+  } else {
+    throw new Error('فشل رفع الصورة');
+  }
+}
+
 // ── Pinterest Modal ─────────────────────────────────────────────
 function PinterestModal({
   onClose,
   onAddLayer,
   view,
+  onUpdateLayer
 }: {
   onClose: () => void;
   onAddLayer: (layer: DesignLayer) => void;
   view: TShirtView;
+  onUpdateLayer?: (id: string, attrs: Partial<DesignLayer>) => void;
 }) {
   const [step, setStep] = useState<'choose' | 'paste'>('choose');
   const [url, setUrl] = useState('');
@@ -74,7 +99,7 @@ function PinterestModal({
         img.src = imageUrl;
       });
 
-      onAddLayer({
+      const newLayer = {
         id: uuidv4(),
         name: 'Pinterest Image',
         imageUrl,
@@ -84,9 +109,20 @@ function PinterestModal({
         height: Math.min(150, printArea.height - 40),
         rotation: 0, opacity: 1, visible: true, locked: false,
         view: view,
-        pinterestUrl: trimmed,
-      });
+        pinterestUrl: isPinterest ? trimmed : (trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed),
+      };
+      
+      onAddLayer(newLayer);
       onClose();
+
+      // Upload base64 strings in the background
+      if (!isPinterest && trimmed.startsWith('data:image') && onUpdateLayer) {
+        uploadToImgBB(trimmed).then(publicUrl => {
+          onUpdateLayer(newLayer.id, { pinterestUrl: publicUrl });
+        }).catch(err => {
+          console.error("Failed to upload base64 to ImgBB", err);
+        });
+      }
     } catch {
       setError('تعذّر تحميل الصورة. حاول نسخ رابط الصورة مباشرة (Click image → Open in new tab → copy URL).');
     } finally {
@@ -281,15 +317,27 @@ export default function LayerSidebar({
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    onAdd(createLayer(URL.createObjectURL(file), file.name.replace(/\.[^.]+$/, '').slice(0, 20)));
+    
+    const newLayer = createLayer(URL.createObjectURL(file), file.name.replace(/\.[^.]+$/, '').slice(0, 20));
+    onAdd(newLayer);
     e.target.value = '';
+
+    uploadToImgBB(file).then(publicUrl => {
+      onUpdate(newLayer.id, { pinterestUrl: publicUrl });
+    }).catch(err => console.error("Upload failed", err));
   }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file?.type.startsWith('image/'))
-      onAdd(createLayer(URL.createObjectURL(file), file.name.slice(0, 20)));
+    if (file?.type.startsWith('image/')) {
+      const newLayer = createLayer(URL.createObjectURL(file), file.name.slice(0, 20));
+      onAdd(newLayer);
+      
+      uploadToImgBB(file).then(publicUrl => {
+        onUpdate(newLayer.id, { pinterestUrl: publicUrl });
+      }).catch(err => console.error("Upload failed", err));
+    }
   }
 
   async function handleRemoveBg(layerId: string, imageUrl: string) {
@@ -604,6 +652,7 @@ export default function LayerSidebar({
           onClose={() => setShowPinterest(false)}
           onAddLayer={onAdd}
           view={view}
+          onUpdateLayer={onUpdate}
         />
       )}
     </>
