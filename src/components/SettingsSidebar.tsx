@@ -456,7 +456,7 @@ const SIZES = [
 ];
 
 // ── رابط Google Apps Script ─────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgNR5Swr7A0Gbg-QkERjAUe-HiukKS0j02sq9lsgm7jiPvHy0-ecA0WGWlA1_JuI8T/exec';
 
 // ── دالة إرسال الطلب إلى Google Apps Script ─────────────────────
 async function sendOrderToSheet(orderData: Record<string, string>): Promise<void> {
