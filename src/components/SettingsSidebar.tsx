@@ -82,9 +82,10 @@ interface PinterestModalProps {
   onClose: () => void;
   onAddLayer: (layer: DesignLayer) => void;
   view: TShirtView;
+  setDesignUrl?: (url: string) => void;
 }
 
-function PinterestModal({ onClose, onAddLayer, view }: PinterestModalProps) {
+function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestModalProps) {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -124,6 +125,9 @@ function PinterestModal({ onClose, onAddLayer, view }: PinterestModalProps) {
         locked: false,
         view: view,
       });
+      if (setDesignUrl) {
+        setDesignUrl(url);
+      }
       onClose();
     } catch (err: any) {
       setError(err.message);
@@ -202,6 +206,7 @@ interface OrderModalProps {
   onClose: () => void;
   tshirtColor: TShirtColor;
   allLayers: DesignLayer[];
+  designLink?: string;
 }
 
 // ─── Text Modal ────────────────────────────────────────────────────
@@ -484,7 +489,7 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 }
 
 
-function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
+function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -768,7 +773,7 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
                     color:         tshirtColor,
                     shippingType:  shipping,
                     paymentMethod: payMethod,
-                    designLink:    'https://pin.it/44SL9x40D',
+                    designLink:    designLink || 'لا يوجد رابط',
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),
@@ -943,6 +948,7 @@ export default function SettingsSidebar({
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [showTextModal, setShowTextModal] = useState(false);
   const [showPinterestModal, setShowPinterestModal] = useState(false);
+  const [designUrl, setDesignUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const printArea = PRINT_AREA[view];
@@ -1162,12 +1168,13 @@ export default function SettingsSidebar({
         <div style={{ flex: 1, backgroundColor: '#050505' }} />
       </aside>
 
-      {showOrderModal && <OrderModal onClose={() => setShowOrderModal(false)} tshirtColor={tshirtColor} allLayers={allLayers} />}
+      {showOrderModal && <OrderModal onClose={() => setShowOrderModal(false)} tshirtColor={tshirtColor} allLayers={allLayers} designLink={designUrl} />}
       {showPinterestModal && (
         <PinterestModal
           onClose={() => setShowPinterestModal(false)}
           onAddLayer={onAddLayer}
           view={view}
+          setDesignUrl={setDesignUrl}
         />
       )}
       {showTextModal && (
