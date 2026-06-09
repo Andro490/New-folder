@@ -713,7 +713,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 40 }}>
+        <div className="max-w-[1100px] mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
           {/* LEFT: Form */}
           <div>
             <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
@@ -988,7 +988,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   if (step === 'review') {
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
-        <div style={{ width: 560, backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
+        <div style={{ width: '100%', maxWidth: 560, backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 2 OF 2</p>
@@ -1045,7 +1045,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   // ── SIZE SELECTION ───────────────────────────────────────────────
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
-      <div style={{ width: 860, maxHeight: '90vh', backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+      <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
@@ -1074,7 +1074,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               اعرف مقاسك
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {SIZES.map(sz => (
               <div
                 key={sz.id}
