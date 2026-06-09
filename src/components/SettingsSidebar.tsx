@@ -455,6 +455,22 @@ const SIZES = [
   { id: 'XXL', label: 'XXLARGE', dims: '60 × 76', height: '185–195 cm tall', weight: '100–110 kg' },
 ];
 
+// ── رابط Google Apps Script ─────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgNR5Swr7A0Gbg-QkERjAUe-HiukKS0j02sq9lsgm7jiPvHy0-ecA0WGWlA1_JuI8T/exec';
+
+async function sendOrderToSheet(orderData: Record<string, string>): Promise<void> {
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
+    });
+  } catch (err) {
+    console.error('خطأ في إرسال الطلب للـ Sheet:', err);
+  }
+}
+
 function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
@@ -466,6 +482,7 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', city: '', governorate: '', address: '' });
   const [showRefundPolicy, setShowRefundPolicy] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const colorLabel = tshirtColor === 'black' ? 'أسود' : tshirtColor === 'white' ? 'أبيض' : tshirtColor === 'navy' ? 'كحلي' : tshirtColor === 'red' ? 'أحمر' : 'رمادي';
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
@@ -713,14 +730,49 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
             </div>
 
             <button
-              onClick={() => {
-                if (!form.firstName || !form.phone || !form.address) { alert('يرجى ملء الاسم ورقم الهاتف والعنوان'); return; }
-                if (payMethod === 'instapay' && !paymentProof) { alert('يرجى رفع صورة إيصال التحويل عبر إنستاباي'); return; }
+              id="submit-btn"
+              disabled={isSubmitting}
+              onClick={async () => {
+                if (!form.firstName || !form.phone || !form.address) {
+                  alert('يرجى ملء الاسم ورقم الهاتف والعنوان');
+                  return;
+                }
+                if (payMethod === 'instapay' && !paymentProof) {
+                  alert('يرجى رفع صورة إيصال التحويل عبر إنستاباي');
+                  return;
+                }
+                setIsSubmitting(true);
+                // ── إرسال الطلب إلى Google Sheets ──
+                await sendOrderToSheet({
+                  firstName:     form.firstName,
+                  lastName:      form.lastName,
+                  phone:         form.phone,
+                  city:          form.city,
+                  governorate:   form.governorate,
+                  address:       form.address,
+                  size:          selectedSize ?? '-',
+                  color:         tshirtColor,
+                  shippingType:  shipping,
+                  paymentMethod: payMethod,
+                  designLink:    'https://pin.it/44SL9x40D',
+                  paymentStatus: 'إيداع انستا باي',
+                  totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
+                  timestamp:     new Date().toLocaleString('ar-EG'),
+                });
+                setIsSubmitting(false);
                 setStep('thanks');
               }}
-              style={{ width: '100%', padding: '16px', backgroundColor: '#f5c842', color: '#000', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 900, letterSpacing: '0.15em', marginTop: 4 }}
+              style={{
+                width: '100%', padding: '16px',
+                backgroundColor: isSubmitting ? '#8a7020' : '#f5c842',
+                color: '#000', border: 'none',
+                cursor: isSubmitting ? 'wait' : 'pointer',
+                fontSize: 14, fontWeight: 900,
+                letterSpacing: '0.15em', marginTop: 4,
+                transition: 'background-color 0.2s',
+              }}
             >
-              إتمام الطلب
+              {isSubmitting ? '⏳ جاري إرسال الطلب...' : 'إتمام الطلب ✓'}
             </button>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 16 }}>
