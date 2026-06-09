@@ -397,23 +397,20 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
     ctx2.textBaseline = 'middle';
     ctx2.fillText(text, 10, h / 2);
 
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      onAddLayer({
-        id: uuidv4(),
-        name: text.slice(0, 18),
-        imageUrl: url,
-        x: printArea.x + 20,
-        y: printArea.y + 30,
-        width: Math.min(w, printArea.width - 40),
-        height: Math.ceil(h * Math.min(w, printArea.width - 40) / w),
-        rotation: 0, opacity: 1, visible: true, locked: false,
-        view: view,
-        textProps: { text, font, color },
-      });
-      onClose();
+    const url = canvas.toDataURL('image/png');
+    onAddLayer({
+      id: uuidv4(),
+      name: text.slice(0, 18),
+      imageUrl: url,
+      x: printArea.x + 20,
+      y: printArea.y + 30,
+      width: Math.min(w, printArea.width - 40),
+      height: Math.ceil(h * Math.min(w, printArea.width - 40) / w),
+      rotation: 0, opacity: 1, visible: true, locked: false,
+      view: view,
+      textProps: { text, font, color },
     });
+    onClose();
   }
 
   return (
