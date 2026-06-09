@@ -78,54 +78,65 @@ function TshirtPreviewBox({ layers, tshirtColor, view, width = 220, height = 180
   return <canvas ref={canvasRef} style={{ width, height, display: 'block' }} />;
 }
 
+// ── Load image via fetch → blob URL (avoids canvas CORS taint) ────
+async function fetchAsBlobUrl(src: string): Promise<string> {
+  try {
+    const resp = await fetch(src);
+    const blob = await resp.blob();
+    return URL.createObjectURL(blob);
+  } catch {
+    return src; // fallback to original src
+  }
+}
+
 // ── Generate T-shirt image as base64 for uploading ────────────────
-function generateTshirtImage(
+async function generateTshirtImage(
   layers: DesignLayer[],
   tshirtColor: TShirtColor,
   view: TShirtView,
-  width = 500,
-  height = 500
+  width = 600,
+  height = 600
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return reject('no ctx');
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('no ctx');
 
-    const scale = width / CANVAS_WIDTH;
+  const scale = width / CANVAS_WIDTH;
 
-    let imgSrc = '';
-    let isSvg = false;
-    if (tshirtColor === 'black') {
-      imgSrc = view === 'front' ? blackMockupFront : blackMockupBack;
-    } else if (tshirtColor === 'white') {
-      imgSrc = view === 'front' ? whiteMockupFront : whiteMockupBack;
-    } else {
-      isSvg = true;
-      const { getTshirtSVG: _getTshirtSVG } = { getTshirtSVG };
-      const svgStr = _getTshirtSVG(tshirtColor, view);
-      const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
-      imgSrc = URL.createObjectURL(svgBlob);
-    }
+  // ── Load shirt background ──
+  let shirtSrc: string;
+  if (tshirtColor === 'black') {
+    shirtSrc = view === 'front' ? blackMockupFront : blackMockupBack;
+  } else if (tshirtColor === 'white') {
+    shirtSrc = view === 'front' ? whiteMockupFront : whiteMockupBack;
+  } else {
+    const svgStr = getTshirtSVG(tshirtColor, view);
+    const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    shirtSrc = URL.createObjectURL(svgBlob);
+  }
 
-    const shirtImg = new Image();
-    shirtImg.crossOrigin = 'anonymous';
-    shirtImg.onload = () => {
-      const rawHeight = Math.round(CANVAS_HEIGHT * scale);
-      ctx.drawImage(shirtImg, 0, 0, width, rawHeight);
-      if (isSvg) URL.revokeObjectURL(imgSrc);
+  const shirtBlobUrl = await fetchAsBlobUrl(shirtSrc);
 
-      const visibleLayers = layers.filter(l => l.visible && l.view === view);
-      if (visibleLayers.length === 0) {
-        resolve(canvas.toDataURL('image/png'));
-        return;
-      }
+  await new Promise<void>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, width, Math.round(CANVAS_HEIGHT * scale));
+      URL.revokeObjectURL(shirtBlobUrl);
+      resolve();
+    };
+    img.onerror = reject;
+    img.src = shirtBlobUrl;
+  });
 
-      let loaded = 0;
-      visibleLayers.forEach(layer => {
+  // ── Draw visible layers ──
+  const visibleLayers = layers.filter(l => l.visible && l.view === view);
+  for (const layer of visibleLayers) {
+    try {
+      const blobUrl = await fetchAsBlobUrl(layer.imageUrl);
+      await new Promise<void>((resolve) => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = () => {
           ctx.save();
           const cx = (layer.x + layer.width / 2) * scale;
@@ -135,19 +146,16 @@ function generateTshirtImage(
           ctx.globalAlpha = layer.opacity;
           ctx.drawImage(img, -layer.width * scale / 2, -layer.height * scale / 2, layer.width * scale, layer.height * scale);
           ctx.restore();
-          loaded++;
-          if (loaded === visibleLayers.length) resolve(canvas.toDataURL('image/png'));
+          URL.revokeObjectURL(blobUrl);
+          resolve();
         };
-        img.onerror = () => {
-          loaded++;
-          if (loaded === visibleLayers.length) resolve(canvas.toDataURL('image/png'));
-        };
-        img.src = layer.imageUrl;
+        img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(); };
+        img.src = blobUrl;
       });
-    };
-    shirtImg.onerror = () => reject('shirt load failed');
-    shirtImg.src = imgSrc;
-  });
+    } catch { /* skip failed layer */ }
+  }
+
+  return canvas.toDataURL('image/png');
 }
 
 interface PinterestModalProps {
