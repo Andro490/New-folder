@@ -78,6 +78,78 @@ function TshirtPreviewBox({ layers, tshirtColor, view, width = 220, height = 180
   return <canvas ref={canvasRef} style={{ width, height, display: 'block' }} />;
 }
 
+// ── Generate T-shirt image as base64 for uploading ────────────────
+function generateTshirtImage(
+  layers: DesignLayer[],
+  tshirtColor: TShirtColor,
+  view: TShirtView,
+  width = 500,
+  height = 500
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return reject('no ctx');
+
+    const scale = width / CANVAS_WIDTH;
+
+    let imgSrc = '';
+    let isSvg = false;
+    if (tshirtColor === 'black') {
+      imgSrc = view === 'front' ? blackMockupFront : blackMockupBack;
+    } else if (tshirtColor === 'white') {
+      imgSrc = view === 'front' ? whiteMockupFront : whiteMockupBack;
+    } else {
+      isSvg = true;
+      const { getTshirtSVG: _getTshirtSVG } = { getTshirtSVG };
+      const svgStr = _getTshirtSVG(tshirtColor, view);
+      const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+      imgSrc = URL.createObjectURL(svgBlob);
+    }
+
+    const shirtImg = new Image();
+    shirtImg.crossOrigin = 'anonymous';
+    shirtImg.onload = () => {
+      const rawHeight = Math.round(CANVAS_HEIGHT * scale);
+      ctx.drawImage(shirtImg, 0, 0, width, rawHeight);
+      if (isSvg) URL.revokeObjectURL(imgSrc);
+
+      const visibleLayers = layers.filter(l => l.visible && l.view === view);
+      if (visibleLayers.length === 0) {
+        resolve(canvas.toDataURL('image/png'));
+        return;
+      }
+
+      let loaded = 0;
+      visibleLayers.forEach(layer => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          ctx.save();
+          const cx = (layer.x + layer.width / 2) * scale;
+          const cy = (layer.y + layer.height / 2) * scale;
+          ctx.translate(cx, cy);
+          ctx.rotate((layer.rotation * Math.PI) / 180);
+          ctx.globalAlpha = layer.opacity;
+          ctx.drawImage(img, -layer.width * scale / 2, -layer.height * scale / 2, layer.width * scale, layer.height * scale);
+          ctx.restore();
+          loaded++;
+          if (loaded === visibleLayers.length) resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => {
+          loaded++;
+          if (loaded === visibleLayers.length) resolve(canvas.toDataURL('image/png'));
+        };
+        img.src = layer.imageUrl;
+      });
+    };
+    shirtImg.onerror = () => reject('shirt load failed');
+    shirtImg.src = imgSrc;
+  });
+}
+
 interface PinterestModalProps {
   onClose: () => void;
   onAddLayer: (layer: DesignLayer) => void;
@@ -812,12 +884,30 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 const designLinkFinal = designLink || pLayer?.pinterestUrl || 'لا يوجد رابط';
 
                 // ── استخراج طبقات النصوص ──
-                const textLayers = allLayers.filter(l => l.textProps);
-                const textSummary = textLayers.length > 0
-                  ? textLayers.map((l, i) =>
+                const textLayersData = allLayers.filter(l => l.textProps);
+                const textSummary = textLayersData.length > 0
+                  ? textLayersData.map((l, i) =>
                       `[${i + 1}] نص: "${l.textProps!.text}" | خط: ${l.textProps!.font.split(',')[0]} | لون: ${l.textProps!.color}`
                     ).join('\n')
                   : 'لا يوجد نص';
+
+                // ── تصدير صور التيشيرت ورفعها على ImgBB ──
+                let frontImageUrl = 'لا توجد صورة';
+                let backImageUrl = 'لا توجد صورة';
+                try {
+                  const [frontBase64, backBase64] = await Promise.all([
+                    generateTshirtImage(allLayers, tshirtColor, 'front', 500, 500),
+                    generateTshirtImage(allLayers, tshirtColor, 'back', 500, 500),
+                  ]);
+                  const [fUrl, bUrl] = await Promise.all([
+                    uploadToImgBB(frontBase64),
+                    uploadToImgBB(backBase64),
+                  ]);
+                  frontImageUrl = fUrl;
+                  backImageUrl = bUrl;
+                } catch (imgErr) {
+                  console.warn('⚠️ فشل رفع صور التيشيرت:', imgErr);
+                }
 
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
@@ -834,6 +924,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     paymentMethod: payMethod,
                     designLink:    designLinkFinal,
                     textLayers:    textSummary,
+                    frontImage:    frontImageUrl,
+                    backImage:     backImageUrl,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),
