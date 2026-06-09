@@ -16,7 +16,16 @@ function Editor() {
   const [layers, setLayers] = useState<DesignLayer[]>(() => {
     const saved = localStorage.getItem('wearurway_layers');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try { 
+        const parsed: DesignLayer[] = JSON.parse(saved);
+        // Blob URLs expire on refresh, so we fallback to the uploaded ImgBB URL if available
+        return parsed.map(layer => {
+          if (layer.imageUrl.startsWith('blob:') && layer.pinterestUrl && layer.pinterestUrl.startsWith('http')) {
+            return { ...layer, imageUrl: layer.pinterestUrl };
+          }
+          return layer;
+        });
+      } catch (e) {}
     }
     return [];
   });
