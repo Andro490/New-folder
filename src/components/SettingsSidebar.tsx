@@ -455,12 +455,9 @@ const SIZES = [
   { id: 'XXL', label: 'XXLARGE', dims: '60 × 76', height: '185–195 cm tall', weight: '100–110 kg' },
 ];
 
-// ── رابط Google Apps Script ─────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
-
-// ── دالة إرسال الطلب إلى Google Apps Script ─────────────────────
+// ── دالة إرسال الطلب عبر الـ Backend (يتجنب CORS) ──────────────
 async function sendOrderToSheet(orderData: Record<string, string>): Promise<void> {
-  // ✅ تنظيف كل القيم — أي حقل فاضي أو undefined يتحول لـ 'غير متوفر'
+  // ✅ تنظيف كل القيم
   const safe: Record<string, string> = {};
   for (const key in orderData) {
     const val = orderData[key];
@@ -469,22 +466,21 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
       : 'غير متوفر';
   }
 
-  // 🔍 لوج للتشخيص — شوفه في Console المتصفح
   console.log('📦 بيانات الطلب اللي هتتبعت:', safe);
 
-  try {
-    await fetch(APPS_SCRIPT_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      // ✅ text/plain فقط هو المسموح مع no-cors
-      // application/json بيتحذف من المتصفح فيوصل الطلب فاضي
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body:    JSON.stringify(safe),
-    });
-    console.log('✅ تم إرسال الطلب بنجاح');
-  } catch (err) {
-    console.error('❌ خطأ في إرسال الطلب للـ Sheet:', err);
+  const response = await fetch('/api/submit-order', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(safe),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || 'فشل الإرسال');
   }
+
+  console.log('✅ تم إرسال الطلب بنجاح');
 }
 
 
@@ -759,25 +755,30 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
                   return;
                 }
                 setIsSubmitting(true);
-                // ── إرسال الطلب إلى Google Sheets ──
-                await sendOrderToSheet({
-                  firstName:     form.firstName,
-                  lastName:      form.lastName,
-                  phone:         form.phone,
-                  city:          form.city,
-                  governorate:   form.governorate,
-                  address:       form.address,
-                  size:          selectedSize ?? '-',
-                  color:         tshirtColor,
-                  shippingType:  shipping,
-                  paymentMethod: payMethod,
-                  designLink:    'https://pin.it/44SL9x40D',
-                  paymentStatus: 'إيداع انستا باي',
-                  totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
-                  timestamp:     new Date().toLocaleString('ar-EG'),
-                });
-                setIsSubmitting(false);
-                setStep('thanks');
+                try {
+                  // ── إرسال الطلب عبر الـ Backend ──
+                  await sendOrderToSheet({
+                    firstName:     form.firstName,
+                    lastName:      form.lastName,
+                    phone:         form.phone,
+                    city:          form.city,
+                    governorate:   form.governorate,
+                    address:       form.address,
+                    size:          selectedSize ?? '-',
+                    color:         tshirtColor,
+                    shippingType:  shipping,
+                    paymentMethod: payMethod,
+                    designLink:    'https://pin.it/44SL9x40D',
+                    paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
+                    totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
+                    timestamp:     new Date().toLocaleString('ar-EG'),
+                  });
+                  setStep('thanks');
+                } catch (err: any) {
+                  alert('❌ حدث خطأ أثناء إرسال الطلب:\n' + err.message);
+                } finally {
+                  setIsSubmitting(false);
+                }
               }}
               style={{
                 width: '100%', padding: '16px',

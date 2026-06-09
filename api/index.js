@@ -8,6 +8,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ── Google Apps Script URL ─────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
+
+// ── proxy الطلب لـ Google Apps Script ─────────────────────────────
+app.post('/api/submit-order', async (req, res) => {
+    try {
+        const orderData = req.body;
+        console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
+
+        const response = await axios.post(APPS_SCRIPT_URL, orderData, {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 15000,
+        });
+
+        console.log('✅ استجابة Google Script:', response.data);
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        console.error('❌ خطأ Google Script:', error.response?.data || error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 async function getPinterestImageUrl(pinUrl) {
     try {
         const response = await axios.get(pinUrl, {
@@ -62,3 +84,4 @@ app.get('/api/proxy-image', async (req, res) => {
 });
 
 export default app;
+
