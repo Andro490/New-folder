@@ -490,7 +490,7 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 }
 
 
-function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
+function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -764,7 +764,7 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
                 setIsSubmitting(true);
                 // ── استخراج رابط Pinterest من الطبقات ──
                 const pLayer = allLayers.find(l => l.pinterestUrl);
-                const finalDesignLink = (pLayer && pLayer.pinterestUrl) ? pLayer.pinterestUrl : 'لا يوجد رابط';
+                const finalDesignLink = designLink || (pLayer && pLayer.pinterestUrl) ? pLayer?.pinterestUrl : 'لا يوجد رابط';
 
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
@@ -779,7 +779,7 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
                     color:         tshirtColor,
                     shippingType:  shipping,
                     paymentMethod: payMethod,
-                    designLink:    finalDesignLink,
+                    designLink:    designLink || pLayer?.pinterestUrl || 'لا يوجد رابط',
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp:     new Date().toLocaleString('ar-EG'),
