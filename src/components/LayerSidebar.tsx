@@ -84,6 +84,7 @@ function PinterestModal({
         height: Math.min(150, printArea.height - 40),
         rotation: 0, opacity: 1, visible: true, locked: false,
         view: view,
+        pinterestUrl: trimmed,
       });
       onClose();
     } catch {
