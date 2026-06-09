@@ -458,20 +458,35 @@ const SIZES = [
 // ── رابط Google Apps Script ─────────────────────────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgNR5Swr7A0Gbg-QkERjAUe-HiukKS0j02sq9lsgm7jiPvHy0-ecA0WGWlA1_JuI8T/exec';
 
+// ── دالة إرسال الطلب إلى Google Apps Script ─────────────────────
 async function sendOrderToSheet(orderData: Record<string, string>): Promise<void> {
+  // ✅ تنظيف كل القيم — أي حقل فاضي أو undefined يتحول لـ 'غير متوفر'
+  const safe: Record<string, string> = {};
+  for (const key in orderData) {
+    const val = orderData[key];
+    safe[key] = (val !== undefined && val !== null && String(val).trim() !== '')
+      ? String(val).trim()
+      : 'غير متوفر';
+  }
+
+  // 🔍 لوج للتشخيص — شوفه في Console المتصفح
+  console.log('📦 بيانات الطلب اللي هتتبعت:', safe);
+
   try {
     await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      // ✅ text/plain هو الوحيد المسموح به مع no-cors
-      // application/json كان بيتحذف تلقائياً من المتصفح فيجي الطلب فاضي
+      method:  'POST',
+      mode:    'no-cors',
+      // ✅ text/plain فقط هو المسموح مع no-cors
+      // application/json بيتحذف من المتصفح فيوصل الطلب فاضي
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(orderData),
+      body:    JSON.stringify(safe),
     });
+    console.log('✅ تم إرسال الطلب بنجاح');
   } catch (err) {
-    console.error('خطأ في إرسال الطلب للـ Sheet:', err);
+    console.error('❌ خطأ في إرسال الطلب للـ Sheet:', err);
   }
 }
+
 
 function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
