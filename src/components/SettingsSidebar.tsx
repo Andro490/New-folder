@@ -887,9 +887,12 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                   return;
                 }
                 setIsSubmitting(true);
-                // ── استخراج رابط Pinterest من الطبقات ──
-                const pLayer = allLayers.find(l => l.pinterestUrl);
-                const designLinkFinal = designLink || pLayer?.pinterestUrl || 'لا يوجد رابط';
+
+                // ── جمع كل روابط الصور من جميع الطبقات ──
+                const allImageUrls: string[] = allLayers
+                  .filter(l => l.pinterestUrl && l.pinterestUrl !== 'جاري الرفع...')
+                  .map(l => l.pinterestUrl!);
+                const uniqueImageUrls = [...new Set(allImageUrls)];
 
                 // ── استخراج طبقات النصوص ──
                 const textLayersData = allLayers.filter(l => l.textProps);
@@ -899,13 +902,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     ).join('\n')
                   : 'لا يوجد نص';
 
-                // ── تصدير صور التيشيرت ورفعها على ImgBB ──
+                // ── تصدير صور التيشيرت (أمامي + خلفي) ──
                 let frontImageUrl = 'لا توجد صورة';
                 let backImageUrl = 'لا توجد صورة';
                 try {
                   const [frontBase64, backBase64] = await Promise.all([
-                    generateTshirtImage(allLayers, tshirtColor, 'front', 500, 500),
-                    generateTshirtImage(allLayers, tshirtColor, 'back', 500, 500),
+                    generateTshirtImage(allLayers, tshirtColor, 'front', 600, 600),
+                    generateTshirtImage(allLayers, tshirtColor, 'back', 600, 600),
                   ]);
                   const [fUrl, bUrl] = await Promise.all([
                     uploadToImgBB(frontBase64),
@@ -930,8 +933,11 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     color:         tshirtColor,
                     shippingType:  shipping,
                     paymentMethod: payMethod,
-                    designLink:    designLinkFinal,
+                    // كل روابط صور التصاميم اللي أضافها العميل
+                    designImages:  uniqueImageUrls.join('\n') || 'لا توجد صور',
+                    // النصوص اللي أضافها العميل
                     textLayers:    textSummary,
+                    // صور التيشيرت النهائية
                     frontImage:    frontImageUrl,
                     backImage:     backImageUrl,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
