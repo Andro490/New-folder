@@ -763,7 +763,7 @@ function OrderModal({ onClose, tshirtColor, allLayers }: OrderModalProps) {
                 setIsSubmitting(true);
                 // ── استخراج رابط Pinterest من الطبقات ──
                 const pLayer = allLayers.find(l => l.pinterestUrl);
-                const finalDesignLink = pLayer ? pLayer.pinterestUrl : 'لا يوجد رابط';
+                const finalDesignLink = (pLayer && pLayer.pinterestUrl) ? pLayer.pinterestUrl : 'لا يوجد رابط';
 
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
