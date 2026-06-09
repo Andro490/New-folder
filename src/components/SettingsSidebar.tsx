@@ -713,9 +713,9 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
-        <div className="max-w-[1100px] mx-auto px-6 py-10 flex flex-col lg:flex-row gap-10">
+        <div className="max-w-[1100px] mx-auto px-6 py-10 flex flex-col lg:flex-row justify-center gap-10 lg:gap-16">
           {/* RIGHT/TOP: Form */}
-          <div className="flex-1 w-full">
+          <div className="w-full lg:w-[500px]">
             <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
 
             {/* Delivery info */}
