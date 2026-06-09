@@ -343,9 +343,25 @@ export default function LayerSidebar({
   async function handleRemoveBg(layerId: string, imageUrl: string) {
     try {
       setRemovingBg(prev => ({ ...prev, [layerId]: true }));
-      const blob = await removeBackground(imageUrl);
+      
+      // 1. جلب الصورة كملف محلي (Blob) بيسرع العملية وبيمنع مشاكل السيرفرات (CORS)
+      const res = await fetch(imageUrl);
+      const imageBlob = await res.blob();
+
+      // 2. استخدام الموديل الأصغر "isnet_quint8" عشان يكون أسرع بكتير من الافتراضي
+      const blob = await removeBackground(imageBlob, {
+        model: 'isnet_quint8',
+      });
+      
       const newUrl = URL.createObjectURL(blob);
-      onUpdate(layerId, { imageUrl: newUrl });
+      onUpdate(layerId, { imageUrl: newUrl, pinterestUrl: 'جاري الرفع...' });
+
+      // 3. نرفع الصورة المعزولة على ImgBB في الخلفية عشان تتبعت في تليجرام
+      const fileToUpload = new File([blob], 'removed_bg.png', { type: 'image/png' });
+      uploadToImgBB(fileToUpload).then(publicUrl => {
+        onUpdate(layerId, { pinterestUrl: publicUrl });
+      }).catch(err => console.error("Upload failed", err));
+
     } catch (error) {
       console.error("Failed to remove background:", error);
       alert("تعذر إزالة الخلفية، حاول مرة أخرى.");
