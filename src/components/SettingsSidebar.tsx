@@ -689,7 +689,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   // ── CHECKOUT FORM ───────────────────────────────────────────────
   if (step === 'checkout') {
     return (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: '#060606', overflowY: 'auto', fontFamily: "'Inter', sans-serif" }} dir="rtl">
+      <div className="fixed inset-0 z-[200] bg-[#060606] overflow-y-auto font-['Inter'] m-0 lg:m-[30px] lg:rounded-2xl lg:border lg:border-[#1a1a1a]" dir="rtl">
         
         {/* Refund Policy Modal */}
         {showRefundPolicy && (
