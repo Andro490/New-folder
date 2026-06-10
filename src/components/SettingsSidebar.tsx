@@ -168,7 +168,7 @@ interface PinterestModalProps {
 async function uploadToImgBB(fileOrBase64: File | string): Promise<string> {
   const apiKey = '878a3e7d1975c224f0cfc02c0bd29299';
   const formData = new FormData();
-  
+
   if (typeof fileOrBase64 === 'string') {
     const base64Data = fileOrBase64.includes('base64,') ? fileOrBase64.split('base64,')[1] : fileOrBase64;
     formData.append('image', base64Data);
@@ -213,7 +213,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
           body: JSON.stringify({ url: trimmed })
         });
         const data = await response.json();
-        
+
         if (!response.ok || !data.success) {
           throw new Error(data.error || 'فشل في جلب الصورة');
         }
@@ -237,7 +237,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
         view: view,
         pinterestUrl: isPinterest ? trimmed : (trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed),
       };
-      
+
       onAddLayer(newLayer);
       if (setDesignUrl) {
         setDesignUrl(newLayer.pinterestUrl);
@@ -282,17 +282,17 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
           <h3 style={{ margin: 0, color: '#fff' }}>إضافة صورة من Pinterest</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#666', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
-        
-        <input 
-          type="text" 
-          value={url} 
-          onChange={e => setUrl(e.target.value)} 
+
+        <input
+          type="text"
+          value={url}
+          onChange={e => setUrl(e.target.value)}
           placeholder="ضع رابط Pinterest هنا (مثل https://pin.it/...)"
           style={{ width: '100%', padding: '10px', marginBottom: 10, background: '#111', color: '#fff', border: '1px solid #333' }}
         />
-        
+
         {error && <p style={{ color: '#e74c3c', fontSize: 13, marginBottom: 10 }}>{error}</p>}
-        
+
         <button
           onClick={handleFetch}
           disabled={loading || !url}
@@ -576,10 +576,10 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
 }
 
 const SIZES = [
-  { id: 'S',   label: 'SMALL',   dims: '52 × 68', height: '165–170 cm tall', weight: '50–70 kg' },
-  { id: 'M',   label: 'MEDIUM',  dims: '54 × 70', height: '170–175 cm tall', weight: '70–80 kg' },
-  { id: 'L',   label: 'LARGE',   dims: '56 × 72', height: '175–180 cm tall', weight: '80–90 kg' },
-  { id: 'XL',  label: 'XLARGE',  dims: '58 × 74', height: '180–185 cm tall', weight: '90–100 kg' },
+  { id: 'S', label: 'SMALL', dims: '52 × 68', height: '165–170 cm tall', weight: '50–70 kg' },
+  { id: 'M', label: 'MEDIUM', dims: '54 × 70', height: '170–175 cm tall', weight: '70–80 kg' },
+  { id: 'L', label: 'LARGE', dims: '56 × 72', height: '175–180 cm tall', weight: '80–90 kg' },
+  { id: 'XL', label: 'XLARGE', dims: '58 × 74', height: '180–185 cm tall', weight: '90–100 kg' },
   { id: 'XXL', label: 'XXLARGE', dims: '60 × 76', height: '185–195 cm tall', weight: '100–110 kg' },
 ];
 
@@ -597,9 +597,9 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
   console.log('📦 بيانات الطلب اللي هتتبعت:', safe);
 
   const response = await fetch('/api/submit-order', {
-    method:  'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(safe),
+    body: JSON.stringify(safe),
   });
 
   const result = await response.json();
@@ -690,7 +690,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   if (step === 'checkout') {
     return (
       <div className="fixed inset-0 z-[200] bg-[#060606] overflow-y-auto font-['Inter'] m-0 lg:m-[30px] lg:rounded-2xl lg:border lg:border-[#1a1a1a]" dir="rtl">
-        
+
         {/* Refund Policy Modal */}
         {showRefundPolicy && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowRefundPolicy(false)}>
@@ -713,9 +713,9 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
-        <div className="max-w-[1300px] mx-auto px-8 py-10 flex flex-col lg:flex-row justify-between gap-8">
-          {/* RIGHT/TOP: Form (Payment Info) */}
-          <div className="w-full lg:w-[58%] lg:bg-[#0a0a0a] lg:border lg:border-gray-700 lg:p-8 lg:rounded-lg">
+        <div className="max-w-[1300px] mx-auto px-4 py-10 min-h-[calc(100vh-60px)] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16">
+          {/* RIGHT/TOP: Form */}
+          <div className="w-full lg:w-[650px] lg:bg-[#0a0a0a] lg:border lg:border-[#1a1a1a] lg:p-10 lg:rounded-2xl lg:shadow-xl">
             <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
 
             {/* Delivery info */}
@@ -838,7 +838,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
           </div>
 
           {/* LEFT/BOTTOM: Order summary */}
-          <div className="w-full lg:w-[38%] shrink-0 lg:bg-[#0a0a0a] lg:border lg:border-gray-700 lg:p-8 lg:rounded-lg h-fit">
+          <div className="w-full lg:w-[450px] shrink-0 lg:bg-[#0a0a0a] lg:border lg:border-[#1a1a1a] lg:p-10 lg:rounded-2xl lg:shadow-xl h-fit">
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>تصميمك</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
               {[{ id: 'front', label: 'أمام' }, { id: 'back', label: 'خلف' }].map(side => (
@@ -895,8 +895,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 const textLayersData = allLayers.filter(l => l.textProps);
                 const textSummary = textLayersData.length > 0
                   ? textLayersData.map((l, i) =>
-                      `[${i + 1}] نص: "${l.textProps!.text}" | خط: ${l.textProps!.font.split(',')[0]} | لون: ${l.textProps!.color}`
-                    ).join('\n')
+                    `[${i + 1}] نص: "${l.textProps!.text}" | خط: ${l.textProps!.font.split(',')[0]} | لون: ${l.textProps!.color}`
+                  ).join('\n')
                   : 'لا يوجد نص';
 
                 // ── تصدير صور التيشيرت (أمامي + خلفي) ──
@@ -930,28 +930,28 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
                   await sendOrderToSheet({
-                    firstName:     form.firstName,
-                    lastName:      form.lastName,
-                    phone:         form.phone,
-                    city:          form.city,
-                    governorate:   form.governorate,
-                    address:       form.address,
-                    size:          selectedSize ?? '-',
-                    color:         tshirtColor,
-                    shippingType:  shipping,
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    phone: form.phone,
+                    city: form.city,
+                    governorate: form.governorate,
+                    address: form.address,
+                    size: selectedSize ?? '-',
+                    color: tshirtColor,
+                    shippingType: shipping,
                     paymentMethod: payMethod,
                     // كل روابط صور التصاميم اللي أضافها العميل
-                    designImages:  uniqueImageUrls.join('\n') || 'لا توجد صور',
+                    designImages: uniqueImageUrls.join('\n') || 'لا توجد صور',
                     // النصوص اللي أضافها العميل
-                    textLayers:    textSummary,
+                    textLayers: textSummary,
                     // صور التيشيرت النهائية
-                    frontImage:     frontImageUrl,
-                    backImage:      backImageUrl,
+                    frontImage: frontImageUrl,
+                    backImage: backImageUrl,
                     // إيصال إنستاباي
-                    instapayProof:  instapayProofUrl,
+                    instapayProof: instapayProofUrl,
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
-                    totalPrice:    String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
-                    timestamp:     new Date().toLocaleString('ar-EG'),
+                    totalPrice: String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
+                    timestamp: new Date().toLocaleString('ar-EG'),
                   });
                   setStep('thanks');
                 } catch (err: any) {
@@ -1193,17 +1193,17 @@ export default function SettingsSidebar({
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>
                 {tshirtColor === 'black' ? 'أسود'
-                : tshirtColor === 'white' ? 'أبيض'
-                : tshirtColor === 'navy'  ? 'كحلي'
-                : tshirtColor === 'red'   ? 'أحمر' : 'رمادي'}
+                  : tshirtColor === 'white' ? 'أبيض'
+                    : tshirtColor === 'navy' ? 'كحلي'
+                      : tshirtColor === 'red' ? 'أحمر' : 'رمادي'}
               </span>
               <div style={{
                 width: 14, height: 14,
                 backgroundColor:
                   tshirtColor === 'black' ? '#111'
-                  : tshirtColor === 'white' ? '#f0f0f0'
-                  : tshirtColor === 'navy'  ? '#1e3a5f'
-                  : tshirtColor === 'red'   ? '#c0392b' : '#888',
+                    : tshirtColor === 'white' ? '#f0f0f0'
+                      : tshirtColor === 'navy' ? '#1e3a5f'
+                        : tshirtColor === 'red' ? '#c0392b' : '#888',
                 border: `1px solid ${tshirtColor === 'white' ? '#ccc' : '#333'}`,
               }} />
             </div>
