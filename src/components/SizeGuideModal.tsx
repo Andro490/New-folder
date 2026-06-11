@@ -30,148 +30,158 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div onClick={(e) => { e.stopPropagation(); onClose(); }} style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)', padding: 20 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: '#fff', color: '#000', borderRadius: 16, width: '100%', maxWidth: 900, maxHeight: '90vh', overflowY: 'auto', position: 'relative', fontFamily: 'Inter', padding: 40 }}>
+    <div
+      onClick={(e) => { e.stopPropagation(); onClose(); }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 md:p-5"
+      dir="rtl"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white text-black rounded-2xl w-full max-w-[900px] max-h-[90vh] overflow-y-auto relative font-inter p-6 md:p-10"
+      >
         
         {/* Close Button */}
-        <button onClick={onClose} style={{ position: 'absolute', top: 20, right: 20, background: '#f5f5f5', border: 'none', borderRadius: '50%', width: 40, height: 40, fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button
+          onClick={onClose}
+          className="absolute top-4 left-4 md:top-5 md:left-5 bg-gray-100 border-none rounded-full w-10 h-10 text-2xl cursor-pointer flex items-center justify-center hover:bg-gray-200 transition-colors"
+        >
           ×
         </button>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <p style={{ color: '#666', fontSize: 16, marginBottom: 8 }}>على القيش النيشين:</p>
-          <h2 style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>دليل المقاسات الذكي لـ PrintStudio</h2>
+        <div className="text-center mb-8 md:mb-10">
+          <p className="text-gray-500 text-sm md:text-base mb-2">على القيش شينشين:</p>
+          <h2 className="text-2xl md:text-4xl font-black m-0">دليل المقاسات الذكية لـ PrintStudio</h2>
         </div>
 
         {/* Illustrations Section */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginBottom: 40 }}>
-          <div style={{ textAlign: 'center', borderRight: '1px solid #eee', paddingRight: 40 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-8 md:mb-10">
+          <div className="text-center md:border-l border-gray-200 md:pl-10">
             {/* Boxy Fit Illustration placeholder */}
-            <div style={{ width: '100%', height: 200, backgroundColor: '#f9f9f9', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, overflow: 'hidden' }}>
-              <img src={fitIllustration} alt="Regular Fit" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <div className="w-full h-40 md:h-48 bg-gray-50 rounded-lg flex items-center justify-center mb-5 overflow-hidden">
+              <img src={fitIllustration} alt="Regular Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 style={{ fontSize: 24, fontWeight: 900, marginBottom: 10 }}>REGULAR FIT</h3>
-            <p style={{ color: '#666', fontSize: 14 }}>قصة Regular، بناءً على الكتف، بناءً على قياساتك.</p>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 15, padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: 100, fontSize: 14, fontWeight: 700 }}>
-              <Ruler size={16} color="#d4af37" />
+            <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">مقاس عادي</h3>
+            <p className="text-gray-500 text-xs md:text-sm">قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
+            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+              <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
           </div>
           
-          <div style={{ textAlign: 'center', paddingLeft: 40 }}>
-            <div style={{ width: '100%', height: 200, backgroundColor: '#f9f9f9', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, overflow: 'hidden' }}>
-              <img src={fitIllustration} alt="Boxy Fit" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <div className="text-center md:pr-10">
+            <div className="w-full h-40 md:h-48 bg-gray-50 rounded-lg flex items-center justify-center mb-5 overflow-hidden">
+              <img src={fitIllustration} alt="Boxy Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 style={{ fontSize: 24, fontWeight: 900, marginBottom: 10 }}>BOXY FIT</h3>
-            <p style={{ color: '#666', fontSize: 14 }}>قصة Boxy Fit، بناءً على الصدر، بناءً على قياساتك.</p>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 15, padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: 100, fontSize: 14, fontWeight: 700 }}>
-              <Ruler size={16} color="#d4af37" />
+            <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">قصة مربعة</h3>
+            <p className="text-gray-500 text-xs md:text-sm">قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
+            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+              <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
           </div>
         </div>
 
         {/* Size Table */}
-        <div style={{ overflowX: 'auto', marginBottom: 40 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: 16 }}>
+        <div className="overflow-x-auto mb-8 md:mb-10">
+          <table className="w-full border-collapse text-center text-sm md:text-base whitespace-nowrap">
             <thead>
               <tr>
-                <th style={{ backgroundColor: '#111', color: '#fff', padding: '16px', border: '1px solid #333' }}>Size</th>
-                <th style={{ backgroundColor: '#111', color: '#f5c842', padding: '16px', border: '1px solid #333' }}>S</th>
-                <th style={{ backgroundColor: '#111', color: '#f5c842', padding: '16px', border: '1px solid #333' }}>M</th>
-                <th style={{ backgroundColor: '#111', color: '#f5c842', padding: '16px', border: '1px solid #333' }}>L</th>
-                <th style={{ backgroundColor: '#111', color: '#f5c842', padding: '16px', border: '1px solid #333' }}>XL</th>
-                <th style={{ backgroundColor: '#111', color: '#f5c842', padding: '16px', border: '1px solid #333' }}>XXL</th>
-                <th style={{ backgroundColor: '#111', color: '#fff', padding: '16px', border: '1px solid #333', fontSize: 14, lineHeight: 1.2 }}>
-                  المقاس المقترح<br/><span style={{ fontSize: 12, color: '#aaa', fontWeight: 'normal' }}>(بالسنتيمتر)</span>
+                <th className="bg-[#111] text-white p-3 md:p-4 border border-[#333]">Size</th>
+                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">S</th>
+                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">M</th>
+                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">L</th>
+                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">XL</th>
+                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">XXL</th>
+                <th className="bg-[#111] text-white p-3 md:p-4 border border-[#333] text-xs md:text-sm leading-tight">
+                  المقاس المقترح<br/><span className="text-[10px] md:text-xs text-gray-400 font-normal">(بالسنتيمتر)</span>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style={{ padding: '16px', border: '1px solid #ddd', fontWeight: 'bold' }}>عرض الكتفين</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>16 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>18 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>20 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>23 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>26 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd', backgroundColor: '#fafafa', fontWeight: 'bold' }}>44-46</td>
+                <td className="p-3 md:p-4 border border-gray-200 font-bold">عرض الكتفين</td>
+                <td className="p-3 md:p-4 border border-gray-200">16 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">18 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">20 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">23 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">26 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">44-46</td>
               </tr>
               <tr>
-                <td style={{ padding: '16px', border: '1px solid #ddd', fontWeight: 'bold' }}>محيط الصدر</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>40 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>44 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>48 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>52 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>56 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd', backgroundColor: '#fafafa', fontWeight: 'bold' }}>56-60</td>
+                <td className="p-3 md:p-4 border border-gray-200 font-bold">محيط الصدر</td>
+                <td className="p-3 md:p-4 border border-gray-200">40 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">44 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">48 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">52 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">56 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">56-60</td>
               </tr>
               <tr>
-                <td style={{ padding: '16px', border: '1px solid #ddd', fontWeight: 'bold' }}>طول التيشيرت</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>64 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>66 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>70 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>72 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd' }}>74 سم</td>
-                <td style={{ padding: '16px', border: '1px solid #ddd', backgroundColor: '#fafafa', fontWeight: 'bold' }}>69-72</td>
+                <td className="p-3 md:p-4 border border-gray-200 font-bold">طول التيشيرت</td>
+                <td className="p-3 md:p-4 border border-gray-200">64 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">66 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">70 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">72 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200">74 سم</td>
+                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">69-72</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         {/* Calculator Section */}
-        <div style={{ display: 'flex', gap: 20 }}>
+        <div className="flex flex-col md:flex-row gap-5 md:gap-6">
           
-          <div style={{ flex: 2, border: '2px solid #111', borderRadius: 12, overflow: 'hidden' }}>
-            <div style={{ backgroundColor: '#111', color: '#fff', padding: '16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Ruler color="#f5c842" />
-              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 'bold' }}>حساب مقاسي الذكي</h3>
+          <div className="w-full md:w-2/3 border-2 border-[#111] rounded-xl overflow-hidden">
+            <div className="bg-[#111] text-white p-3 md:p-4 flex items-center gap-3">
+              <Ruler className="text-[#f5c842]" />
+              <h3 className="m-0 text-base md:text-lg font-bold">حساب مقاسي الذكي</h3>
             </div>
-            <div style={{ padding: '24px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontWeight: 'bold', width: 60 }}>الكتف</span>
-                  <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, padding: '8px 16px', flex: 1 }}>
-                    <input type="number" value={shoulder} onChange={e => setShoulder(e.target.value)} placeholder="الكتف" style={{ border: 'none', outline: 'none', width: '100%', fontSize: 16 }} />
-                    <span style={{ color: '#aaa', fontSize: 14 }}>cm</span>
+            <div className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 mb-4 md:mb-5">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الكتف</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                    <input type="number" value={shoulder} onChange={e => setShoulder(e.target.value)} placeholder="الكتف" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
+                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontWeight: 'bold', width: 60 }}>الصدر</span>
-                  <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, padding: '8px 16px', flex: 1 }}>
-                    <input type="number" value={chest} onChange={e => setChest(e.target.value)} placeholder="الصدر" style={{ border: 'none', outline: 'none', width: '100%', fontSize: 16 }} />
-                    <span style={{ color: '#aaa', fontSize: 14 }}>cm</span>
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الصدر</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                    <input type="number" value={chest} onChange={e => setChest(e.target.value)} placeholder="الصدر" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
+                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontWeight: 'bold', width: 60 }}>الطول</span>
-                  <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, padding: '8px 16px', flex: 1 }}>
-                    <input type="number" value={length} onChange={e => setLength(e.target.value)} placeholder="الطول" style={{ border: 'none', outline: 'none', width: '100%', fontSize: 16 }} />
-                    <span style={{ color: '#aaa', fontSize: 14 }}>cm</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الطول</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                    <input type="number" value={length} onChange={e => setLength(e.target.value)} placeholder="الطول" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
+                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div style={{ flex: 1, backgroundColor: '#111', color: '#fff', borderRadius: 12, padding: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 70, fontWeight: 900, color: '#f5c842', lineHeight: 1 }}>{suggestedSize}</span>
+          <div className="w-full md:w-1/3 bg-[#111] text-white rounded-xl p-6 md:p-8 flex flex-col items-center justify-center min-h-[140px] md:min-h-0">
+            <span className="text-6xl md:text-7xl font-black text-[#f5c842] leading-none mb-2 md:mb-0">{suggestedSize}</span>
             {suggestedFit && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10, color: '#aaa', fontSize: 14 }}>
-                <CheckCircle2 size={16} color="#2ecc71" />
-                {suggestedFit}
+              <div className="flex items-center gap-2 mt-2 md:mt-3 text-gray-400 text-xs md:text-sm text-center">
+                <CheckCircle2 size={16} className="text-[#2ecc71] shrink-0" />
+                <span>{suggestedFit}</span>
               </div>
             )}
           </div>
 
         </div>
 
-        <p style={{ marginTop: 20, textAlign: 'center', fontSize: 12, color: '#aaa' }}>
-          * كيفية القياس الصحيحة تضمن لك الحصول على القياس المناسب.<br/>
-          * Measurement variance for different models is indicated.
+        <p className="mt-6 md:mt-8 text-center text-[10px] md:text-xs text-gray-400 leading-relaxed">
+          * كيفية القياس الصحيح لك للحصول على القياس المناسب.<br/>
+          * تتم الإشارة إلى تباين القياس لنماذج مختلفة.
         </p>
       </div>
     </div>
