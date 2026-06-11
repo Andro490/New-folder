@@ -37,7 +37,7 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white text-black rounded-2xl w-full max-w-[900px] max-h-[90vh] overflow-y-auto relative font-inter p-6 md:p-10"
+        className="bg-white text-black rounded-2xl w-full max-w-[900px] max-h-[90vh] overflow-y-auto relative font-inter p-6 pb-8 md:p-10 md:pb-12"
       >
         
         {/* Close Button */}
@@ -131,47 +131,68 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Calculator Section */}
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-          
-          <div className="w-full md:w-2/3 border-2 border-[#111] rounded-xl overflow-hidden">
+        <div className="flex flex-col gap-6 md:gap-8">
+
+          {/* Inputs Card — always on top */}
+          <div className="w-full border-2 border-[#111] rounded-xl overflow-hidden">
             <div className="bg-[#111] text-white p-3 md:p-4 flex items-center gap-3">
               <Ruler className="text-[#f5c842]" />
               <h3 className="m-0 text-base md:text-lg font-bold">حساب مقاسي الذكي</h3>
             </div>
             <div className="p-5 md:p-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7 mb-5 md:mb-7">
-                <div className="flex items-center gap-3 md:gap-4">
-                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الكتف</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
-                    <input type="number" value={shoulder} onChange={e => setShoulder(e.target.value)} placeholder="الكتف" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
-                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-7">
+                {/* Shoulder */}
+                <div className="flex flex-col gap-1.5">
+                  <span className="font-bold text-sm md:text-base">عرض الكتف</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                    <input
+                      type="number"
+                      value={shoulder}
+                      onChange={e => setShoulder(e.target.value)}
+                      placeholder="مثال: 18"
+                      className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                    />
+                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الصدر</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
-                    <input type="number" value={chest} onChange={e => setChest(e.target.value)} placeholder="الصدر" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
-                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
+                {/* Chest */}
+                <div className="flex flex-col gap-1.5">
+                  <span className="font-bold text-sm md:text-base">محيط الصدر</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                    <input
+                      type="number"
+                      value={chest}
+                      onChange={e => setChest(e.target.value)}
+                      placeholder="مثال: 44"
+                      className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                    />
+                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
                   </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7">
-                <div className="flex items-center gap-3 md:gap-4">
-                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الطول</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
-                    <input type="number" value={length} onChange={e => setLength(e.target.value)} placeholder="الطول" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
-                    <span className="text-gray-400 text-xs md:text-sm">cm</span>
+                {/* Length */}
+                <div className="flex flex-col gap-1.5">
+                  <span className="font-bold text-sm md:text-base">طول التيشيرت</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                    <input
+                      type="number"
+                      value={length}
+                      onChange={e => setLength(e.target.value)}
+                      placeholder="مثال: 66"
+                      className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                    />
+                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="w-full md:w-1/3 bg-[#111] text-white rounded-xl p-6 md:p-8 flex flex-col items-center justify-center min-h-[140px] md:min-h-0">
-            <span className="text-6xl md:text-7xl font-black text-[#f5c842] leading-none mb-2 md:mb-0">{suggestedSize}</span>
+          {/* Result Box — always below inputs */}
+          <div className="w-full bg-[#111] text-white rounded-xl p-8 md:p-10 flex flex-col items-center justify-center min-h-[160px]">
+            <span className="text-7xl md:text-8xl font-black text-[#f5c842] leading-none">{suggestedSize}</span>
             {suggestedFit && (
-              <div className="flex items-center gap-2 mt-2 md:mt-3 text-gray-400 text-xs md:text-sm text-center">
-                <CheckCircle2 size={16} className="text-[#2ecc71] shrink-0" />
+              <div className="flex items-center gap-2 mt-4 text-gray-400 text-sm md:text-base text-center">
+                <CheckCircle2 size={18} className="text-[#2ecc71] shrink-0" />
                 <span>{suggestedFit}</span>
               </div>
             )}
