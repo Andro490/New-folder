@@ -37,7 +37,7 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white text-black rounded-2xl w-full max-w-[900px] max-h-[90vh] overflow-y-auto relative font-inter p-6 pb-8 md:p-10 md:pb-12"
+        className="bg-white text-black rounded-2xl w-full max-w-[900px] md:max-w-[1100px] max-h-[90vh] overflow-y-auto relative font-inter p-6 pb-8 md:p-12 md:pb-14"
       >
         
         {/* Close Button */}
@@ -83,7 +83,7 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Size Table */}
-        <div className="overflow-x-auto mb-10 md:mb-14">
+        <div className="overflow-x-auto mb-14 md:mb-20">
           <table className="w-full border-collapse text-center text-sm md:text-base whitespace-nowrap">
             <thead>
               <tr>
