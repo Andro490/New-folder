@@ -12,6 +12,7 @@ export interface DesignLayer {
   locked: boolean;
   view: TShirtView;
   pinterestUrl?: string;
+  originalImageUrl?: string;
   textProps?: {
     text: string;
     font: string;

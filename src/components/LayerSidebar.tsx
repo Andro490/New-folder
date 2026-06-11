@@ -109,6 +109,7 @@ function PinterestModal({
         height: Math.min(150, printArea.height - 40),
         rotation: 0, opacity: 1, visible: true, locked: false,
         view: view,
+        originalImageUrl: imageUrl,
         pinterestUrl: isPinterest ? trimmed : (trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed),
       };
       
@@ -311,6 +312,7 @@ export default function LayerSidebar({
       height: Math.min(150, printArea.height - 40),
       rotation: 0, opacity: 1, visible: true, locked: false,
       view: view,
+      originalImageUrl: imageUrl,
     };
   }
 
@@ -569,6 +571,15 @@ export default function LayerSidebar({
 
                       {/* Advanced Remove Background Tools */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 6 }}>
+                        {layer.originalImageUrl && layer.originalImageUrl !== layer.imageUrl && (
+                          <button
+                            style={{ ...S.actionBtn(), width: '100%', justifyContent: 'center', color: '#fff', backgroundColor: '#e60023', borderColor: '#e60023' }}
+                            onClick={() => onUpdate(layer.id, { imageUrl: layer.originalImageUrl, pinterestUrl: '' })}
+                            title="إلغاء التعديلات والرجوع للصورة الأصلية"
+                          >
+                            ↺ استعادة الصورة الأصلية
+                          </button>
+                        )}
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button
                             style={{ ...S.actionBtn(removingBg[layer.id]), flex: 1, padding: '8px 4px' }}
