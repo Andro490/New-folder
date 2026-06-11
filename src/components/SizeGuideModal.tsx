@@ -49,33 +49,33 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </button>
 
         {/* Header */}
-        <div className="text-center mb-8 md:mb-10">
-          <p className="text-gray-500 text-sm md:text-base mb-2">على القيش شينشين:</p>
+        <div className="text-center mb-10 md:mb-14">
+          <p className="text-gray-500 text-sm md:text-base mb-3">على القيش شينشين:</p>
           <h2 className="text-2xl md:text-4xl font-black m-0">دليل المقاسات الذكية لـ PrintStudio</h2>
         </div>
 
         {/* Illustrations Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-8 md:mb-10">
-          <div className="text-center md:border-l border-gray-200 md:pl-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 mb-10 md:mb-14">
+          <div className="text-center md:border-l border-gray-200 md:pl-12">
             {/* Boxy Fit Illustration placeholder */}
-            <div className="w-full h-40 md:h-48 bg-gray-50 rounded-lg flex items-center justify-center mb-5 overflow-hidden">
+            <div className="w-full h-44 md:h-52 bg-gray-50 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
               <img src={fitIllustration} alt="Regular Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">مقاس عادي</h3>
-            <p className="text-gray-500 text-xs md:text-sm">قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
-            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">مقاس عادي</h3>
+            <p className="text-gray-500 text-xs md:text-sm mb-2">قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
+            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
               <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
           </div>
           
-          <div className="text-center md:pr-10">
-            <div className="w-full h-40 md:h-48 bg-gray-50 rounded-lg flex items-center justify-center mb-5 overflow-hidden">
+          <div className="text-center md:pr-12">
+            <div className="w-full h-44 md:h-52 bg-gray-50 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
               <img src={fitIllustration} alt="Boxy Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-2 md:mb-3">قصة مربعة</h3>
-            <p className="text-gray-500 text-xs md:text-sm">قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
-            <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">قصة مربعة</h3>
+            <p className="text-gray-500 text-xs md:text-sm mb-2">قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
+            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
               <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
@@ -83,7 +83,7 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Size Table */}
-        <div className="overflow-x-auto mb-8 md:mb-10">
+        <div className="overflow-x-auto mb-10 md:mb-14">
           <table className="w-full border-collapse text-center text-sm md:text-base whitespace-nowrap">
             <thead>
               <tr>
@@ -131,34 +131,34 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Calculator Section */}
-        <div className="flex flex-col md:flex-row gap-5 md:gap-6">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
           
           <div className="w-full md:w-2/3 border-2 border-[#111] rounded-xl overflow-hidden">
             <div className="bg-[#111] text-white p-3 md:p-4 flex items-center gap-3">
               <Ruler className="text-[#f5c842]" />
               <h3 className="m-0 text-base md:text-lg font-bold">حساب مقاسي الذكي</h3>
             </div>
-            <div className="p-4 md:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 mb-4 md:mb-5">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الكتف</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+            <div className="p-5 md:p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7 mb-5 md:mb-7">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الكتف</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
                     <input type="number" value={shoulder} onChange={e => setShoulder(e.target.value)} placeholder="الكتف" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
                     <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 md:gap-3">
-                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الصدر</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الصدر</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
                     <input type="number" value={chest} onChange={e => setChest(e.target.value)} placeholder="الصدر" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
                     <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <span className="font-bold w-12 md:w-16 text-sm md:text-base">الطول</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <span className="font-bold w-14 md:w-16 text-sm md:text-base">الطول</span>
+                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3 flex-1">
                     <input type="number" value={length} onChange={e => setLength(e.target.value)} placeholder="الطول" className="border-none outline-none w-full text-sm md:text-base bg-transparent" />
                     <span className="text-gray-400 text-xs md:text-sm">cm</span>
                   </div>
