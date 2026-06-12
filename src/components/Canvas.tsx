@@ -107,6 +107,7 @@ function DesignImage({ layer, isSelected, onSelect, onChange }: DesignImageProps
   return (
     <>
       <KonvaImage
+        id={layer.id}
         ref={imageRef}
         image={image}
         x={layer.x}
@@ -199,11 +200,14 @@ export default function Canvas({
 
   const handleTouchMove = (e: any) => {
     e.evt.preventDefault();
-    if (!selectedId) return;
+    if (!selectedId || !stageRef.current) return;
     const touch1 = e.evt.touches[0];
     const touch2 = e.evt.touches[1];
 
     if (touch1 && touch2) {
+      const node = stageRef.current.findOne('#' + selectedId);
+      if (!node) return;
+
       const dist = Math.sqrt(
         Math.pow(touch2.clientX - touch1.clientX, 2) +
         Math.pow(touch2.clientY - touch1.clientY, 2)
@@ -216,29 +220,63 @@ export default function Canvas({
       const factor = dist / lastDist.current;
       lastDist.current = dist;
 
-      const layer = layers.find(l => l.id === selectedId);
-      if (!layer || layer.locked) return;
+      // Calculate center of the pinch
+      const clientCenterX = (touch1.clientX + touch2.clientX) / 2;
+      const clientCenterY = (touch1.clientY + touch2.clientY) / 2;
 
-      const newWidth = Math.max(20, layer.width * factor);
-      const newHeight = Math.max(20, layer.height * factor);
-      const dw = newWidth - layer.width;
-      const dh = newHeight - layer.height;
+      const stage = stageRef.current;
+      const stageBox = stage.container().getBoundingClientRect();
+      const pointerPosition = {
+        x: clientCenterX - stageBox.left,
+        y: clientCenterY - stageBox.top
+      };
 
-      onLayerChange(selectedId, {
-        width: newWidth,
-        height: newHeight,
-        x: layer.x - dw / 2,
-        y: layer.y - dh / 2,
+      // Get pointer position relative to the node
+      const transform = node.getAbsoluteTransform().copy();
+      transform.invert();
+      const localPointer = transform.point(pointerPosition);
+
+      // Scale the node
+      const scaleX = node.scaleX() * factor;
+      const scaleY = node.scaleY() * factor;
+      node.scale({ x: scaleX, y: scaleY });
+
+      // Move the node to keep the pointer centered
+      const newAbsolutePointer = node.getAbsoluteTransform().point(localPointer);
+      node.position({
+        x: node.x() + pointerPosition.x - newAbsolutePointer.x,
+        y: node.y() + pointerPosition.y - newAbsolutePointer.y
       });
+
+      node.getLayer()?.batchDraw();
     }
   };
 
   const handleTouchEnd = () => {
     lastDist.current = 0;
+    if (selectedId && stageRef.current) {
+      const node = stageRef.current.findOne('#' + selectedId);
+      if (node && (node.scaleX() !== 1 || node.scaleY() !== 1)) {
+        const scaleX = node.scaleX();
+        const scaleY = node.scaleY();
+        node.scaleX(1);
+        node.scaleY(1);
+        
+        const layer = layers.find(l => l.id === selectedId);
+        if (layer) {
+          onLayerChange(selectedId, {
+            x: node.x(),
+            y: node.y(),
+            width: Math.max(20, layer.width * scaleX),
+            height: Math.max(20, layer.height * scaleY),
+          });
+        }
+      }
+    }
   };
 
   return (
-    <div className="konva-wrapper rounded-2xl overflow-hidden" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
+    <div className="konva-wrapper rounded-2xl overflow-hidden" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT, touchAction: 'none' }}>
       <Stage
         ref={stageRef}
         width={CANVAS_WIDTH}
