@@ -118,8 +118,8 @@ function Editor() {
 
   return (
     <div
-      className="flex flex-col h-screen"
-      style={{ background: 'var(--bg-primary)', overflow: 'hidden' }}
+      className="flex flex-col"
+      style={{ background: 'var(--bg-primary)', overflow: 'hidden', height: '100dvh' }}
     >
       {/* Top Bar */}
       <header

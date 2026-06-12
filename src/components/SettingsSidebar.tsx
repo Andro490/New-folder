@@ -1340,7 +1340,7 @@ export default function SettingsSidebar({
         </div>
 
         {/* ─── Empty bottom ─── */}
-        <div style={{ flex: 1, backgroundColor: '#050505' }} />
+        <div style={{ height: '80px', backgroundColor: '#050505' }} />
       </aside>
 
       {showOrderModal && <OrderModal onClose={() => setShowOrderModal(false)} tshirtColor={tshirtColor} allLayers={allLayers} designLink={designUrl} />}
