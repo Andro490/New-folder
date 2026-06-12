@@ -174,6 +174,7 @@ export default function Canvas({
   const stageRef = useRef<Konva.Stage>(null);
   const printArea = PRINT_AREA[view];
   const lastDist = useRef<number>(0);
+  const lastCenter = useRef<{ x: number; y: number } | null>(null);
 
   const handleWheel = (e: any) => {
     e.evt.preventDefault();
@@ -208,6 +209,11 @@ export default function Canvas({
       const node = stageRef.current.findOne('#' + selectedId);
       if (!node) return;
 
+      // Stop single-finger drag if it was started
+      if (node.isDragging()) {
+        node.stopDrag();
+      }
+
       const dist = Math.sqrt(
         Math.pow(touch2.clientX - touch1.clientX, 2) +
         Math.pow(touch2.clientY - touch1.clientY, 2)
@@ -226,34 +232,40 @@ export default function Canvas({
 
       const stage = stageRef.current;
       const stageBox = stage.container().getBoundingClientRect();
-      const pointerPosition = {
+      const newCenter = {
         x: clientCenterX - stageBox.left,
         y: clientCenterY - stageBox.top
       };
 
-      // Get pointer position relative to the node
+      if (!lastCenter.current) {
+        lastCenter.current = newCenter;
+      }
+
+      // Get the point on the node where the OLD center was
       const transform = node.getAbsoluteTransform().copy();
       transform.invert();
-      const localPointer = transform.point(pointerPosition);
+      const localCenter = transform.point(lastCenter.current);
 
       // Scale the node
       const scaleX = node.scaleX() * factor;
       const scaleY = node.scaleY() * factor;
       node.scale({ x: scaleX, y: scaleY });
 
-      // Move the node to keep the pointer centered
-      const newAbsolutePointer = node.getAbsoluteTransform().point(localPointer);
+      // Move the node so that the localCenter maps perfectly to the NEW center
+      const newAbsoluteCenter = node.getAbsoluteTransform().point(localCenter);
       node.position({
-        x: node.x() + pointerPosition.x - newAbsolutePointer.x,
-        y: node.y() + pointerPosition.y - newAbsolutePointer.y
+        x: node.x() + newCenter.x - newAbsoluteCenter.x,
+        y: node.y() + newCenter.y - newAbsoluteCenter.y
       });
 
+      lastCenter.current = newCenter;
       node.getLayer()?.batchDraw();
     }
   };
 
   const handleTouchEnd = () => {
     lastDist.current = 0;
+    lastCenter.current = null;
     if (selectedId && stageRef.current) {
       const node = stageRef.current.findOne('#' + selectedId);
       if (node && (node.scaleX() !== 1 || node.scaleY() !== 1)) {
