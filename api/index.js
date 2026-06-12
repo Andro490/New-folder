@@ -36,18 +36,41 @@ app.post('/api/submit-order', async (req, res) => {
 async function getPinterestImageUrl(pinUrl) {
     try {
         const response = await axios.get(pinUrl, {
+            maxRedirects: 10,         // follow pin.it → pinterest.com redirects
+            timeout: 12000,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Cache-Control': 'no-cache',
             }
         });
 
         const html = response.data;
         const $ = cheerio.load(html);
 
-        let imageUrl = $('meta[property="og:image"]').attr('content');
+        // Try multiple selectors in order of reliability
+        let imageUrl =
+            $('meta[property="og:image"]').attr('content') ||
+            $('meta[name="twitter:image:src"]').attr('content') ||
+            $('meta[name="twitter:image"]').attr('content') ||
+            $('meta[property="og:image:secure_url"]').attr('content');
 
         if (!imageUrl) {
-             throw new Error('Image not found in the page meta tags.');
+            // Try to extract from JSON-LD or script tags
+            const scripts = $('script[type="application/json"]').toArray();
+            for (const script of scripts) {
+                try {
+                    const json = JSON.parse($(script).html() || '');
+                    const str = JSON.stringify(json);
+                    const match = str.match(/"url":"(https:\/\/i\.pinimg\.com\/[^"]+)"/);
+                    if (match) { imageUrl = match[1]; break; }
+                } catch { /* ignore */ }
+            }
+        }
+
+        if (!imageUrl) {
+            throw new Error('Image not found in the page meta tags.');
         }
 
         return imageUrl;
@@ -56,6 +79,7 @@ async function getPinterestImageUrl(pinUrl) {
         throw error;
     }
 }
+
 
 app.post('/api/pinterest-image', async (req, res) => {
     const { url } = req.body;

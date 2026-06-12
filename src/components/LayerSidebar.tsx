@@ -73,16 +73,33 @@ function PinterestModal({
 
       if (isPinterest) {
         const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
-        const response = await fetch(`${API_BASE}/api/pinterest-image`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: trimmed })
-        });
         
-        const data = await response.json();
+        let response: Response;
+        try {
+          response = await fetch(`${API_BASE}/api/pinterest-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: trimmed })
+          });
+        } catch {
+          setError('تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.');
+          setLoading(false);
+          return;
+        }
+
+        // Safely parse JSON — avoid crash if server returns HTML
+        let data: { success?: boolean; imageUrl?: string; error?: string };
+        try {
+          const text = await response.text();
+          data = JSON.parse(text);
+        } catch {
+          setError('تعذّر جلب الصورة من الرابط. حاول نسخ رابط الصورة مباشرة، أو اضغط على الصورة ثم "فتح في تبويبة جديدة" وانسخ URLالصورة.');
+          setLoading(false);
+          return;
+        }
         
-        if (!response.ok || !data.success) {
-          setError(data.error || 'تعذّر استخراج الصورة من الرابط. حاول نسخ رابط الصورة مباشرة.');
+        if (!response.ok || !data.success || !data.imageUrl) {
+          setError(data.error || 'تعذّر استخراج الصورة من الرابط. حاول نسخ رابط الصورة مباشرة؟');
           setLoading(false);
           return;
         }
@@ -96,6 +113,8 @@ function PinterestModal({
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve();
         img.onerror = () => reject(new Error('image load failed'));
+        // timeout after 15s
+        setTimeout(() => reject(new Error('timeout')), 15000);
         img.src = imageUrl;
       });
 
@@ -124,8 +143,13 @@ function PinterestModal({
           console.error("Failed to upload base64 to ImgBB", err);
         });
       }
-    } catch {
-      setError('تعذّر تحميل الصورة. حاول نسخ رابط الصورة مباشرة (Click image → Open in new tab → copy URL).');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg === 'timeout') {
+        setError('انتهت مدة تحميل الصورة. تحقق من الرابط وحاول مرة أخرى.');
+      } else {
+        setError('تعذّر تحميل الصورة. حاول نسخ رابط الصورة مباشرة (اضغط على الصورة → فتح في تبويبة جديدة → انسخ URL)الصورة.');
+      }
     } finally {
       setLoading(false);
     }
