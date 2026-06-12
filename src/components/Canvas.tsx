@@ -264,23 +264,32 @@ export default function Canvas({
   };
 
   const handleTouchEnd = () => {
+    const wasPinching = lastDist.current > 0;
     lastDist.current = 0;
     lastCenter.current = null;
-    if (selectedId && stageRef.current) {
+    
+    if (wasPinching && selectedId && stageRef.current) {
       const node = stageRef.current.findOne('#' + selectedId);
-      if (node && (node.scaleX() !== 1 || node.scaleY() !== 1)) {
+      if (node) {
         const scaleX = node.scaleX();
         const scaleY = node.scaleY();
         node.scaleX(1);
         node.scaleY(1);
+        
+        const newWidth = Math.max(20, node.width() * scaleX);
+        const newHeight = Math.max(20, node.height() * scaleY);
+        
+        // Update visually immediately before React re-renders to prevent jitter
+        node.width(newWidth);
+        node.height(newHeight);
         
         const layer = layers.find(l => l.id === selectedId);
         if (layer) {
           onLayerChange(selectedId, {
             x: node.x(),
             y: node.y(),
-            width: Math.max(20, layer.width * scaleX),
-            height: Math.max(20, layer.height * scaleY),
+            width: newWidth,
+            height: newHeight,
           });
         }
       }
@@ -299,7 +308,7 @@ export default function Canvas({
         onMouseDown={(e) => {
           if (e.target === e.target.getStage()) onSelect(null);
         }}
-        onTouchStart={(e) => {
+        onTap={(e) => {
           if (e.target === e.target.getStage()) onSelect(null);
         }}
       >
