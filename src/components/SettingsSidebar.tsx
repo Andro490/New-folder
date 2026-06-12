@@ -25,9 +25,18 @@ function TshirtPreviewBox({ layers, tshirtColor, view, width = 220, height = 180
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const dpr = window.devicePixelRatio || 1;
     const scale = width / CANVAS_WIDTH;
-    canvas.width = width;
-    canvas.height = height;
+    
+    // Set actual internal canvas resolution higher for sharp retina displays
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    
+    // Scale drawing context so CSS pixels map correctly to device pixels
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
     ctx.clearRect(0, 0, width, height);
 
     // Determine background source
