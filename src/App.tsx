@@ -125,8 +125,9 @@ function Editor() {
       <header
         className="flex items-center px-6 h-16 shrink-0"
         style={{
-          backgroundColor: '#050505',
-          borderBottom: '1px solid #1a1a1a',
+          backgroundColor: 'rgba(5, 5, 5, 0.85)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           zIndex: 50
         }}
       >

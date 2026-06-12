@@ -3,6 +3,7 @@ import { DesignLayer, TShirtView } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { PRINT_AREA } from '../utils/tshirtSvg';
 import { removeBackground } from '@imgly/background-removal';
+import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Wand2, Droplet, Edit2, RotateCw, RotateCcw, Undo2 } from 'lucide-react';
 
 interface LayerSidebarProps {
   layers: DesignLayer[];
@@ -450,65 +451,69 @@ export default function LayerSidebar({
 
   const S = {
     sidebar: {
-      backgroundColor: '#080808',
+      backgroundColor: '#0a0a0a',
       borderRight: '1px solid #1a1a1a',
       display: 'flex', flexDirection: 'column' as const,
       fontFamily: "'Inter', sans-serif",
     },
     header: {
-      padding: '20px 16px 16px',
+      padding: '20px 24px',
       borderBottom: '1px solid #1a1a1a',
     },
     brand: {
-      fontSize: 16, fontWeight: 900, color: '#fff',
+      fontSize: 18, fontWeight: 900, color: '#fff',
       letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-      marginBottom: 14,
+      marginBottom: 16,
     },
     sectionTitle: {
-      fontSize: 11, fontWeight: 800, color: '#888',
+      fontSize: 12, fontWeight: 700, color: '#888',
       letterSpacing: '0.15em', textTransform: 'uppercase' as const,
     },
-    layerList: { flex: 1, overflowY: 'auto' as const, padding: '12px' },
+    layerList: { flex: 1, overflowY: 'auto' as const, padding: '16px' },
     emptyText: {
-      fontSize: 11, fontWeight: 700, color: '#444',
-      letterSpacing: '0.1em', textTransform: 'uppercase' as const,
-      lineHeight: 1.7, padding: '8px 0',
+      fontSize: 12, fontWeight: 600, color: '#555',
+      letterSpacing: '0.05em', lineHeight: 1.6, padding: '20px 0', textAlign: 'center' as const,
     },
     layerCard: (selected: boolean) => ({
-      border: `1px solid ${selected ? '#e60023' : '#1e1e1e'}`,
-      backgroundColor: selected ? '#120000' : '#0d0d0d',
-      marginBottom: 8, padding: '10px',
+      border: `1px solid ${selected ? '#f5c842' : '#222'}`,
+      backgroundColor: selected ? 'rgba(245, 200, 66, 0.05)' : '#111',
+      borderRadius: 12,
+      marginBottom: 12, padding: '12px',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer',
     }),
     layerRow: {
-      display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
+      display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8,
     },
     thumb: {
-      width: 36, height: 36, objectFit: 'contain' as const,
-      backgroundColor: '#111', border: '1px solid #222', flexShrink: 0,
+      width: 44, height: 44, objectFit: 'contain' as const,
+      backgroundColor: '#000', borderRadius: 8, border: '1px solid #222', flexShrink: 0,
     },
     layerName: {
-      flex: 1, fontSize: 11, fontWeight: 800, color: '#fff',
-      letterSpacing: '0.12em', textTransform: 'uppercase' as const,
-      whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis',
+      flex: 1, fontSize: 13, fontWeight: 700, color: '#fff',
+      letterSpacing: '0.05em', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis',
     },
     iconBtn: (danger = false) => ({
       background: 'none', border: 'none', cursor: 'pointer',
-      color: danger ? '#e60023' : '#555', fontSize: 15, lineHeight: 1, padding: 2,
+      color: danger ? '#e63946' : '#888', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 6, borderRadius: 6, transition: 'all 0.2s',
     }),
-    actionRow: { display: 'flex', gap: 6, marginBottom: 6 },
+    actionRow: { display: 'flex', gap: 8, marginBottom: 8 },
     actionBtn: (disabled = false) => ({
-      flex: 1, padding: '6px 4px',
-      backgroundColor: '#111', border: '1px solid #222',
-      color: disabled ? '#333' : '#999',
-      fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-      textTransform: 'uppercase' as const, cursor: disabled ? 'not-allowed' : 'pointer',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+      flex: 1, padding: '8px 6px',
+      backgroundColor: '#1a1a1a', borderRadius: 8, border: '1px solid #2a2a2a',
+      color: disabled ? '#555' : '#ccc',
+      fontSize: 11, fontWeight: 600,
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+      transition: 'all 0.2s'
     }),
     deleteBtn: {
-      padding: '6px 8px',
-      backgroundColor: '#1a0000', border: '1px solid #3a0000',
-      color: '#e60023', fontSize: 12, cursor: 'pointer',
+      padding: '8px', borderRadius: 8,
+      backgroundColor: 'rgba(230, 57, 70, 0.1)', border: '1px solid rgba(230, 57, 70, 0.2)',
+      color: '#e63946', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'all 0.2s',
     },
     uploadZone: {
       margin: '0 12px 12px',
@@ -552,11 +557,10 @@ export default function LayerSidebar({
           </p>
         </div>
 
-        {/* Layer list */}
         <div style={S.layerList} onDragOver={e => e.preventDefault()} onDrop={handleDrop}>
           {layers.length === 0 ? (
             <p style={S.emptyText}>
-              No layers yet. Add an image to the {viewLabel.toLowerCase()} to start designing.
+              No layers yet. Start adding designs to create your masterpiece.
             </p>
           ) : (
             [...layers].reverse().map((layer, i) => {
@@ -568,7 +572,6 @@ export default function LayerSidebar({
                   style={S.layerCard(selected)}
                   onClick={() => onSelect(selected ? null : layer.id)}
                 >
-                  {/* Layer row */}
                   <div style={S.layerRow}>
                     <img src={layer.imageUrl} alt={layer.name} style={S.thumb} />
                     <span style={S.layerName}>LAYER {realIndex + 1}</span>
@@ -576,100 +579,94 @@ export default function LayerSidebar({
                       style={S.iconBtn()}
                       onClick={e => { e.stopPropagation(); onUpdate(layer.id, { visible: !layer.visible }); }}
                       title={layer.visible ? 'Hide' : 'Show'}
+                      onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#888'}
                     >
-                      {layer.visible ? '👁' : '🚫'}
+                      {layer.visible ? <Eye size={18} /> : <EyeOff size={18} color="#666" />}
                     </button>
                   </div>
 
                   {selected && (
                     <div onClick={e => e.stopPropagation()}>
-                      {/* Edit Image */}
-                      <div style={{ marginBottom: 6 }}>
+                      <div style={{ marginBottom: 12 }}>
                         <button
-                          style={{ ...S.actionBtn(), width: '100%', justifyContent: 'center' }}
+                          style={{ ...S.actionBtn(), width: '100%', padding: '10px', backgroundColor: '#f5c842', color: '#000', border: 'none' }}
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          — EDIT IMAGE
+                          <Edit2 size={14} /> تغيير الصورة
                         </button>
                       </div>
 
-                      {/* Advanced Remove Background Tools */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 6 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                         {layer.originalImageUrl && layer.originalImageUrl !== layer.imageUrl && (
                           <button
-                            style={{ ...S.actionBtn(), width: '100%', justifyContent: 'center', color: '#fff', backgroundColor: '#e60023', borderColor: '#e60023' }}
+                            style={{ ...S.actionBtn(), width: '100%', color: '#fff', backgroundColor: 'rgba(255,255,255,0.05)', borderColor: '#333' }}
                             onClick={() => onUpdate(layer.id, { imageUrl: layer.originalImageUrl, pinterestUrl: '' })}
                             title="إلغاء التعديلات والرجوع للصورة الأصلية"
                           >
-                            ↺ استعادة الصورة الأصلية
+                            <Undo2 size={14} /> استعادة الأصلية
                           </button>
                         )}
-                        <div style={{ display: 'flex', gap: 6 }}>
+                        <div style={{ display: 'flex', gap: 8 }}>
                           <button
-                            style={{ ...S.actionBtn(removingBg[layer.id]), flex: 1, padding: '8px 4px' }}
+                            style={{ ...S.actionBtn(removingBg[layer.id]), flex: 1 }}
                             onClick={() => handleRemoveColor(layer.id, layer.imageUrl, 'black')}
                             disabled={removingBg[layer.id]}
-                            title="تفريغ اللون الأسود بالكامل مع الحفاظ على النصوص"
                           >
-                            ⬛ إزالة الأسود
+                            <Droplet size={14} color="#555" /> إزالة الأسود
                           </button>
                           <button
-                            style={{ ...S.actionBtn(removingBg[layer.id]), flex: 1, padding: '8px 4px' }}
+                            style={{ ...S.actionBtn(removingBg[layer.id]), flex: 1 }}
                             onClick={() => handleRemoveColor(layer.id, layer.imageUrl, 'white')}
                             disabled={removingBg[layer.id]}
-                            title="تفريغ اللون الأبيض بالكامل مع الحفاظ على النصوص"
                           >
-                            ⬜ إزالة الأبيض
+                            <Droplet size={14} color="#ddd" /> إزالة الأبيض
                           </button>
                         </div>
                         <button
                           style={{ ...S.actionBtn(removingBg[layer.id]), width: '100%', justifyContent: 'center' }}
                           onClick={() => handleRemoveBg(layer.id, layer.imageUrl)}
                           disabled={removingBg[layer.id]}
-                          title="عزل الشخص أو العنصر الأساسي (يمسح النصوص والخلفية المشتتة)"
                         >
-                          {removingBg[layer.id] ? '⏳ جاري العزل...' : '✨ عزل ذكي (AI)'}
+                          <Wand2 size={14} color="#a855f7" />
+                          {removingBg[layer.id] ? 'جاري العزل...' : 'عزل ذكي (AI)'}
                         </button>
                       </div>
 
-                      {/* Rotate */}
+                      {/* Rotate & Controls */}
                       <div style={S.actionRow}>
                         <button
                           style={S.actionBtn()}
                           onClick={() => onUpdate(layer.id, { rotation: (layer.rotation - 45 + 360) % 360 })}
                         >
-                          ↺ ROTATE
+                          <RotateCcw size={14} />
                         </button>
                         <button
                           style={S.actionBtn()}
                           onClick={() => onUpdate(layer.id, { rotation: (layer.rotation + 45) % 360 })}
                         >
-                          ↻ ROTATE
-                        </button>
-                      </div>
-
-                      {/* Up / Down / Delete */}
-                      <div style={S.actionRow}>
-                        <button
-                          style={S.actionBtn(realIndex >= layers.length - 1)}
-                          disabled={realIndex >= layers.length - 1}
-                          onClick={() => onReorder(realIndex, realIndex + 1)}
-                        >
-                          ↑ UP
+                          <RotateCw size={14} />
                         </button>
                         <button
                           style={S.actionBtn(realIndex <= 0)}
                           disabled={realIndex <= 0}
                           onClick={() => onReorder(realIndex, realIndex - 1)}
                         >
-                          ↓ DOWN
+                          <ArrowDown size={14} />
+                        </button>
+                        <button
+                          style={S.actionBtn(realIndex >= layers.length - 1)}
+                          disabled={realIndex >= layers.length - 1}
+                          onClick={() => onReorder(realIndex, realIndex + 1)}
+                        >
+                          <ArrowUp size={14} />
                         </button>
                         <button
                           style={S.deleteBtn}
                           onClick={() => onRemove(layer.id)}
                           title="Delete"
                         >
-                          ×
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </div>

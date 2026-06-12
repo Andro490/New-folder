@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DesignLayer, TShirtColor, TShirtView } from '../types';
-import { Info } from 'lucide-react';
+import { Info, Image as ImageIcon, Link as LinkIcon, Type, Save, CheckCircle, ZoomIn, ZoomOut } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { SizeGuideModal } from './SizeGuideModal';
 import { PRINT_AREA, getTshirtSVG, CANVAS_WIDTH, CANVAS_HEIGHT } from '../utils/tshirtSvg';
@@ -1224,127 +1224,146 @@ export default function SettingsSidebar({
           <button
             onClick={() => setShowOrderModal(true)}
             style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               width: '100%',
-              padding: '14px 0',
-              backgroundColor: 'rgb(245, 200, 66)',
-              color: 'rgb(13, 13, 13)',
+              padding: '16px 0',
+              backgroundColor: '#f5c842',
+              color: '#0d0d0d',
               fontWeight: 900,
-              fontSize: 14,
-              letterSpacing: '0.2em',
+              fontSize: 15,
+              borderRadius: 12,
+              boxShadow: '0 4px 15px rgba(245, 200, 66, 0.2)',
               border: 'none',
               cursor: 'pointer',
-              transition: 'opacity 0.15s',
+              transition: 'all 0.2s ease',
             }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 200, 66, 0.3)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 200, 66, 0.2)'; }}
           >
-            اطلب الآن
+            <CheckCircle size={18} />
+            إتمام الطلب
           </button>
         </div>
 
         {/* ─── Section 3: أدوات ─── */}
         <div style={{ padding: '24px', borderBottom: '1px solid #1a1a1a' }}>
-          <p style={{ fontSize: 13, color: '#888', marginBottom: 20, textAlign: 'right' }}>
-            أدوات
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#aaa', marginBottom: 20, textAlign: 'right', display: 'flex', alignItems: 'center', gap: 8 }}>
+            أدوات التصميم
           </p>
 
-          {/* إضافة صورة */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              display: 'block', width: '100%', textAlign: 'right',
-              padding: '12px 16px', marginBottom: 12,
-              fontSize: 14, fontWeight: 700, color: '#fff',
-              backgroundColor: '#050505',
-              border: '1px solid #222',
-              cursor: 'pointer', transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#111')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#050505')}
-          >
-            إضافة صورة من الجهاز
-          </button>
+          <div style={{ display: 'grid', gap: 12, marginBottom: 24 }}>
+            {/* إضافة صورة */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '14px 18px',
+                fontSize: 14, fontWeight: 600, color: '#fff',
+                backgroundColor: '#111',
+                borderRadius: 10,
+                border: '1px solid #222',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+            >
+              <span>رفع صورة من الجهاز</span>
+              <ImageIcon size={18} color="#f5c842" />
+            </button>
 
-          {/* إضافة رابط Pinterest */}
-          <button
-            onClick={() => setShowPinterestModal(true)}
-            style={{
-              display: 'block', width: '100%', textAlign: 'right',
-              padding: '12px 16px', marginBottom: 12,
-              fontSize: 14, fontWeight: 700, color: '#fff',
-              backgroundColor: '#050505',
-              border: '1px solid #222',
-              cursor: 'pointer', transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#111')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#050505')}
-          >
-            إضافة رابط Pinterest
-          </button>
+            {/* إضافة رابط Pinterest */}
+            <button
+              onClick={() => setShowPinterestModal(true)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '14px 18px',
+                fontSize: 14, fontWeight: 600, color: '#fff',
+                backgroundColor: '#111',
+                borderRadius: 10,
+                border: '1px solid #222',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+            >
+              <span>إضافة من Pinterest</span>
+              <LinkIcon size={18} color="#e60023" />
+            </button>
 
-          {/* أضف نصًا */}
-          <button
-            onClick={() => setShowTextModal(true)}
-            style={{
-              display: 'block', width: '100%', textAlign: 'right',
-              padding: '12px 16px', marginBottom: 24,
-              fontSize: 14, fontWeight: 700, color: '#fff',
-              backgroundColor: '#050505',
-              border: '1px solid #222',
-              cursor: 'pointer', transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#111')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#050505')}
-          >
-            أضف نصًا
-          </button>
+            {/* أضف نصًا */}
+            <button
+              onClick={() => setShowTextModal(true)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '14px 18px',
+                fontSize: 14, fontWeight: 600, color: '#fff',
+                backgroundColor: '#111',
+                borderRadius: 10,
+                border: '1px solid #222',
+                cursor: 'pointer', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+            >
+              <span>إضافة نص (عربي/إنجليزي)</span>
+              <Type size={18} color="#4ade80" />
+            </button>
+          </div>
 
           {/* حجم النموذج الأولي */}
-          <p style={{ fontSize: 12, color: '#555', marginBottom: 10, textAlign: 'right' }}>
-            حجم النموذج الأولي
-          </p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              onClick={() => setMockupScale(s => Math.max(0.5, s - 0.1))}
-              style={{
-                flex: 1, padding: '10px 0', textAlign: 'center',
-                fontSize: 13, fontWeight: 700, color: '#fff',
-                backgroundColor: '#050505', border: '1px solid #222',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#111')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#050505')}
-            >
-              - أصغر
-            </button>
-            <button
-              onClick={() => setMockupScale(s => Math.min(2, s + 0.1))}
-              style={{
-                flex: 1, padding: '10px 0', textAlign: 'center',
-                fontSize: 13, fontWeight: 700, color: '#fff',
-                backgroundColor: '#050505', border: '1px solid #222',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#111')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#050505')}
-            >
-              + أكبر
-            </button>
+          <div style={{ backgroundColor: '#0a0a0a', padding: 16, borderRadius: 12, border: '1px solid #1a1a1a', marginBottom: 20 }}>
+            <p style={{ fontSize: 12, color: '#888', marginBottom: 12, textAlign: 'center' }}>
+              معاينة حجم التصميم
+            </p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setMockupScale(s => Math.max(0.5, s - 0.1))}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  flex: 1, padding: '12px 0',
+                  fontSize: 13, fontWeight: 600, color: '#fff',
+                  backgroundColor: '#161616', borderRadius: 8, border: '1px solid #222',
+                  cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#161616')}
+              >
+                <ZoomOut size={16} color="#aaa" /> تصغير
+              </button>
+              <button
+                onClick={() => setMockupScale(s => Math.min(2, s + 0.1))}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  flex: 1, padding: '12px 0',
+                  fontSize: 13, fontWeight: 600, color: '#fff',
+                  backgroundColor: '#161616', borderRadius: 8, border: '1px solid #222',
+                  cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#161616')}
+              >
+                <ZoomIn size={16} color="#aaa" /> تكبير
+              </button>
+            </div>
           </div>
 
           <button
             onClick={onSaveDesign}
             style={{
-              display: 'block', width: '100%', textAlign: 'center',
-              padding: '12px 16px', marginTop: 12,
-              fontSize: 13, fontWeight: 700, color: '#0d0d0d',
-              backgroundColor: '#f5c842', border: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              width: '100%',
+              padding: '14px 16px',
+              fontSize: 13, fontWeight: 700, color: '#fff',
+              backgroundColor: 'rgba(255,255,255,0.05)', 
+              borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.1)',
               cursor: 'pointer', transition: 'all 0.2s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
           >
-            حفظ التعديلات (Save)
+            <Save size={16} />
+            حفظ التعديلات للعودة لاحقاً
           </button>
         </div>
 
