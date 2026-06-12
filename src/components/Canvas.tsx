@@ -200,12 +200,11 @@ export default function Canvas({
   };
 
   const handleTouchMove = (e: any) => {
-    e.evt.preventDefault();
-    if (!selectedId || !stageRef.current) return;
     const touch1 = e.evt.touches[0];
     const touch2 = e.evt.touches[1];
 
-    if (touch1 && touch2) {
+    if (touch1 && touch2 && selectedId && stageRef.current) {
+      e.evt.preventDefault();
       const node = stageRef.current.findOne('#' + selectedId);
       if (!node) return;
 
@@ -297,7 +296,7 @@ export default function Canvas({
   };
 
   return (
-    <div className="konva-wrapper rounded-2xl overflow-hidden" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT, touchAction: 'none' }}>
+    <div className="konva-wrapper rounded-2xl overflow-hidden" style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}>
       <Stage
         ref={stageRef}
         width={CANVAS_WIDTH}
