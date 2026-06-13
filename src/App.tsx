@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
 import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
@@ -304,6 +306,19 @@ function ProductStep() {
   const navigate = useNavigate();
   return (
     <div className="flex-1 min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white font-['Inter'] px-4 py-12">
+      <div className="absolute top-6 right-6 z-50">
+        <button
+          onClick={() => {
+            const token = localStorage.getItem('wearurway_token');
+            if (token) navigate('/dashboard');
+            else navigate('/auth');
+          }}
+          className="text-sm font-bold bg-[#f5c842] text-black px-6 py-2 rounded-full hover:bg-[#e6b72f] transition-colors"
+        >
+          {localStorage.getItem('wearurway_token') ? 'حسابي' : 'تسجيل الدخول'}
+        </button>
+      </div>
+
       <div className="w-full max-w-5xl md:px-10">
         <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5">Select Product</h1>
         <p className="text-gray-400 text-sm mb-6 md:mb-5">Choose your canvas.</p>
@@ -387,12 +402,24 @@ function ColorStep() {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const ref = searchParams.get('ref');
+    if (ref) {
+      localStorage.setItem('wearurway_ref', ref);
+    }
+  }, [location]);
+
   return (
     <Routes>
       <Route path="/" element={<ProductStep />} />
       <Route path="/fit" element={<FitStep />} />
       <Route path="/color" element={<ColorStep />} />
       <Route path="/editor" element={<Editor />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );
 }

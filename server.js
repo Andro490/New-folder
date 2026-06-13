@@ -4,14 +4,86 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
 
 app.use(cors());
 app.use(express.json());
+
+// Auth Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+
+// User Registration
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) return res.status(400).json({ error: 'البريد الإلكتروني مسجل بالفعل' });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // Generate a random affiliate code
+        const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+        const user = await prisma.user.create({
+            data: { name, email, password: hashedPassword, affiliateCode }
+        });
+
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+        res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'حدث خطأ أثناء التسجيل' });
+    }
+});
+
+// User Login
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(400).json({ error: 'كلمة المرور غير صحيحة' });
+
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+        res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
+    } catch (error) {
+        res.status(500).json({ error: 'حدث خطأ أثناء تسجيل الدخول' });
+    }
+});
+
+// Get User Profile
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user) return res.sendStatus(404);
+        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
+    } catch (error) {
+        res.sendStatus(500);
+    }
+});
+
 
 async function getPinterestImageUrl(pinUrl) {
     try {
@@ -71,6 +143,25 @@ app.post('/api/submit-order', async (req, res) => {
     try {
         const orderData = req.body;
         console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
+
+        // Handle Affiliate system
+        if (orderData.affiliateCode) {
+            try {
+                const affiliate = await prisma.user.findUnique({ where: { affiliateCode: orderData.affiliateCode } });
+                if (affiliate) {
+                    await prisma.user.update({
+                        where: { id: affiliate.id },
+                        data: { 
+                            discountBalance: { increment: 50 },
+                            referredUsers: { increment: 1 }
+                        }
+                    });
+                    console.log(`✅ تمت إضافة 50 جنيه لحساب الكود ${orderData.affiliateCode}`);
+                }
+            } catch (err) {
+                console.error("Error processing affiliate code", err);
+            }
+        }
 
         const response = await axios.post(APPS_SCRIPT_URL, orderData, {
             headers: { 'Content-Type': 'application/json' },

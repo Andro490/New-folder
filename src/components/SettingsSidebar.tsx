@@ -961,6 +961,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice: String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp: new Date().toLocaleString('ar-EG'),
+                    affiliateCode: localStorage.getItem('wearurway_ref') || '',
                   });
                   setStep('thanks');
                 } catch (err: any) {
