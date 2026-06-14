@@ -166,72 +166,6 @@ app.get('/api/user/designs', authenticateToken, async (req, res) => {
 });
 
 
-// ── Google Apps Script URL ─────────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
-
-// ── proxy الطلب لـ Google Apps Script ─────────────────────────────
-app.post('/api/submit-order', async (req, res) => {
-    try {
-        const orderData = req.body;
-        console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
-
-        // Handle Affiliate system
-        if (orderData.affiliateCode) {
-            try {
-                const affiliate = await prisma.user.findUnique({ where: { affiliateCode: orderData.affiliateCode } });
-                if (affiliate) {
-                    await prisma.user.update({
-                        where: { id: affiliate.id },
-                        data: { 
-                            discountBalance: { increment: 50 },
-                            referredUsers: { increment: 1 }
-                        }
-                    });
-                    console.log(`✅ تمت إضافة 50 جنيه لحساب الكود ${orderData.affiliateCode}`);
-                }
-            } catch (err) {
-                console.error("Error processing affiliate code", err);
-            }
-        }
-        
-        // Handle Design Creator Reward
-        if (orderData.designId) {
-            try {
-                const design = await prisma.design.findUnique({ where: { id: parseInt(orderData.designId) }, include: { user: true } });
-                if (design) {
-                    await prisma.user.update({
-                        where: { id: design.userId },
-                        data: {
-                            discountBalance: { increment: 50 }
-                        }
-                    });
-                    await prisma.design.update({
-                        where: { id: design.id },
-                        data: { purchases: { increment: 1 } }
-                    });
-                    console.log(`✅ تمت إضافة 50 جنيه لمنشئ التصميم (ID: ${design.userId})`);
-                }
-            } catch (err) {
-                console.error("Error processing design reward", err);
-            }
-        }
-
-        const response = await axios.post(APPS_SCRIPT_URL, orderData, {
-            headers: { 'Content-Type': 'application/json' },
-            timeout: 15000,
-        });
-
-        console.log('✅ استجابة Google Script:', response.data);
-        if (response.data && response.data.status === 'error') {
-            return res.status(500).json({ success: false, error: response.data.message });
-        }
-        res.json({ success: true, data: response.data });
-    } catch (error) {
-        console.error('❌ خطأ Google Script:', error.response?.data || error.message);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
 
 async function getPinterestImageUrl(pinUrl) {
     try {
@@ -319,8 +253,7 @@ app.post('/api/submit-order', async (req, res) => {
                     await prisma.user.update({
                         where: { id: design.userId },
                         data: {
-                            discountBalance: { increment: 50 },
-                            referredUsers: { increment: 1 }
+                            discountBalance: { increment: 50 }
                         }
                     });
                     await prisma.design.update({
