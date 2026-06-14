@@ -699,7 +699,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   // ── CHECKOUT FORM ───────────────────────────────────────────────
   if (step === 'checkout') {
     return (
-      <div className="fixed inset-0 z-[200] bg-[#060606] overflow-y-auto font-['Inter'] m-0 lg:m-[30px] lg:rounded-2xl lg:border lg:border-[#1a1a1a]" dir="rtl">
+      <div className="fixed inset-0 z-[200] overflow-y-auto font-['Inter'] m-0 lg:m-[30px] lg:rounded-2xl lg:border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }} dir="rtl">
 
         {/* Refund Policy Modal */}
         {showRefundPolicy && (
@@ -718,9 +718,9 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
         )}
 
         {/* Top bar */}
-        <div style={{ borderBottom: '1px solid #1a1a1a', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>الخطوة الثانية من أجل خطواتك</p>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
+        <div style={{ borderBottom: '1px solid var(--border-color)', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>الخطوة الثانية من أجل خطوتك</p>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
         <div className="max-w-[1300px] mx-auto px-4 py-10 min-h-[calc(100vh-60px)] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16 lg:mr-[15%]">
@@ -1177,13 +1177,13 @@ export default function SettingsSidebar({
         onChange={handleFileUpload}
       />
       <aside
-        className="flex flex-col shrink-0 overflow-y-auto bg-[#050505] w-full lg:w-[288px] lg:min-w-[288px] h-auto lg:h-full border-t lg:border-t-0 border-[#1a1a1a]"
-        style={{ borderLeft: '1px solid #1a1a1a' }}
+        className="flex flex-col shrink-0 overflow-y-auto w-full lg:w-[288px] lg:min-w-[288px] h-auto lg:h-full border-t lg:border-t-0"
+        style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', borderLeft: '1px solid var(--border-color)' }}
         dir="rtl"
       >
         {/* ─── Section 1: إعدادات ─── */}
-        <div style={{ padding: '24px', borderBottom: '1px solid #1a1a1a' }}>
-          <p style={{ fontSize: 13, color: '#888', marginBottom: 20, textAlign: 'right' }}>
+        <div style={{ padding: '24px', borderBottom: '1px solid var(--border-color)' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20, textAlign: 'right' }}>
             إعدادات
           </p>
 

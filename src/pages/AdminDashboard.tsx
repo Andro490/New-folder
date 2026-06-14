@@ -96,28 +96,31 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">جاري التحميل...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>جاري التحميل...</div>;
 
   if (error) return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center gap-6" dir="rtl">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
       <ShieldAlert className="text-red-500" size={64} />
       <h1 className="text-2xl font-black text-red-400">وصول مرفوض</h1>
-      <p className="text-gray-400 max-w-md text-center">{error}</p>
-      <button onClick={() => navigate('/dashboard')} className="bg-[#f5c842] text-black font-bold px-8 py-3 rounded-xl">العودة للوحة التحكم</button>
+      <p className="max-w-md text-center" style={{ color: 'var(--text-muted)' }}>{error}</p>
+      <button onClick={() => navigate('/dashboard')} className="font-bold px-8 py-3 rounded-xl transition-all" style={{ backgroundColor: 'var(--accent-primary)', color: '#000' }}>العودة للوحة التحكم</button>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-['Inter']" dir="rtl">
+    <div className="min-h-screen font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 md:px-12 py-6 border-b border-[#1a1a1a] sticky top-0 bg-[#0a0a0a]/90 backdrop-blur-md z-50">
+      <header className="flex items-center justify-between px-6 md:px-12 py-6 border-b sticky top-0 backdrop-blur-md z-50" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center gap-3">
           <ShieldAlert className="text-red-500" size={28} />
-          <h1 className="text-2xl font-black text-white">لوحة الإدارة <span className="text-red-500">(Admin)</span></h1>
+          <h1 className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>لوحة الإدارة <span className="text-red-500">(Admin)</span></h1>
         </div>
         <button
           onClick={() => navigate('/dashboard')}
-          className="text-sm font-bold bg-[#111] border border-[#333] hover:border-[#f5c842] text-white px-6 py-2 rounded-full transition-colors"
+          className="text-sm font-bold px-6 py-2 rounded-full transition-colors"
+          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+          onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
         >
           العودة للوحة التحكم
         </button>
@@ -129,13 +132,15 @@ export default function AdminDashboard() {
         <div className="flex gap-4 mb-8">
           <button 
             onClick={() => setActiveTab('users')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors ${activeTab === 'users' ? 'bg-[#f5c842] text-black' : 'bg-[#111] text-gray-400 hover:bg-[#222]'}`}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors"
+            style={{ backgroundColor: activeTab === 'users' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'users' ? '#000' : 'var(--text-muted)', border: '1px solid var(--border-color)' }}
           >
             <Users size={18} /> المستخدمين
           </button>
           <button 
             onClick={() => setActiveTab('designs')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors ${activeTab === 'designs' ? 'bg-[#f5c842] text-black' : 'bg-[#111] text-gray-400 hover:bg-[#222]'}`}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors"
+            style={{ backgroundColor: activeTab === 'designs' ? 'var(--accent-primary)' : 'var(--bg-card)', color: activeTab === 'designs' ? '#000' : 'var(--text-muted)', border: '1px solid var(--border-color)' }}
           >
             <LayoutList size={18} /> التصاميم المنشورة
           </button>
@@ -143,10 +148,10 @@ export default function AdminDashboard() {
 
         {/* Users Tab */}
         {activeTab === 'users' && (
-          <div className="bg-[#111] border border-[#222] rounded-2xl overflow-hidden">
+          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
             <div className="overflow-x-auto">
               <table className="w-full text-right">
-                <thead className="bg-[#050505] text-gray-400 text-sm">
+                <thead style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)', fontSize: 14 }}>
                   <tr>
                     <th className="p-4 font-semibold">الاسم</th>
                     <th className="p-4 font-semibold">البريد الإلكتروني</th>
@@ -156,16 +161,16 @@ export default function AdminDashboard() {
                     <th className="p-4 font-semibold">صلاحية</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#222]">
+                <tbody style={{ borderTop: '1px solid var(--border-color)' }}>
                   {users.map(u => (
-                    <tr key={u.id} className="hover:bg-[#1a1a1a] transition-colors">
-                      <td className="p-4 font-medium text-white">{u.name}</td>
-                      <td className="p-4 text-gray-400">{u.email}</td>
-                      <td className="p-4 text-[#f5c842] font-bold">{u.discountBalance} ج.م</td>
-                      <td className="p-4 text-white">{u.referredUsers}</td>
-                      <td className="p-4 text-gray-500 text-sm">{new Date(u.createdAt).toLocaleDateString('ar-EG')}</td>
+                    <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                      <td className="p-4 font-medium" style={{ color: 'var(--text-primary)' }}>{u.name}</td>
+                      <td className="p-4" style={{ color: 'var(--text-muted)' }}>{u.email}</td>
+                      <td className="p-4 font-bold" style={{ color: 'var(--accent-primary)' }}>{u.discountBalance} ج.م</td>
+                      <td className="p-4" style={{ color: 'var(--text-primary)' }}>{u.referredUsers}</td>
+                      <td className="p-4 text-sm" style={{ color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString('ar-EG')}</td>
                       <td className="p-4">
-                        {u.isAdmin ? <span className="bg-red-500/20 text-red-500 px-2 py-1 rounded text-xs font-bold">Admin</span> : <span className="bg-gray-800 text-gray-400 px-2 py-1 rounded text-xs">User</span>}
+                        {u.isAdmin ? <span className="bg-red-500/20 text-red-500 px-2 py-1 rounded text-xs font-bold">Admin</span> : <span className="px-2 py-1 rounded text-xs" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }}>User</span>}
                       </td>
                     </tr>
                   ))}
@@ -179,13 +184,13 @@ export default function AdminDashboard() {
         {activeTab === 'designs' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {designs.map(design => (
-              <div key={design.id} className="bg-[#111] border border-[#222] rounded-xl overflow-hidden group flex flex-col">
-                <div className="relative aspect-square bg-[#050505] p-4 flex justify-center items-center">
-                   {design.imageUrl ? <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain" /> : <span className="text-gray-600">لا صورة</span>}
+              <div key={design.id} className="rounded-xl overflow-hidden group flex flex-col" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+                <div className="relative aspect-square p-4 flex justify-center items-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                   {design.imageUrl ? <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain" /> : <span style={{ color: 'var(--text-muted)' }}>لا صورة</span>}
                 </div>
                 <div className="p-4 flex flex-col flex-1">
-                  <h3 className="font-bold text-white mb-1 truncate">{design.name}</h3>
-                  <p className="text-xs text-gray-400 mb-4 truncate">الناشر: {design.user.name || 'مجهول'}</p>
+                  <h3 className="font-bold mb-1 truncate" style={{ color: 'var(--text-primary)' }}>{design.name}</h3>
+                  <p className="text-xs mb-4 truncate" style={{ color: 'var(--text-muted)' }}>الناشر: {design.user.name || 'مجهول'}</p>
                   <button
                     onClick={() => handleDeleteDesign(design.id)}
                     className="mt-auto w-full py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
@@ -195,7 +200,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
-            {designs.length === 0 && <p className="text-gray-500 col-span-full">لا توجد تصاميم منشورة حالياً.</p>}
+            {designs.length === 0 && <p className="col-span-full" style={{ color: 'var(--text-muted)' }}>لا توجد تصاميم منشورة حالياً.</p>}
           </div>
         )}
         

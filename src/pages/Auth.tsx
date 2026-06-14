@@ -40,10 +40,10 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white font-['Inter'] px-4 py-12">
-      <div className="w-full max-w-md p-8 bg-[#111] border border-[#222] rounded-2xl shadow-2xl relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#f5c842]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        <h2 className="text-3xl font-black text-center mb-6 text-[#f5c842]">
+    <div className="flex-1 min-h-screen flex flex-col items-center justify-center font-['Inter'] px-4 py-12" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+        <div className="absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none" style={{ background: 'linear-gradient(135deg, var(--accent-glow), transparent)' }}></div>
+        <h2 className="text-3xl font-black text-center mb-6" style={{ color: 'var(--accent-primary)' }}>
           {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب'}
         </h2>
         {error && <div className="bg-red-500/20 border border-red-500 text-red-500 p-3 rounded mb-4 text-center text-sm">{error}</div>}
@@ -52,7 +52,10 @@ export default function Auth() {
             <input
               type="text"
               placeholder="الاسم كامل"
-              className="p-3 bg-[#1a1a1a] border border-[#333] rounded focus:outline-none focus:border-[#f5c842] transition-colors"
+              className="p-3 rounded focus:outline-none transition-colors"
+              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+              onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+              onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -61,7 +64,10 @@ export default function Auth() {
           <input
             type="email"
             placeholder="البريد الإلكتروني"
-            className="p-3 bg-[#1a1a1a] border border-[#333] rounded focus:outline-none focus:border-[#f5c842] transition-colors text-right"
+            className="p-3 rounded focus:outline-none transition-colors text-right"
+            style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+            onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+            onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -70,19 +76,22 @@ export default function Auth() {
           <input
             type="password"
             placeholder="كلمة المرور"
-            className="p-3 bg-[#1a1a1a] border border-[#333] rounded focus:outline-none focus:border-[#f5c842] transition-colors text-right"
+            className="p-3 rounded focus:outline-none transition-colors text-right"
+            style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+            onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+            onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             dir="ltr"
           />
-          <button type="submit" className="mt-2 py-3 bg-[#f5c842] text-black font-bold rounded hover:bg-[#e6b72f] transition-colors">
+          <button type="submit" className="mt-2 py-3 font-bold rounded transition-all" style={{ backgroundColor: 'var(--accent-primary)', color: '#000' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 20px var(--accent-glow)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
             {isLogin ? 'دخول' : 'تسجيل'}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-gray-400 relative z-10">
+        <p className="mt-6 text-center text-sm relative z-10" style={{ color: 'var(--text-muted)' }}>
           {isLogin ? 'ليس لديك حساب؟ ' : 'لديك حساب بالفعل؟ '}
-          <button onClick={() => setIsLogin(!isLogin)} className="text-[#f5c842] hover:underline font-bold">
+          <button onClick={() => setIsLogin(!isLogin)} className="hover:underline font-bold" style={{ color: 'var(--accent-primary)' }}>
             {isLogin ? 'سجل الآن' : 'سجل دخول'}
           </button>
         </p>

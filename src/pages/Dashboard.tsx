@@ -45,7 +45,7 @@ export default function Dashboard() {
     fetchUser();
   }, [navigate]);
 
-  if (!user) return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">جاري التحميل...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>جاري التحميل...</div>;
 
   const affiliateLink = `${window.location.origin}/?ref=${user.affiliateCode}`;
 
@@ -62,19 +62,19 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col bg-[#0a0a0a] text-white font-['Inter']" dir="rtl">
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 h-16 shrink-0 bg-[#050505]/85 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+      <header className="flex items-center justify-between px-6 h-16 shrink-0 backdrop-blur-md border-b sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center gap-3">
-          <span className="text-xl font-black tracking-widest text-white">
-            ويرورواي <span className="text-[#f5c842]">Affiliate</span>
+          <span className="text-xl font-black tracking-widest" style={{ color: 'var(--text-primary)' }}>
+            ويرورواي <span style={{ color: 'var(--accent-primary)' }}>Affiliate</span>
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/')} className="text-sm font-bold text-gray-400 hover:text-white transition-colors">
+          <button onClick={() => navigate('/')} className="text-sm font-bold transition-colors" style={{ color: 'var(--text-muted)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
             الرئيسية
           </button>
-          <button onClick={() => navigate('/editor')} className="text-sm font-bold bg-[#f5c842] text-black px-4 py-2 rounded hover:bg-[#e6b72f] transition-colors">
+          <button onClick={() => navigate('/editor')} className="text-sm font-bold px-4 py-2 rounded transition-colors" style={{ backgroundColor: 'var(--accent-primary)', color: '#000' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
             صمم تيشيرتك
           </button>
           {user.isAdmin && (
@@ -95,8 +95,8 @@ export default function Dashboard() {
           
           {/* Top Title & Subtitle */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-black mb-3 flex items-center justify-center gap-3">
-               أهلاً بك، <span className="text-[#f5c842]">{user.name}</span>!
+            <h1 className="text-3xl md:text-4xl font-black mb-3 flex items-center justify-center gap-3" style={{ color: 'var(--text-primary)' }}>
+               أهلاً بك، <span style={{ color: 'var(--accent-primary)' }}>{user.name}</span>!
             </h1>
             <p className="text-gray-400 text-sm md:text-base">
               مرحباً بك في لوحة التحكم الخاصة بك. تابع أرباحك وتصاميمك من هنا.
@@ -104,29 +104,33 @@ export default function Dashboard() {
           </div>
 
           {/* Wide Top Box: Affiliate Link (Like 'إدارة التصنيفات' in ref) */}
-          <div className="w-full bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl">
+          <div className="w-full rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
             <div className="flex items-center gap-3 min-w-fit">
-              <Layers className="text-[#f5c842]" size={24} />
-              <h2 className="text-lg font-bold text-white">رابط الإحالة الخاص بك</h2>
+              <Layers size={24} style={{ color: 'var(--accent-primary)' }} />
+              <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>رابط الإحالة الخاص بك</h2>
             </div>
             
-            <p className="text-sm text-gray-400 flex-1 hidden lg:block">
-              شارك هذا الرابط مع أصدقائك أو عملائك واحصل على <span className="text-[#f5c842]">50 جنيه</span> عن كل شراء.
+            <p className="text-sm flex-1 hidden lg:block" style={{ color: 'var(--text-muted)' }}>
+              شارك هذا الرابط مع أصدقائك أو عملائك واحصل على <span style={{ color: 'var(--accent-primary)' }}>50 جنيه</span> عن كل شراء.
             </p>
 
-            <div className="flex items-center bg-[#111] border border-[#222] rounded-xl p-1.5 gap-2 w-full md:w-auto flex-1 md:flex-none">
+            <div className="flex items-center rounded-xl p-1.5 gap-2 w-full md:w-auto flex-1 md:flex-none" style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
               <input
                 type="text"
                 readOnly
                 value={affiliateLink}
-                className="bg-transparent flex-1 outline-none text-xs md:text-sm text-gray-300 text-left px-3 font-mono min-w-[200px]"
+                className="bg-transparent flex-1 outline-none text-xs md:text-sm text-left px-3 font-mono min-w-[200px]"
+                style={{ color: 'var(--text-primary)' }}
                 dir="ltr"
               />
               <button
                 onClick={handleCopy}
-                className="bg-[#222] hover:bg-[#333] text-white font-semibold px-4 py-2 text-sm rounded-lg transition-all flex items-center justify-center shrink-0 gap-2 border border-[#333]"
+                className="font-semibold px-4 py-2 text-sm rounded-lg transition-all flex items-center justify-center shrink-0 gap-2 border"
+                style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
               >
-                {copied ? <CheckCircle size={16} className="text-[#f5c842]" /> : <Copy size={16} />}
+                {copied ? <CheckCircle size={16} style={{ color: 'var(--accent-primary)' }} /> : <Copy size={16} />}
                 {copied ? 'تم النسخ' : 'نسخ'}
               </button>
             </div>
@@ -136,37 +140,37 @@ export default function Dashboard() {
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* Stat 1: Balance */}
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-              <p className="text-gray-500 text-sm mb-4 font-semibold">رصيدك الحالي</p>
+            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>رصيدك الحالي</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-black text-[#f5c842]">{user.discountBalance}</span>
-                <span className="text-sm text-gray-500 mb-1">ج.م</span>
+                <span className="text-4xl font-black" style={{ color: 'var(--accent-primary)' }}>{user.discountBalance}</span>
+                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>ج.م</span>
               </div>
             </div>
 
             {/* Stat 2: Referrals */}
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-              <p className="text-gray-500 text-sm mb-4 font-semibold">العملاء المحالين</p>
+            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>العملاء المحالين</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-black text-white">{user.referredUsers}</span>
-                <span className="text-sm text-gray-500 mb-1">شخص</span>
+                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{user.referredUsers}</span>
+                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>شخص</span>
               </div>
             </div>
 
             {/* Stat 3: Total Sales */}
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-              <p className="text-gray-500 text-sm mb-4 font-semibold">المبيعات الإجمالية</p>
+            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>المبيعات الإجمالية</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-black text-white">{totalSales}</span>
-                <span className="text-sm text-gray-500 mb-1">عملية</span>
+                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{totalSales}</span>
+                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>عملية</span>
               </div>
             </div>
 
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-              <p className="text-gray-500 text-sm mb-4 font-semibold">التصاميم المنشورة</p>
+            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>التصاميم المنشورة</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-black text-white">{designCount}</span>
-                <span className="text-sm text-gray-500 mb-1">تصميم</span>
+                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{designCount}</span>
+                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>تصميم</span>
               </div>
             </div>
 
