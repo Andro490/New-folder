@@ -126,79 +126,53 @@ function Editor() {
       className="flex flex-col"
       style={{ background: 'var(--bg-primary)', overflow: 'hidden', height: '100dvh' }}
     >
-      {/* Top Bar */}
-      <header
-        className="flex items-center px-6 h-16 shrink-0"
+      {/* Top Bar - replaced with shared Navbar */}
+      <Navbar />
+
+      {/* Sub-bar: Editor status */}
+      <div
+        className="flex items-center justify-between px-6 h-9 shrink-0"
         style={{
-          backgroundColor: 'rgba(243, 235, 210, 0.95)', /* matches --bg-primary */
-          backdropFilter: 'blur(12px)',
+          backgroundColor: 'var(--bg-secondary)',
           borderBottom: '1px solid var(--border-color)',
-          zIndex: 50
+          zIndex: 40,
         }}
       >
-        {/* Left: Logo & View Badge */}
-        <div className="flex items-center gap-3 w-full md:w-1/3">
-          <div
-            className="w-8 h-8 rounded flex items-center justify-center shrink-0"
-            style={{
-              background: 'linear-gradient(135deg, #b1894d, #6a4f2d)',
-              boxShadow: '0 0 15px rgba(139, 107, 67, 0.3)',
-            }}
-          >
-            <Zap size={16} color="#f3ebd2" fill="#f3ebd2" />
-          </div>
-          <span
-            className="font-black text-xl tracking-tight shrink-0"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            Print<span style={{ color: 'var(--accent-primary)' }}>Studio</span>
-          </span>
-          
-          <div className="hidden sm:block h-4 w-px mx-2" style={{ backgroundColor: 'var(--border-color)' }}></div>
-          
-          <span
-            className="hidden sm:inline-block text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shrink-0"
-            style={{
-              background: 'var(--accent-glow)',
-              color: 'var(--accent-secondary)',
-              border: '1px solid var(--border-color)'
-            }}
-          >
-            {view} VIEW
-          </span>
-        </div>
+        {/* Left: view badge */}
+        <span
+          className="text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full"
+          style={{
+            background: 'var(--accent-glow)',
+            color: 'var(--accent-secondary)',
+            border: '1px solid var(--border-color)',
+          }}
+        >
+          {view} VIEW
+        </span>
 
-        {/* Center: Status / Layers */}
-        <div className="hidden md:flex items-center justify-center gap-3 w-1/3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-            <Layers size={12} color="var(--text-muted)" />
-            <span className="text-[11px] font-medium tracking-[0.1em] uppercase" style={{ color: 'var(--text-muted)' }}>
+        {/* Center: layers */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-color)' }}>
+            <Layers size={11} color="var(--text-muted)" />
+            <span className="text-[10px] font-medium tracking-[0.1em] uppercase" style={{ color: 'var(--text-muted)' }}>
               {layers.length} Layer{layers.length !== 1 ? 's' : ''}
             </span>
           </div>
           {selectedLayer && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--accent-primary)' }}>
-              <Sparkles size={12} color="var(--accent-primary)" />
-              <span className="text-[11px] font-bold tracking-[0.1em] uppercase truncate max-w-[100px]" style={{ color: 'var(--accent-secondary)' }}>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--accent-primary)' }}>
+              <Sparkles size={11} color="var(--accent-primary)" />
+              <span className="text-[10px] font-bold tracking-[0.1em] uppercase truncate max-w-[100px]" style={{ color: 'var(--accent-secondary)' }}>
                 {selectedLayer.name}
               </span>
             </div>
           )}
         </div>
 
-        {/* Right: Branding */}
-        <div className="hidden md:flex items-center justify-end gap-6 w-1/3">
-          <span className="text-[10px] font-bold tracking-[0.25em] uppercase" style={{ color: 'var(--text-muted)' }}>
-            Platform Design
-          </span>
-          <div className="h-4 w-px" style={{ backgroundColor: 'var(--border-color)' }}></div>
-          <span
-            className="text-lg font-black tracking-widest" style={{ color: 'var(--text-primary)', fontFamily: "'Aref Ruqaa', serif" }}
-          >
-            ويرورواي
-          </span>
-        </div>
-      </header>
+        {/* Right: platform tag */}
+        <span className="text-[10px] font-bold tracking-[0.2em] uppercase hidden md:block" style={{ color: 'var(--text-muted)' }}>
+          Platform Design
+        </span>
+      </div>
 
       {/* Main Layout */}
       <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden overflow-x-hidden">
