@@ -119,91 +119,104 @@ export default function Community() {
               ) : filteredDesigns.length === 0 ? (
                 <div className="text-center py-20 text-[#8b6b43] font-bold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-14 pt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-10 pt-8">
                   {filteredDesigns.map(design => (
+                    /* ─── Outer ornate frame wrapper ─── */
                     <div
                       key={design.id}
-                      className="group relative flex flex-col transition-all duration-300 hover:-translate-y-2"
+                      className="group relative p-[6px] transition-all duration-300 hover:-translate-y-1"
                       style={{
-                        background: 'linear-gradient(160deg, #e8d5a3 0%, #d4b97a 40%, #c8a85a 100%)',
-                        borderRadius: '10px',
-                        border: '2px solid #8b6b43',
-                        boxShadow: '0 4px 24px rgba(90,60,20,0.18), inset 0 1px 0 rgba(255,255,255,0.3)',
-                        overflow: 'visible',
+                        /* double-stroke golden frame effect */
+                        background: 'linear-gradient(135deg, #c9973e 0%, #f5e09a 30%, #a8742a 55%, #f5e09a 75%, #c9973e 100%)',
+                        borderRadius: '12px',
+                        boxShadow: '0 6px 28px rgba(90,60,20,0.28), 0 0 0 1px rgba(200,160,70,0.5)',
                       }}
                     >
-                      {/* Ornate top border line */}
-                      <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-[#b1894d] to-transparent"></div>
+                      {/* Corner ornament dots */}
+                      <div className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#f5e09a] opacity-80 z-40"></div>
+                      <div className="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-[#f5e09a] opacity-80 z-40"></div>
+                      <div className="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-[#f5e09a] opacity-80 z-40"></div>
+                      <div className="absolute bottom-1 left-1 w-2.5 h-2.5 rounded-full bg-[#f5e09a] opacity-80 z-40"></div>
 
-                      {/* Top Circular Badge — matches "CS" circle in reference */}
+                      {/* ─── Inner card ─── */}
                       <div
-                        className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+                        className="relative flex flex-col"
                         style={{
-                          background: 'linear-gradient(160deg, #b1894d 0%, #6a4f2d 100%)',
-                          border: '3px solid #e8d5a3',
-                          boxShadow: '0 4px 12px rgba(90,60,20,0.4)',
+                          background: 'linear-gradient(160deg, #e8d5a3 0%, #d4b97a 40%, #c8a85a 100%)',
+                          borderRadius: '8px',
+                          overflow: 'visible',
                         }}
                       >
-                        <span className="text-[#f3ebd2] text-xs font-bold tracking-widest" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
-                          {design.purchases > 0 ? design.purchases : 'CS'}
-                        </span>
-                      </div>
-
-                      {/* Image Area — dark background, fills most of card */}
-                      <div
-                        className="mt-6 mx-2 mb-0 rounded-t-md overflow-hidden flex items-center justify-center"
-                        style={{
-                          background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)',
-                          aspectRatio: '3/4',
-                          borderRadius: '8px 8px 0 0',
-                          border: '1px solid rgba(139,107,67,0.4)',
-                        }}
-                      >
-                        {design.imageUrl ? (
-                          <img
-                            src={design.imageUrl}
-                            alt={design.name}
-                            className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl"
-                          />
-                        ) : (
-                          <span className="text-gray-500 font-bold text-sm">بدون صورة</span>
-                        )}
-                      </div>
-
-                      {/* Info + Button — below image, parchment tone */}
-                      <div
-                        className="mx-2 mb-2 rounded-b-md px-4 pt-3 pb-4 flex flex-col gap-1"
-                        style={{
-                          background: 'linear-gradient(180deg, #c8a85a 0%, #b1894d 100%)',
-                          borderRadius: '0 0 8px 8px',
-                          border: '1px solid rgba(139,107,67,0.4)',
-                          borderTop: 'none',
-                        }}
-                      >
-                        <h3
-                          className="font-bold text-lg text-[#1a0e06] truncate text-right leading-tight"
-                          style={{ fontFamily: "'Aref Ruqaa', serif" }}
-                        >
-                          {design.name}
-                        </h3>
-                        <p className="text-xs text-[#3d2b1f]/80 text-right font-semibold truncate mb-2">
-                          من تصميم: <span className="text-[#1a0e06] font-bold">{design.user.name || 'مبدع مجهول'}</span>
-                        </p>
-
-                        <button
-                          onClick={() => handleBuy(design)}
-                          className="w-full py-2.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                        {/* Top Circular Badge */}
+                        <div
+                          className="absolute -top-5 left-1/2 -translate-x-1/2 z-30 w-10 h-10 rounded-full flex items-center justify-center shadow-md"
                           style={{
-                            background: 'linear-gradient(180deg, #2a1a0a 0%, #0d0804 100%)',
-                            color: '#e8d5a3',
-                            borderRadius: '6px',
-                            border: '1px solid #6a4f2d',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                            background: 'linear-gradient(160deg, #b1894d 0%, #6a4f2d 100%)',
+                            border: '2px solid #e8d5a3',
+                            boxShadow: '0 3px 10px rgba(90,60,20,0.45)',
                           }}
                         >
-                          <ShoppingCart className="w-4 h-4" />
-                          <span>شراء التصميم</span>
-                        </button>
+                          <span className="text-[#f3ebd2] text-[10px] font-bold" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+                            {design.purchases > 0 ? design.purchases : 'CS'}
+                          </span>
+                        </div>
+
+                        {/* Image Area */}
+                        <div
+                          className="mt-5 mx-1.5 rounded-t-md overflow-hidden flex items-center justify-center"
+                          style={{
+                            background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)',
+                            aspectRatio: '3/4',
+                            borderRadius: '6px 6px 0 0',
+                            border: '1px solid rgba(139,107,67,0.4)',
+                          }}
+                        >
+                          {design.imageUrl ? (
+                            <img
+                              src={design.imageUrl}
+                              alt={design.name}
+                              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-xl"
+                            />
+                          ) : (
+                            <span className="text-gray-500 font-bold text-xs">بدون صورة</span>
+                          )}
+                        </div>
+
+                        {/* Info + Button */}
+                        <div
+                          className="mx-1.5 mb-1.5 rounded-b-md px-3 pt-2 pb-3 flex flex-col gap-1"
+                          style={{
+                            background: 'linear-gradient(180deg, #c8a85a 0%, #b1894d 100%)',
+                            borderRadius: '0 0 6px 6px',
+                            border: '1px solid rgba(139,107,67,0.4)',
+                            borderTop: 'none',
+                          }}
+                        >
+                          <h3
+                            className="font-bold text-sm text-[#1a0e06] truncate text-right leading-tight"
+                            style={{ fontFamily: "'Aref Ruqaa', serif" }}
+                          >
+                            {design.name}
+                          </h3>
+                          <p className="text-[10px] text-[#3d2b1f]/80 text-right font-semibold truncate mb-1.5">
+                            من تصميم: <span className="text-[#1a0e06] font-bold">{design.user.name || 'مبدع مجهول'}</span>
+                          </p>
+
+                          <button
+                            onClick={() => handleBuy(design)}
+                            className="w-full py-2 flex items-center justify-center gap-1.5 font-bold text-xs transition-all duration-200 hover:opacity-90 active:scale-95"
+                            style={{
+                              background: 'linear-gradient(180deg, #2a1a0a 0%, #0d0804 100%)',
+                              color: '#e8d5a3',
+                              borderRadius: '5px',
+                              border: '1px solid #6a4f2d',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                            }}
+                          >
+                            <ShoppingCart className="w-3 h-3" />
+                            <span>شراء التصميم</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
