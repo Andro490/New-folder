@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -40,8 +41,10 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col items-center justify-center font-['Inter'] px-4 py-12" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
         <div className="absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none" style={{ background: 'linear-gradient(135deg, var(--accent-glow), transparent)' }}></div>
         <h2 className="text-3xl font-black text-center mb-6" style={{ color: 'var(--accent-primary)' }}>
           {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب'}
@@ -95,6 +98,7 @@ export default function Auth() {
             {isLogin ? 'سجل الآن' : 'سجل دخول'}
           </button>
         </p>
+        </div>
       </div>
     </div>
   );

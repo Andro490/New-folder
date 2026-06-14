@@ -7,6 +7,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
+import Navbar from './components/Navbar';
 import { DesignLayer, TShirtColor, TShirtView } from './types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './utils/tshirtSvg';
 import { Layers, Sparkles, Zap } from 'lucide-react';
@@ -306,53 +307,31 @@ function Editor() {
 function ProductStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col items-center justify-center font-['Inter'] px-4 py-12" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <div className="absolute top-6 right-6 z-50 flex gap-4">
-        <button
-          onClick={() => navigate('/community')}
-          className="text-sm font-bold px-6 py-2 rounded-full transition-colors"
-          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-          onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-        >
-          اكتشف تصاميم المجتمع
-        </button>
-        <button
-          onClick={() => {
-            const token = localStorage.getItem('wearurway_token');
-            if (token) navigate('/dashboard');
-            else navigate('/auth');
-          }}
-          className="text-sm font-bold px-6 py-2 rounded-full transition-colors"
-          style={{ backgroundColor: 'var(--accent-primary)', color: '#f9f4e6' }}
-          onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)'}
-          onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
-        >
-          {localStorage.getItem('wearurway_token') ? 'حسابي' : 'تسجيل الدخول'}
-        </button>
-      </div>
-
-      <div className="w-full max-w-5xl md:px-10">
-        <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Product</h1>
-        <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Choose your canvas.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-          <button
-            onClick={() => navigate('/fit')}
-            className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-            style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-          >
-            <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>T-SHIRT</span>
-          </button>
-          <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATSHIRT</span>
-            <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-          </button>
-          <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATPANTS</span>
-            <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-          </button>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-5xl md:px-10">
+          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Product</h1>
+          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Choose your canvas.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+            <button
+              onClick={() => navigate('/fit')}
+              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
+              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+            >
+              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>T-SHIRT</span>
+            </button>
+            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATSHIRT</span>
+              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
+            </button>
+            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATPANTS</span>
+              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -362,33 +341,36 @@ function ProductStep() {
 function FitStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col items-center justify-center font-['Inter'] px-4 py-12" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <div className="w-full max-w-5xl md:px-10">
-        <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Which Fit Do You Prefer?</h1>
-        <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Define the silhouette.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-          <button
-            onClick={() => navigate('/color')}
-            className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-            style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-          >
-            <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>BOXY FIT</span>
-          </button>
-          <button
-            onClick={() => navigate('/color')}
-            className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-            style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-          >
-            <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>REGULAR FIT</span>
-          </button>
-          <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>OVERSIZE</span>
-            <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-          </button>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-5xl md:px-10">
+          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Which Fit Do You Prefer?</h1>
+          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Define the silhouette.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+            <button
+              onClick={() => navigate('/color')}
+              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
+              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+            >
+              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>BOXY FIT</span>
+            </button>
+            <button
+              onClick={() => navigate('/color')}
+              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
+              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+            >
+              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>REGULAR FIT</span>
+            </button>
+            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>OVERSIZE</span>
+              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -398,25 +380,28 @@ function FitStep() {
 function ColorStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col items-center justify-center font-['Inter'] px-4 py-12" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-      <div className="w-full max-w-5xl md:px-10 flex flex-col items-center md:items-start text-center md:text-left">
-        <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Color</h1>
-        <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Set the tone.</p>
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-14 mt-2 md:mt-5 w-full max-w-xs md:max-w-none">
-          <button
-            onClick={() => navigate('/editor?color=black')}
-            className="flex flex-col items-center group w-full md:w-auto"
-          >
-            <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#111', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
-            <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>Black</span>
-          </button>
-          <button
-            onClick={() => navigate('/editor?color=white')}
-            className="flex flex-col items-center group w-full md:w-auto"
-          >
-            <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#e5e5e5', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
-            <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>White</span>
-          </button>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-5xl md:px-10 flex flex-col items-center md:items-start text-center md:text-left">
+          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Color</h1>
+          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Set the tone.</p>
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-14 mt-2 md:mt-5 w-full max-w-xs md:max-w-none">
+            <button
+              onClick={() => navigate('/editor?color=black')}
+              className="flex flex-col items-center group w-full md:w-auto"
+            >
+              <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#111', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
+              <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>Black</span>
+            </button>
+            <button
+              onClick={() => navigate('/editor?color=white')}
+              className="flex flex-col items-center group w-full md:w-auto"
+            >
+              <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#e5e5e5', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
+              <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>White</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

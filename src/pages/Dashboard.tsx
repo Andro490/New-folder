@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layers, Copy, CheckCircle, LogOut } from 'lucide-react';
+import { Layers, Copy, CheckCircle } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -63,30 +64,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 h-16 shrink-0 backdrop-blur-md border-b sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-        <div className="flex items-center gap-3">
-          <span className="text-xl font-black tracking-widest" style={{ color: 'var(--text-primary)' }}>
-            ويرورواي <span style={{ color: 'var(--accent-primary)' }}>Affiliate</span>
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/')} className="text-sm font-bold transition-colors" style={{ color: 'var(--text-muted)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-            الرئيسية
-          </button>
-          <button onClick={() => navigate('/editor')} className="text-sm font-bold px-4 py-2 rounded transition-colors" style={{ backgroundColor: 'var(--accent-primary)', color: '#000' }} onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)'} onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}>
-            صمم تيشيرتك
-          </button>
-          {user.isAdmin && (
-            <button onClick={() => navigate('/admin')} className="text-sm font-bold bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
-              لوحة الإدارة
-            </button>
-          )}
-          <button onClick={handleLogout} className="text-sm font-bold text-red-500 hover:text-red-400 transition-colors flex items-center gap-2">
-            <LogOut size={16} /> خروج
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="flex-1 w-full flex flex-col items-center p-6 md:p-10">
         
