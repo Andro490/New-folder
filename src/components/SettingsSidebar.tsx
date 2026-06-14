@@ -707,7 +707,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             <div style={{ width: 480, maxWidth: '90%', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: 40, fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()} dir="rtl">
               <p style={{ fontSize: 11, color: '#555', marginBottom: 12 }}>سياسة</p>
               <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 24 }}>سياسة الاسترداد</h2>
-              <p style={{ fontSize: 15, color: '#ddd', lineHeight: 1.8, marginBottom: 36 }}>
+              <p style={{ fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: 36 }}>
                 للأسف، لا نقدم خدمة الإرجاع أو الاستبدال لأن هذا التيشيرت مصمم خصيصاً لك. مع ذلك، يمكنك رفض استلام الطلب إذا لم يكن التصميم كما صممته أو طلبته، أو إذا لم تكن راضياً عن الخامة.
               </p>
               <button onClick={() => setShowRefundPolicy(false)} style={{ width: '100%', padding: '16px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
@@ -1267,8 +1267,8 @@ export default function SettingsSidebar({
                 border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
               <span>رفع صورة من الجهاز</span>
               <ImageIcon size={18} color="var(--accent-primary)" />
@@ -1286,8 +1286,8 @@ export default function SettingsSidebar({
                 border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
               <span>إضافة من Pinterest</span>
               <LinkIcon size={18} color="#e60023" />
