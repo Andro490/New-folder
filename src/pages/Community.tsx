@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, LayoutGrid, Tag, Star, ArrowRight } from 'lucide-react';
+import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
+import blackMockupBack from '../assets/black-mockup-back.png';
+import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 
 interface Design {
   id: number;
@@ -121,13 +123,19 @@ export default function Community() {
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-10 pt-8">
                   {filteredDesigns.map(design => {
-                    // Extract back image URL from backDesign layers if available
-                    let backImageUrl: string | null = null;
+                    // Parse back design layers using correct 'imageUrl' property
+                    let backLayers: Array<{imageUrl: string; x: number; y: number; width: number; height: number; rotation: number; opacity: number; visible: boolean}> = [];
+                    let hasBackDesign = false;
                     try {
-                      const backLayers = JSON.parse(design.backDesign || '[]');
-                      const imgLayer = backLayers.find((l: any) => l.type === 'image' && l.src);
-                      if (imgLayer) backImageUrl = imgLayer.src;
+                      const parsed = JSON.parse(design.backDesign || '[]');
+                      if (Array.isArray(parsed) && parsed.length > 0) {
+                        backLayers = parsed.filter((l: any) => l.imageUrl);
+                        hasBackDesign = backLayers.length > 0;
+                      }
                     } catch(e) {}
+
+                    // Choose correct back mockup based on tshirt color
+                    const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
 
                     return (
                     /* ─── Outer ornate frame wrapper ─── */
@@ -154,7 +162,7 @@ export default function Community() {
                           transformStyle: 'preserve-3d',
                           transform: 'rotateY(0deg)',
                         }}
-                        onMouseEnter={e => { if (backImageUrl) (e.currentTarget as HTMLDivElement).style.transform = 'rotateY(180deg)'; }}
+                        onMouseEnter={e => { if (hasBackDesign) (e.currentTarget as HTMLDivElement).style.transform = 'rotateY(180deg)'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'rotateY(0deg)'; }}
                       >
                         {/* ── FRONT FACE ── */}
@@ -170,16 +178,16 @@ export default function Community() {
                         >
                           {/* Image Area — FRONT */}
                           <div
-                            className="mt-1.5 mx-1.5 rounded-t-md overflow-hidden flex items-center justify-center"
+                            className="mt-1.5 mx-1.5 rounded-t-md overflow-hidden flex items-center justify-center relative"
                             style={{
                               background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)',
-                              aspectRatio: '3/4',
+                              aspectRatio: '5/6', // Matching canvas aspect ratio
                               borderRadius: '6px 6px 0 0',
                               border: '1px solid rgba(139,107,67,0.4)',
                             }}
                           >
                             {design.imageUrl ? (
-                              <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain drop-shadow-xl" />
+                              <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain drop-shadow-xl absolute inset-0" />
                             ) : (
                               <span className="text-gray-500 font-bold text-xs">بدون صورة</span>
                             )}
@@ -219,7 +227,7 @@ export default function Community() {
                         </div>
 
                         {/* ── BACK FACE ── */}
-                        {backImageUrl && (
+                        {hasBackDesign && (
                           <div
                             className="absolute inset-0 flex flex-col"
                             style={{
@@ -232,15 +240,39 @@ export default function Community() {
                             }}
                           >
                             {/* Back label */}
-                            <div className="text-center py-1.5 text-[9px] font-bold text-[#594228] tracking-widest border-b border-[#8b6b43]/30">
+                            <div className="text-center py-1.5 text-[9px] font-bold text-[#594228] tracking-widest border-b border-[#8b6b43]/30 bg-[#e8d5a3]">
                               ← الظهر
                             </div>
-                            {/* Back image */}
+                            {/* Back image container */}
                             <div
-                              className="flex-1 mx-1.5 mb-1.5 rounded-b-md overflow-hidden flex items-center justify-center"
-                              style={{ background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)' }}
+                              className="flex-1 mx-1.5 mb-1.5 mt-1.5 rounded-b-md overflow-hidden flex items-center justify-center relative"
+                              style={{ 
+                                background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)',
+                                aspectRatio: '5/6',
+                                borderRadius: '6px 6px 6px 6px',
+                              }}
                             >
-                              <img src={backImageUrl} alt="back design" className="w-full h-full object-contain drop-shadow-xl" />
+                              {/* The Base Mockup */}
+                              <img src={backMockup} alt="back mockup" className="w-full h-full object-cover absolute inset-0 z-0 drop-shadow-xl" />
+                              
+                              {/* The Layers */}
+                              {backLayers.map((layer, idx) => (
+                                <img 
+                                  key={idx}
+                                  src={layer.imageUrl}
+                                  className="absolute z-10"
+                                  style={{
+                                    left: `${(layer.x / 500) * 100}%`,
+                                    top: `${(layer.y / 600) * 100}%`,
+                                    width: `${(layer.width / 500) * 100}%`,
+                                    height: `${(layer.height / 600) * 100}%`,
+                                    transform: `rotate(${layer.rotation || 0}deg)`,
+                                    opacity: layer.opacity ?? 1,
+                                    pointerEvents: 'none'
+                                  }}
+                                  alt="layer"
+                                />
+                              ))}
                             </div>
                           </div>
                         )}
