@@ -119,46 +119,91 @@ export default function Community() {
               ) : filteredDesigns.length === 0 ? (
                 <div className="text-center py-20 text-[#8b6b43] font-bold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-12 pt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-14 pt-8">
                   {filteredDesigns.map(design => (
-                    <div 
-                      key={design.id} 
-                      className="group relative bg-[#ebddc4] rounded-lg overflow-visible flex flex-col transition-all duration-300 hover:-translate-y-1 shadow-lg border-[2px] border-[#8b6b43]/60"
+                    <div
+                      key={design.id}
+                      className="group relative flex flex-col transition-all duration-300 hover:-translate-y-2"
+                      style={{
+                        background: 'linear-gradient(160deg, #e8d5a3 0%, #d4b97a 40%, #c8a85a 100%)',
+                        borderRadius: '10px',
+                        border: '2px solid #8b6b43',
+                        boxShadow: '0 4px 24px rgba(90,60,20,0.18), inset 0 1px 0 rgba(255,255,255,0.3)',
+                        overflow: 'visible',
+                      }}
                     >
-                      {/* Top Circular Badge */}
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full border-[2px] border-[#f3ebd2] shadow-md flex flex-col items-center justify-center bg-gradient-to-b from-[#b1894d] to-[#6a4f2d] text-[#f3ebd2]">
-                        <span className="text-lg font-bold leading-none mt-1" style={{ fontFamily: "'Aref Ruqaa', serif" }}>{design.purchases}</span>
+                      {/* Ornate top border line */}
+                      <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-[#b1894d] to-transparent"></div>
+
+                      {/* Top Circular Badge — matches "CS" circle in reference */}
+                      <div
+                        className="absolute -top-7 left-1/2 -translate-x-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+                        style={{
+                          background: 'linear-gradient(160deg, #b1894d 0%, #6a4f2d 100%)',
+                          border: '3px solid #e8d5a3',
+                          boxShadow: '0 4px 12px rgba(90,60,20,0.4)',
+                        }}
+                      >
+                        <span className="text-[#f3ebd2] text-xs font-bold tracking-widest" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+                          {design.purchases > 0 ? design.purchases : 'CS'}
+                        </span>
                       </div>
-                      
-                      {/* Image Container */}
-                      <div className="relative aspect-[4/5] bg-gradient-to-b from-[#222] to-[#111] m-2 rounded-md overflow-hidden flex items-center justify-center p-4 border border-[#8b6b43]/30 shadow-inner">
+
+                      {/* Image Area — dark background, fills most of card */}
+                      <div
+                        className="mt-6 mx-2 mb-0 rounded-t-md overflow-hidden flex items-center justify-center"
+                        style={{
+                          background: 'linear-gradient(180deg, #1a1008 0%, #0d0804 100%)',
+                          aspectRatio: '3/4',
+                          borderRadius: '8px 8px 0 0',
+                          border: '1px solid rgba(139,107,67,0.4)',
+                        }}
+                      >
                         {design.imageUrl ? (
-                          <img 
-                            src={design.imageUrl} 
-                            alt={design.name} 
-                            className="w-full h-full object-contain relative z-0 transition-transform duration-700 group-hover:scale-105 drop-shadow-xl" 
+                          <img
+                            src={design.imageUrl}
+                            alt={design.name}
+                            className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl"
                           />
                         ) : (
-                          <span className="text-gray-400 font-bold text-sm relative z-0">بدون صورة</span>
+                          <span className="text-gray-500 font-bold text-sm">بدون صورة</span>
                         )}
                       </div>
-                      
-                      {/* Content Section */}
-                      <div className="p-5 flex flex-col flex-1 relative z-10 text-center">
-                        <h3 className="font-bold text-xl text-[#3d2b1f] mb-1 truncate" style={{ fontFamily: "'Aref Ruqaa', serif" }}>{design.name}</h3>
-                        <p className="text-xs text-[#8b6b43] font-semibold mb-6 truncate">
-                          من تصميم: <span className="text-[#594228] font-bold">{design.user.name || 'مبدع مجهول'}</span>
+
+                      {/* Info + Button — below image, parchment tone */}
+                      <div
+                        className="mx-2 mb-2 rounded-b-md px-4 pt-3 pb-4 flex flex-col gap-1"
+                        style={{
+                          background: 'linear-gradient(180deg, #c8a85a 0%, #b1894d 100%)',
+                          borderRadius: '0 0 8px 8px',
+                          border: '1px solid rgba(139,107,67,0.4)',
+                          borderTop: 'none',
+                        }}
+                      >
+                        <h3
+                          className="font-bold text-lg text-[#1a0e06] truncate text-right leading-tight"
+                          style={{ fontFamily: "'Aref Ruqaa', serif" }}
+                        >
+                          {design.name}
+                        </h3>
+                        <p className="text-xs text-[#3d2b1f]/80 text-right font-semibold truncate mb-2">
+                          من تصميم: <span className="text-[#1a0e06] font-bold">{design.user.name || 'مبدع مجهول'}</span>
                         </p>
-                        
-                        <div className="mt-auto">
-                          <button
-                            onClick={() => handleBuy(design)}
-                            className="w-full py-2.5 bg-gradient-to-b from-[#3d2b1f] to-[#1a120c] border border-[#594228] text-[#eaddc3] hover:text-white text-sm font-bold rounded-full shadow-md transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg"
-                          >
-                            <ShoppingCart className="w-4 h-4" />
-                            <span>شراء التصميم</span>
-                          </button>
-                        </div>
+
+                        <button
+                          onClick={() => handleBuy(design)}
+                          className="w-full py-2.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                          style={{
+                            background: 'linear-gradient(180deg, #2a1a0a 0%, #0d0804 100%)',
+                            color: '#e8d5a3',
+                            borderRadius: '6px',
+                            border: '1px solid #6a4f2d',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                          }}
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          <span>شراء التصميم</span>
+                        </button>
                       </div>
                     </div>
                   ))}
