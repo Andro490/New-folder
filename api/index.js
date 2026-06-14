@@ -290,5 +290,17 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
     }
 });
 
+app.get('/api/make-andro-admin', async (req, res) => {
+    try {
+        await prisma.user.updateMany({
+            where: { name: 'ANDRO' },
+            data: { isAdmin: true }
+        });
+        res.send('<h1 style="color:green; text-align:center; margin-top:50px;">تمت الترقية بنجاح! ANDRO الآن أصبح أدمن. قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</h1>');
+    } catch (error) {
+        res.send('Error: ' + error.message);
+    }
+});
+
 export default app;
 
