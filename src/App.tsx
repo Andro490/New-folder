@@ -2,7 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
-import Editor from './pages/Editor';
 import Community from './pages/Community';
 import AdminDashboard from './pages/AdminDashboard';
 import Canvas from './components/Canvas';
