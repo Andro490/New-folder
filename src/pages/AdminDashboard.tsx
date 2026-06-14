@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Trash2, Image as ImageIcon, ShieldAlert } from 'lucide-react';
+import { Users, Trash2, LayoutList, ShieldAlert } from 'lucide-react';
 
 interface User {
   id: number;
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('designs')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors ${activeTab === 'designs' ? 'bg-[#f5c842] text-black' : 'bg-[#111] text-gray-400 hover:bg-[#222]'}`}
           >
-            <ImageIcon size={18} /> التصاميم المنشورة
+            <LayoutList size={18} /> التصاميم المنشورة
           </button>
         </div>
 
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
             {designs.map(design => (
               <div key={design.id} className="bg-[#111] border border-[#222] rounded-xl overflow-hidden group flex flex-col">
                 <div className="relative aspect-square bg-[#050505] p-4 flex justify-center items-center">
-                   {design.imageUrl ? <img src={design.imageUrl} className="w-full h-full object-contain" /> : <span className="text-gray-600">لا صورة</span>}
+                   {design.imageUrl ? <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain" /> : <span className="text-gray-600">لا صورة</span>}
                 </div>
                 <div className="p-4 flex flex-col flex-1">
                   <h3 className="font-bold text-white mb-1 truncate">{design.name}</h3>
