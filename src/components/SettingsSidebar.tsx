@@ -297,7 +297,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
           value={url}
           onChange={e => setUrl(e.target.value)}
           placeholder="ضع رابط Pinterest هنا (مثل https://pin.it/...)"
-          style={{ width: '100%', padding: '10px', marginBottom: 10, background: '#111', color: 'var(--text-primary)', border: '1px solid #333' }}
+          style={{ width: '100%', padding: '10px', marginBottom: 10, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
         />
 
         {error && <p style={{ color: '#e74c3c', fontSize: 13, marginBottom: 10 }}>{error}</p>}
@@ -515,9 +515,9 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
                 onClick={() => setBold(b => !b)}
                 style={{
                   padding: '8px 14px', height: 34,
-                  backgroundColor: bold ? 'var(--accent-primary)' : '#111',
-                  color: bold ? '#000' : '#888',
-                  border: '1px solid #2a2a2a', cursor: 'pointer',
+                  backgroundColor: bold ? 'var(--accent-primary)' : 'var(--bg-card)',
+                  color: bold ? '#000' : 'var(--text-muted)',
+                  border: '1px solid var(--border-color)', cursor: 'pointer',
                   fontWeight: 900, fontSize: 13,
                 }}
               >
@@ -768,7 +768,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               <div
                 key={opt.id}
                 onClick={() => setShipping(opt.id as 'free' | 'premium')}
-                style={{ border: `1px solid ${shipping === opt.id ? 'var(--accent-primary)' : '#1e1e1e'}`, backgroundColor: shipping === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
+                style={{ border: `1px solid ${shipping === opt.id ? 'var(--accent-primary)' : 'var(--border-color)'}`, backgroundColor: shipping === opt.id ? 'var(--bg-tertiary)' : 'var(--bg-secondary)', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
               >
                 <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${shipping === opt.id ? 'var(--accent-primary)' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {shipping === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent-primary)' }} />}
@@ -790,7 +790,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               <div
                 key={opt.id}
                 onClick={() => setPayMethod(opt.id as 'instapay' | 'cod')}
-                style={{ border: `1px solid ${payMethod === opt.id ? 'var(--accent-primary)' : '#1e1e1e'}`, backgroundColor: payMethod === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
+                style={{ border: `1px solid ${payMethod === opt.id ? 'var(--accent-primary)' : 'var(--border-color)'}`, backgroundColor: payMethod === opt.id ? 'var(--bg-tertiary)' : 'var(--bg-secondary)', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
               >
                 <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${payMethod === opt.id ? 'var(--accent-primary)' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {payMethod === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent-primary)' }} />}
@@ -871,8 +871,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               { label: 'رابط التصميم', value: (allLayers.find(l => l.pinterestUrl)?.pinterestUrl || 'لا يوجد رابط') },
               { label: 'شحن', value: shippingCost === 0 ? <span style={{ color: '#4ade80' }}>حر</span> : `${shippingCost} جنيه` },
             ].map(row => (
-              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #111' }}>
-                <span style={{ fontSize: 12, color: '#555' }}>{row.label}</span>
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border-color)' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{row.label}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{row.value as any}</span>
               </div>
             ))}
@@ -1000,7 +1000,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
         <div style={{ width: '100%', maxWidth: 560, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 2 OF 2</p>
               <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>REVIEW ORDER</h2>
@@ -1030,7 +1030,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               { label: 'COLOR', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel.toUpperCase()}</span> },
               { label: 'SIZE', value: selectedSize },
             ].map(row => (
-              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid #111', marginBottom: 1 }}>
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', marginBottom: 1 }}>
                 <span style={{ fontSize: 11, color: '#444', letterSpacing: '0.1em' }}>{row.label}</span>
                 <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em' }}>{row.value as any}</span>
               </div>
@@ -1058,7 +1058,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
       <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 1 OF 2</p>
             <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>SELECT SIZE</h2>
@@ -1091,13 +1091,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 key={sz.id}
                 onClick={() => { setSelectedSize(sz.id); setStep('review'); }}
                 style={{
-                  border: `1px solid ${selectedSize === sz.id ? 'var(--accent-primary)' : '#1e1e1e'}`,
-                  backgroundColor: selectedSize === sz.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a',
+                  border: `1px solid ${selectedSize === sz.id ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+                  backgroundColor: selectedSize === sz.id ? 'var(--bg-tertiary)' : 'var(--bg-secondary)',
                   padding: '28px 20px', cursor: 'pointer', textAlign: 'center',
                   transition: 'all 0.15s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent-primary)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = selectedSize === sz.id ? 'var(--accent-primary)' : '#1e1e1e')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = selectedSize === sz.id ? 'var(--accent-primary)' : 'var(--border-color)')}
               >
                 <p style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.12em', marginBottom: 8 }}>{sz.label}</p>
                 <p style={{ fontSize: 12, color: '#555', marginBottom: 10 }}>
@@ -1305,8 +1305,8 @@ export default function SettingsSidebar({
                 border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
               <span>إضافة نص (عربي/إنجليزي)</span>
               <Type size={18} color="#4ade80" />
@@ -1328,8 +1328,8 @@ export default function SettingsSidebar({
                   backgroundColor: 'var(--bg-tertiary)', borderRadius: 8, border: '1px solid var(--border-color)',
                   cursor: 'pointer', transition: 'all 0.2s'
                 }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#161616')}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-card)')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)')}
               >
                 <ZoomOut size={16} color="#aaa" /> تصغير
               </button>
