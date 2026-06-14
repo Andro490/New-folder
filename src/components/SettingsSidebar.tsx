@@ -1382,13 +1382,15 @@ export default function SettingsSidebar({
               
               setIsPublishing(true);
               try {
+                const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+                
                 const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400);
                 let imageUrl = '';
                 try {
                    imageUrl = await uploadToImgBB(frontBase64);
                 } catch(e) {}
                 
-                const res = await fetch('/api/designs', {
+                const res = await fetch(`${API_BASE}/api/designs`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                   body: JSON.stringify({
@@ -1399,14 +1401,21 @@ export default function SettingsSidebar({
                     imageUrl
                   })
                 });
+                
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`Server Error: ${text}`);
+                }
+                
                 const data = await res.json();
                 if(data.success) {
                   alert('تم نشر التصميم بنجاح! يمكن للآخرين الآن شراؤه من صفحة المعرض (Gallery).');
                 } else {
                   alert('خطأ: ' + (data.error || 'فشل النشر'));
                 }
-              } catch (err) {
-                alert('فشل النشر.');
+              } catch (err: any) {
+                console.error(err);
+                alert('فشل النشر: ' + err.message);
               } finally {
                 setIsPublishing(false);
               }
