@@ -15,7 +15,8 @@ export default function Dashboard() {
         return;
       }
       try {
-        const res = await fetch('/api/auth/me', {
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        const res = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

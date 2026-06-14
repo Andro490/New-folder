@@ -958,10 +958,10 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     backImage: backImageUrl,
                     // إيصال إنستاباي
                     instapayProof: instapayProofUrl,
-                    paymentStatus: payMethod === 'instapay' ? 'إيداع انستا باي' : 'الدفع عند الاستلام',
                     totalPrice: String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
+                    designId: new URLSearchParams(window.location.search).get('designId') || '',
                   });
                   setStep('thanks');
                 } catch (err: any) {
@@ -1135,6 +1135,7 @@ export default function SettingsSidebar({
   const [showPinterestModal, setShowPinterestModal] = useState(false);
   const [designUrl, setDesignUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const printArea = PRINT_AREA[view];
 
@@ -1359,12 +1360,69 @@ export default function SettingsSidebar({
               borderRadius: 10,
               border: '1px solid rgba(255,255,255,0.1)',
               cursor: 'pointer', transition: 'all 0.2s',
+              marginBottom: '10px'
             }}
             onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
             onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
           >
             <Save size={16} />
             حفظ التعديلات للعودة لاحقاً
+          </button>
+          
+          <button
+            disabled={isPublishing}
+            onClick={async () => {
+              const token = localStorage.getItem('wearurway_token');
+              if (!token) {
+                alert('يرجى تسجيل الدخول أولاً لنشر التصميم');
+                return;
+              }
+              const name = prompt('أدخل اسماً مميزاً لتصميمك:');
+              if (!name) return;
+              
+              setIsPublishing(true);
+              try {
+                const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400);
+                let imageUrl = '';
+                try {
+                   imageUrl = await uploadToImgBB(frontBase64);
+                } catch(e) {}
+                
+                const res = await fetch('/api/designs', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                  body: JSON.stringify({
+                    name,
+                    tshirtColor,
+                    frontDesign: allLayers.filter(l => l.view === 'front'),
+                    backDesign: allLayers.filter(l => l.view === 'back'),
+                    imageUrl
+                  })
+                });
+                const data = await res.json();
+                if(data.success) {
+                  alert('تم نشر التصميم بنجاح! يمكن للآخرين الآن شراؤه من صفحة المعرض (Gallery).');
+                } else {
+                  alert('خطأ: ' + (data.error || 'فشل النشر'));
+                }
+              } catch (err) {
+                alert('فشل النشر.');
+              } finally {
+                setIsPublishing(false);
+              }
+            }}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              width: '100%',
+              padding: '14px 16px',
+              fontSize: 13, fontWeight: 700, color: '#000',
+              backgroundColor: isPublishing ? '#ccc' : '#4ade80', 
+              borderRadius: 10,
+              border: 'none',
+              cursor: isPublishing ? 'wait' : 'pointer', transition: 'all 0.2s',
+            }}
+          >
+            {isPublishing ? 'جاري النشر...' : 'نشر التصميم للبيع 💸'}
           </button>
         </div>
 

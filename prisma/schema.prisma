@@ -1,6 +1,6 @@
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -17,4 +17,19 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   referredUsers   Int      @default(0) // عدد العملاء اللي اشتروا
+  designs         Design[]
+}
+
+model Design {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  name        String
+  frontDesign String   // JSON string or base64 representation
+  backDesign  String   
+  tshirtColor String   @default("#ffffff")
+  imageUrl    String?  // Optional snapshot/preview
+  createdAt   DateTime @default(now())
+  purchases   Int      @default(0)
+
+  user        User     @relation(fields: [userId], references: [id])
 }

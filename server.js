@@ -73,7 +73,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// Get User Profile
+// ── Get User Profile ───────────────────────────────────────────────
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
@@ -81,6 +81,40 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
         res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
     } catch (error) {
         res.sendStatus(500);
+    }
+});
+
+// ── Community Designs ──────────────────────────────────────────────
+app.post('/api/designs', authenticateToken, async (req, res) => {
+    try {
+        const { name, frontDesign, backDesign, tshirtColor, imageUrl } = req.body;
+        const design = await prisma.design.create({
+            data: {
+                userId: req.user.id,
+                name,
+                frontDesign: JSON.stringify(frontDesign),
+                backDesign: JSON.stringify(backDesign),
+                tshirtColor,
+                imageUrl
+            }
+        });
+        res.json({ success: true, design });
+    } catch (error) {
+        console.error('Error creating design:', error);
+        res.status(500).json({ error: 'حدث خطأ أثناء نشر التصميم' });
+    }
+});
+
+app.get('/api/designs', async (req, res) => {
+    try {
+        const designs = await prisma.design.findMany({
+            include: { user: { select: { name: true, affiliateCode: true } } },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ success: true, designs });
+    } catch (error) {
+        console.error('Error fetching designs:', error);
+        res.status(500).json({ error: 'حدث خطأ أثناء جلب التصميمات' });
     }
 });
 
@@ -160,6 +194,29 @@ app.post('/api/submit-order', async (req, res) => {
                 }
             } catch (err) {
                 console.error("Error processing affiliate code", err);
+            }
+        }
+        
+        // Handle Design Creator Reward
+        if (orderData.designId) {
+            try {
+                const design = await prisma.design.findUnique({ where: { id: parseInt(orderData.designId) }, include: { user: true } });
+                if (design) {
+                    await prisma.user.update({
+                        where: { id: design.userId },
+                        data: {
+                            discountBalance: { increment: 50 },
+                            referredUsers: { increment: 1 }
+                        }
+                    });
+                    await prisma.design.update({
+                        where: { id: design.id },
+                        data: { purchases: { increment: 1 } }
+                    });
+                    console.log(`✅ تمت إضافة 50 جنيه لمنشئ التصميم (ID: ${design.userId})`);
+                }
+            } catch (err) {
+                console.error("Error processing design reward", err);
             }
         }
 

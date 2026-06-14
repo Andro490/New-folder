@@ -13,7 +13,8 @@ export default function Auth() {
     e.preventDefault();
     setError('');
 
-    const url = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+    const url = isLogin ? `${API_BASE}/api/auth/login` : `${API_BASE}/api/auth/register`;
     const payload = isLogin ? { email, password } : { name, email, password };
 
     try {
