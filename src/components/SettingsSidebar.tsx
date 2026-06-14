@@ -617,6 +617,18 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
     throw new Error(result.error || 'فشل الإرسال');
   }
 
+  // ── Track Community Design Purchase ──
+  try {
+    const designId = localStorage.getItem('wearurway_community_design_id');
+    if (designId) {
+      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+      await fetch(`${API_BASE}/api/designs/${designId}/purchase`, { method: 'POST' });
+      localStorage.removeItem('wearurway_community_design_id');
+    }
+  } catch (e) {
+    console.error('Failed to track purchase', e);
+  }
+
   console.log('✅ تم إرسال الطلب بنجاح');
 }
 
