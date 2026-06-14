@@ -16,6 +16,8 @@ import blackMockupFront from './assets/black-mockup.png';
 import blackMockupBack from './assets/black-mockup-back.png';
 import whiteMockupFront from './assets/—Pngtree—white t shirt mockup realistic_13020297.png';
 import whiteMockupBack from './assets/—Pngtree—back white t shirt_13029479.png';
+import pantImg from './assets/pant.png';
+import hodyImg from './assets/hody.png';
 
 function Editor() {
   const [layers, setLayers] = useState<DesignLayer[]>(() => {
@@ -301,28 +303,83 @@ function ProductStep() {
   return (
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      
+      {/* Banner */}
+      <div 
+        className="w-full py-10 flex flex-col items-center justify-center relative overflow-hidden mt-4"
+        style={{ 
+          background: 'linear-gradient(rgba(70, 50, 30, 0.9), rgba(50, 35, 20, 0.9))',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        }}
+      >
+        {/* Subtle wood texture effect via repeating gradient */}
+        <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px)' }}></div>
+        <h1 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-[#f3ebd2] z-10" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>SELECT PRODUCT</h1>
+        <p className="text-sm mt-2 text-[#d4c3a3] z-10">.Choose your canvas</p>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-start px-4 py-12">
         <div className="w-full max-w-5xl md:px-10">
-          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Product</h1>
-          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Choose your canvas.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-            <button
-              onClick={() => navigate('/fit')}
-              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-            >
-              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>T-SHIRT</span>
-            </button>
-            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATSHIRT</span>
-              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-            </button>
-            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>SWEATPANTS</span>
-              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-            </button>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-5">
+            {/* SWEATPANTS */}
+            <div className="flex flex-col items-center pt-10 relative">
+              <div 
+                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+              >
+                <img src={pantImg} alt="Sweatpants" className="w-4/5 h-auto object-contain opacity-60" />
+                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
+                  <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>COMING SOON</span>
+                </div>
+              </div>
+            </div>
+
+            {/* SWEATSHIRT */}
+            <div className="flex flex-col items-center pt-10 relative">
+              <div 
+                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+              >
+                <img src={hodyImg} alt="Sweatshirt" className="w-4/5 h-auto object-contain opacity-60" />
+                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
+                  <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>COMING SOON</span>
+                </div>
+              </div>
+            </div>
+
+            {/* T-SHIRT (Active) */}
+            <div className="flex flex-col items-center">
+              <h2 className="text-3xl font-black mb-4 text-[#3d3329]">T-SHIRT</h2>
+              <div 
+                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center p-4 transition-transform hover:-translate-y-2"
+                style={{ 
+                  background: 'linear-gradient(145deg, #e6ded0, #f5f0e6)',
+                  boxShadow: '0 12px 30px rgba(139, 107, 67, 0.2)',
+                  border: '2px solid #fff'
+                }}
+              >
+                <img src={whiteMockupFront} alt="T-Shirt" className="w-[90%] h-auto object-contain flex-1 filter drop-shadow-xl" />
+                
+                <div className="w-full mt-4 flex flex-col items-center gap-3">
+                  <span className="font-bold text-sm text-[#3d3329]">T-SHIRT</span>
+                  <button
+                    onClick={() => navigate('/fit')}
+                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all"
+                    style={{ 
+                      background: 'linear-gradient(to right, #6a4f2d, #b1894d, #6a4f2d)',
+                      backgroundSize: '200% auto',
+                      boxShadow: '0 4px 10px rgba(106, 79, 45, 0.4)'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundPosition = 'right center'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundPosition = 'left center'}
+                  >
+                    GET STARTED
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
