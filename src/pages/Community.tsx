@@ -35,13 +35,14 @@ export default function Community() {
   }, []);
 
   const handleBuy = (design: Design) => {
+    // Save the design ID so we can track the purchase on order submission
+    localStorage.setItem('wearurway_community_design_id', String(design.id));
+    
     // Save layers to localstorage and navigate to editor
     try {
       const front = JSON.parse(design.frontDesign || '[]');
       const back = JSON.parse(design.backDesign || '[]');
       localStorage.setItem('wearurway_layers', JSON.stringify([...front, ...back]));
-      // Save the design ID so we can track the purchase on order submission
-      localStorage.setItem('wearurway_community_design_id', String(design.id));
     } catch(e) {}
     
     navigate(`/editor?color=${design.tshirtColor}&designId=${design.id}`);
