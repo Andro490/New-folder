@@ -328,31 +328,6 @@ app.get('/api/proxy-image', async (req, res) => {
     }
 });
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, 'dist')));
-
-// Catch-all route to serve the React app for any other request (client-side routing)
-app.get('/{*path}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
-const PORT = process.env.PORT || 3001;
-app.get('/api/make-andro-admin', async (req, res) => {
-    try {
-        await prisma.user.updateMany({
-            where: { name: 'ANDRO' },
-            data: { isAdmin: true }
-        });
-        res.send('<h1 style="color:green; text-align:center; margin-top:50px;">تمت الترقية بنجاح! ANDRO الآن أصبح أدمن. قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</h1>');
-    } catch (error) {
-        res.send('Error: ' + error.message);
-    }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 // ── Admin Routes ───────────────────────────────────────────────────
 
 // Middleware to check if admin
@@ -389,3 +364,29 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
         res.status(500).json({ error: 'فشل مسح التصميم' });
     }
 });
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Catch-all route to serve the React app for any other request (client-side routing)
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3001;
+app.get('/api/make-andro-admin', async (req, res) => {
+    try {
+        await prisma.user.updateMany({
+            where: { name: 'ANDRO' },
+            data: { isAdmin: true }
+        });
+        res.send('<h1 style="color:green; text-align:center; margin-top:50px;">تمت الترقية بنجاح! ANDRO الآن أصبح أدمن. قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</h1>');
+    } catch (error) {
+        res.send('Error: ' + error.message);
+    }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
