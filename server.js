@@ -136,12 +136,11 @@ app.post('/api/designs/:id/purchase', async (req, res) => {
             include: { user: true }
         });
 
-        // Reward the designer: add 50 EGP to their balance
+        // Reward the designer: add 50 EGP to their balance only
         await prisma.user.update({
             where: { id: design.userId },
             data: {
-                discountBalance: { increment: 50 },
-                referredUsers: { increment: 1 }
+                discountBalance: { increment: 50 }
             }
         });
 
