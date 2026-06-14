@@ -24,31 +24,32 @@ export default function AdminDashboard() {
   const [designs, setDesigns] = useState<Design[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'users' | 'designs'>('users');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAdminData = async () => {
       const token = localStorage.getItem('wearurway_token');
-      const userStr = localStorage.getItem('wearurway_user');
-      
-      if (!token || !userStr) {
+
+      if (!token) {
         navigate('/auth');
-        return;
-      }
-      
-      const user = JSON.parse(userStr);
-      if (!user.isAdmin) {
-        navigate('/dashboard'); // Not an admin
         return;
       }
 
       const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
 
       try {
-        // Fetch users
+        // Fetch users - API will return 403 if not admin
         const usersRes = await fetch(`${API_BASE}/api/admin/users`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (usersRes.status === 403) {
+          setError('ليس لديك صلاحيات للوصول لهذه الصفحة. تواصل مع المطور لترقية حسابك.');
+          setLoading(false);
+          return;
+        }
+
         if (usersRes.ok) {
           const usersData = await usersRes.json();
           setUsers(usersData.users);
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
         }
       } catch (e) {
         console.error(e);
+        setError('حدث خطأ في الاتصال بالسيرفر.');
       } finally {
         setLoading(false);
       }
@@ -95,6 +97,15 @@ export default function AdminDashboard() {
   };
 
   if (loading) return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">جاري التحميل...</div>;
+
+  if (error) return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center gap-6" dir="rtl">
+      <ShieldAlert className="text-red-500" size={64} />
+      <h1 className="text-2xl font-black text-red-400">وصول مرفوض</h1>
+      <p className="text-gray-400 max-w-md text-center">{error}</p>
+      <button onClick={() => navigate('/dashboard')} className="bg-[#f5c842] text-black font-bold px-8 py-3 rounded-xl">العودة للوحة التحكم</button>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-['Inter']" dir="rtl">
