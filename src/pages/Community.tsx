@@ -34,7 +34,15 @@ export default function Community() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleBuy = (design: Design) => {
+  const handleBuy = async (design: Design) => {
+    // Call API to track the purchase and reward the designer
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+      await fetch(`${API_BASE}/api/designs/${design.id}/purchase`, { method: 'POST' });
+      // Update local count
+      setDesigns(prev => prev.map(d => d.id === design.id ? { ...d, purchases: d.purchases + 1 } : d));
+    } catch(e) { console.error(e); }
+
     // Save layers to localstorage and navigate to editor
     try {
       const front = JSON.parse(design.frontDesign || '[]');

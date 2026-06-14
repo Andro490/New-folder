@@ -6,6 +6,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [designCount, setDesignCount] = useState(0);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -23,6 +24,14 @@ export default function Dashboard() {
           const data = await res.json();
           setUser(data.user);
           localStorage.setItem('wearurway_user', JSON.stringify(data.user));
+          // Fetch user's design count
+          const designsRes = await fetch(`${API_BASE}/api/user/designs`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (designsRes.ok) {
+            const designsData = await designsRes.json();
+            setDesignCount(designsData.count || 0);
+          }
         } else {
           localStorage.removeItem('wearurway_token');
           navigate('/auth');
@@ -151,11 +160,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Placeholder Stat 4 (For symmetrical layout like ref image) */}
-            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl opacity-50">
+            <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 flex flex-col justify-between shadow-xl">
               <p className="text-gray-500 text-sm mb-4 font-semibold">التصاميم المنشورة</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-black text-gray-400">0</span>
+                <span className="text-4xl font-black text-white">{designCount}</span>
                 <span className="text-sm text-gray-500 mb-1">تصميم</span>
               </div>
             </div>

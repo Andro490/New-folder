@@ -124,6 +124,47 @@ app.get('/api/designs', async (req, res) => {
     }
 });
 
+// ── Track design purchase ──────────────────────────────────────────
+app.post('/api/designs/:id/purchase', async (req, res) => {
+    try {
+        const designId = parseInt(req.params.id);
+        
+        // Increment purchase counter
+        const design = await prisma.design.update({
+            where: { id: designId },
+            data: { purchases: { increment: 1 } },
+            include: { user: true }
+        });
+
+        // Reward the designer: add 50 EGP to their balance
+        await prisma.user.update({
+            where: { id: design.userId },
+            data: {
+                discountBalance: { increment: 50 },
+                referredUsers: { increment: 1 }
+            }
+        });
+
+        res.json({ success: true, purchases: design.purchases });
+    } catch (error) {
+        console.error('Error tracking purchase:', error);
+        res.status(500).json({ error: 'Failed to track purchase' });
+    }
+});
+
+// ── Get user's own designs ─────────────────────────────────────────
+app.get('/api/user/designs', authenticateToken, async (req, res) => {
+    try {
+        const designs = await prisma.design.findMany({
+            where: { userId: req.user.id },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ success: true, designs, count: designs.length });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user designs' });
+    }
+});
+
 
 async function getPinterestImageUrl(pinUrl) {
     try {
