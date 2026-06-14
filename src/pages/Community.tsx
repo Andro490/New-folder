@@ -21,7 +21,9 @@ export default function Community() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/designs')
+    const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+    
+    fetch(`${API_BASE}/api/designs`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
