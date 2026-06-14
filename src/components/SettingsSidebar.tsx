@@ -605,7 +605,7 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 
   console.log('📦 بيانات الطلب اللي هتتبعت:', safe);
 
-  const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://new-folder-production.up.railway.app';
+  const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
   const response = await fetch(`${API_BASE}/api/submit-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
