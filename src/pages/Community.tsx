@@ -71,39 +71,38 @@ export default function Community() {
   });
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-['Cairo'] relative overflow-x-hidden" dir="rtl">
-      {/* Background Pattern Overlay */}
+    <div className="flex min-h-screen bg-[#121212] text-white font-['Cairo'] relative overflow-hidden" dir="rtl">
+      {/* Background Pattern Overlay for the whole page */}
       <div className="fixed inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
       <div className="fixed inset-0 opacity-20 pointer-events-none bg-gradient-to-b from-[#b89547]/10 via-transparent to-transparent"></div>
 
-      {/* Header Section */}
-      <header className="relative pt-12 pb-8 px-6 md:px-12 flex flex-col items-center justify-center z-10">
-        <button
-          onClick={() => navigate('/')}
-          className="absolute right-6 top-8 text-gray-400 hover:text-[#e5bc5b] transition-colors flex items-center gap-2 group"
-        >
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          <span className="text-sm font-semibold tracking-wider">العودة</span>
-        </button>
+      {/* Main Content Area (Right Side in RTL) */}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 custom-scrollbar">
+        {/* Header Section */}
+        <header className="relative pt-12 pb-8 px-6 md:px-12 flex flex-col items-center justify-center">
+          <button
+            onClick={() => navigate('/')}
+            className="absolute right-6 top-8 text-gray-400 hover:text-[#e5bc5b] transition-colors flex items-center gap-2 group"
+          >
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <span className="text-sm font-semibold tracking-wider">العودة</span>
+          </button>
 
-        <div className="flex flex-col items-center mb-4">
-          <div className="w-12 h-12 flex items-center justify-center border border-[#e5bc5b] rounded-sm mb-4">
-            <span className="font-serif text-xl font-bold text-[#e5bc5b] tracking-widest">PS</span>
+          <div className="flex flex-col items-center mb-4 mt-4">
+            <div className="w-12 h-12 flex items-center justify-center border border-[#e5bc5b] rounded-sm mb-4">
+              <span className="font-serif text-xl font-bold text-[#e5bc5b] tracking-widest">PS</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#fceabb] to-[#f8b500] drop-shadow-lg mb-3" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+              مَعْرِض التَّصَامِيم المُجْتَمَعِيَّة
+            </h1>
+            <p className="text-gray-400 text-sm md:text-base tracking-wide font-light">
+              اكتشف تصاميم المبدعين، اشترِ ما يعجبك وادعمهم
+            </p>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#fceabb] to-[#f8b500] drop-shadow-lg mb-3" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
-            مَعْرِض التَّصَامِيم المُجْتَمَعِيَّة
-          </h1>
-          <p className="text-gray-400 text-sm md:text-base tracking-wide font-light">
-            اكتشف تصاميم المبدعين، اشترِ ما يعجبك وادعمهم
-          </p>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Layout: Grid + Sidebar */}
-      <div className="max-w-[1500px] mx-auto px-6 md:px-12 pb-24 relative z-10 flex flex-col lg:flex-row gap-10">
-        
-        {/* Main Grid (Right side in RTL) */}
-        <main className="flex-1 order-2 lg:order-1">
+        {/* Main Grid */}
+        <main className="flex-1 px-6 md:px-12 pb-24">
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="w-10 h-10 border-4 border-[#e5bc5b] border-t-transparent rounded-full animate-spin"></div>
@@ -111,7 +110,7 @@ export default function Community() {
           ) : filteredDesigns.length === 0 ? (
             <div className="text-center py-20 text-gray-500 font-semibold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
               {filteredDesigns.map(design => (
                 <div 
                   key={design.id} 
@@ -120,10 +119,8 @@ export default function Community() {
                     boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), 0 10px 30px -10px rgba(0,0,0,0.5)',
                   }}
                 >
-                  {/* Glowing border effect on hover */}
                   <div className="absolute inset-0 bg-gradient-to-b from-[#e5bc5b]/0 to-[#e5bc5b]/0 group-hover:from-[#e5bc5b]/20 group-hover:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl"></div>
                   
-                  {/* Image Container with elegant frame */}
                   <div className="relative aspect-[4/5] bg-[#0a0a0a] m-1 rounded-t-lg overflow-hidden flex items-center justify-center p-6 border-b border-[#222]">
                     <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] pointer-events-none z-10"></div>
                     
@@ -143,7 +140,6 @@ export default function Community() {
                     </div>
                   </div>
                   
-                  {/* Content Section */}
                   <div className="p-5 flex flex-col flex-1 relative z-10 bg-[#161616]">
                     <h3 className="font-bold text-xl text-white mb-1 truncate tracking-wide text-right">{design.name}</h3>
                     <p className="text-xs text-[#888] mb-6 truncate text-right font-light">
@@ -165,83 +161,70 @@ export default function Community() {
             </div>
           )}
         </main>
-
-        {/* Sidebar (Left side in RTL because of order-1 / flex-row behavior where second child is on the left) */}
-        <aside className="w-full lg:w-[300px] shrink-0 order-1 lg:order-2">
-          <div className="sticky top-24 bg-[#161616]/80 backdrop-blur-md border border-[#333] rounded-xl p-6 shadow-2xl">
-            
-            {/* Categories */}
-            <div className="mb-8">
-              <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4 border-b border-[#333] pb-2">
-                <LayoutGrid className="w-5 h-5" />
-                <span>التصنيفات</span>
-              </h3>
-              <div className="space-y-2">
-                <button 
-                  onClick={() => setSelectedCategory('all')}
-                  className={`w-full text-right px-3 py-2 rounded-md transition-colors text-sm ${selectedCategory === 'all' ? 'bg-[#e5bc5b]/10 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}
-                >
-                  الكل
-                </button>
-                <button 
-                  onClick={() => setSelectedCategory('tshirts')}
-                  className={`w-full text-right px-3 py-2 rounded-md transition-colors text-sm ${selectedCategory === 'tshirts' ? 'bg-[#e5bc5b]/10 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}
-                >
-                  تي شيرت (T-Shirts)
-                </button>
-                <button 
-                  onClick={() => setSelectedCategory('hoodies')}
-                  className={`w-full text-right px-3 py-2 rounded-md transition-colors text-sm ${selectedCategory === 'hoodies' ? 'bg-[#e5bc5b]/10 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}
-                >
-                  هوديز (قريباً)
-                </button>
-              </div>
-            </div>
-
-            {/* Price Range */}
-            <div className="mb-8">
-              <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4 border-b border-[#333] pb-2">
-                <Tag className="w-5 h-5" />
-                <span>نطاق السعر</span>
-              </h3>
-              <div className="space-y-2">
-                <button className="w-full text-right px-3 py-2 rounded-md transition-colors text-sm bg-[#e5bc5b]/10 text-[#e5bc5b]">
-                  جميع الأسعار
-                </button>
-                <button className="w-full text-right px-3 py-2 rounded-md transition-colors text-sm text-gray-400 hover:text-white hover:bg-[#222] opacity-50 cursor-not-allowed" title="متوفر قريباً">
-                  أقل من 500 جنيه
-                </button>
-              </div>
-            </div>
-
-            {/* Featured Artists */}
-            <div>
-              <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4 border-b border-[#333] pb-2">
-                <Star className="w-5 h-5" />
-                <span>أبرز المبدعين</span>
-              </h3>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-                <button 
-                  onClick={() => setSelectedArtist('all')}
-                  className={`w-full text-right px-3 py-2 rounded-md transition-colors text-sm ${selectedArtist === 'all' ? 'bg-[#e5bc5b]/10 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}
-                >
-                  الجميع
-                </button>
-                {uniqueArtists.map(artist => (
-                  <button 
-                    key={artist}
-                    onClick={() => setSelectedArtist(artist as string)}
-                    className={`w-full text-right px-3 py-2 rounded-md transition-colors text-sm ${selectedArtist === artist ? 'bg-[#e5bc5b]/10 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222]'}`}
-                  >
-                    {artist}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-          </div>
-        </aside>
       </div>
+
+      {/* Solid Sidebar (Left Side in RTL) */}
+      <aside className="w-[300px] hidden lg:flex flex-col bg-[#0f0f0f] border-r border-[#222] h-screen sticky top-0 shrink-0 shadow-2xl z-20 relative overflow-y-auto custom-scrollbar">
+        {/* Subtle gradient overlay for the sidebar */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a]/50 to-transparent pointer-events-none"></div>
+        
+        <div className="p-8 relative z-10">
+          <h2 className="text-2xl font-bold text-white mb-10 border-b border-[#333] pb-4" style={{ fontFamily: "'Aref Ruqaa', serif" }}>فلترة التصاميم</h2>
+          
+          {/* Categories */}
+          <div className="mb-10">
+            <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4">
+              <LayoutGrid className="w-5 h-5" />
+              <span>التصنيفات</span>
+            </h3>
+            <div className="space-y-2">
+              <button 
+                onClick={() => setSelectedCategory('all')}
+                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'all' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+              >
+                الكل
+              </button>
+              <button 
+                onClick={() => setSelectedCategory('tshirts')}
+                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'tshirts' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+              >
+                تي شيرت (T-Shirts)
+              </button>
+              <button 
+                onClick={() => setSelectedCategory('hoodies')}
+                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'hoodies' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+              >
+                هوديز (قريباً)
+              </button>
+            </div>
+          </div>
+
+          {/* Featured Artists */}
+          <div>
+            <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4">
+              <Star className="w-5 h-5" />
+              <span>أبرز المبدعين</span>
+            </h3>
+            <div className="space-y-2">
+              <button 
+                onClick={() => setSelectedArtist('all')}
+                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedArtist === 'all' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+              >
+                الجميع
+              </button>
+              {uniqueArtists.map(artist => (
+                <button 
+                  key={artist}
+                  onClick={() => setSelectedArtist(artist as string)}
+                  className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedArtist === artist ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                >
+                  {artist}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }
