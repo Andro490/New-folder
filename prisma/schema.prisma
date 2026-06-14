@@ -17,6 +17,7 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   referredUsers   Int      @default(0) // عدد العملاء اللي اشتروا
+  isAdmin         Boolean  @default(false)
   designs         Design[]
 }
 

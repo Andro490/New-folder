@@ -73,7 +73,7 @@ app.post('/api/auth/login', async (req, res) => {
         if (!validPassword) return res.status(400).json({ error: 'كلمة المرور غير صحيحة' });
 
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
+        res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin } });
     } catch (error) {
         res.status(500).json({ error: 'حدث خطأ أثناء تسجيل الدخول' });
     }
@@ -84,7 +84,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
         if (!user) return res.sendStatus(404);
-        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
+        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin } });
     } catch (error) {
         res.sendStatus(500);
     }
@@ -282,4 +282,41 @@ app.get('/{*path}', (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// ── Admin Routes ───────────────────────────────────────────────────
+
+// Middleware to check if admin
+const authenticateAdmin = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (user && user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ error: 'Access denied. Admins only.' });
+        }
+    } catch (e) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const users = await prisma.user.findMany({
+            select: { id: true, name: true, email: true, discountBalance: true, referredUsers: true, isAdmin: true, createdAt: true }
+        });
+        res.json({ success: true, users });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const designId = parseInt(req.params.id);
+        await prisma.design.delete({ where: { id: designId } });
+        res.json({ success: true, message: 'تم مسح التصميم بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'فشل مسح التصميم' });
+    }
 });

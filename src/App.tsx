@@ -2,7 +2,9 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import Editor from './pages/Editor';
 import Community from './pages/Community';
+import AdminDashboard from './pages/AdminDashboard';
 import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
@@ -428,6 +430,7 @@ export default function App() {
       <Route path="/auth" element={<Auth />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/community" element={<Community />} />
+      <Route path="/admin" element={<AdminDashboard />} />
     </Routes>
   );
 }

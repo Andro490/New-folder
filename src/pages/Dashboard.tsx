@@ -66,6 +66,11 @@ export default function Dashboard() {
           <button onClick={() => navigate('/editor')} className="text-sm font-bold bg-[#f5c842] text-black px-4 py-2 rounded hover:bg-[#e6b72f] transition-colors">
             صمم تيشيرتك
           </button>
+          {user.isAdmin && (
+            <button onClick={() => navigate('/admin')} className="text-sm font-bold bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
+              لوحة الإدارة
+            </button>
+          )}
           <button onClick={handleLogout} className="text-sm font-bold text-red-500 hover:text-red-400 transition-colors flex items-center gap-2">
             <LogOut size={16} /> خروج
           </button>
