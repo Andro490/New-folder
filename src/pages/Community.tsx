@@ -71,128 +71,134 @@ export default function Community() {
   });
 
   return (
-    <div className="flex min-h-screen bg-[#121212] text-white font-['Cairo'] relative overflow-hidden" dir="rtl">
-      {/* Background Pattern Overlay for the whole page */}
-      <div className="fixed inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-      <div className="fixed inset-0 opacity-20 pointer-events-none bg-gradient-to-b from-[#b89547]/10 via-transparent to-transparent"></div>
+    <div className="flex min-h-screen bg-[#f3ebd2] text-[#3d2b1f] font-['Cairo'] relative overflow-hidden" dir="rtl">
+      {/* Vintage Paper Texture Overlay */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/old-wall.png")' }}></div>
 
       {/* Main Content Area (Right Side in RTL) */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 custom-scrollbar">
-        {/* Header Section */}
-        <header className="relative pt-12 pb-8 px-6 md:px-12 flex flex-col items-center justify-center">
-          <button
-            onClick={() => navigate('/')}
-            className="absolute right-6 top-8 text-gray-400 hover:text-[#e5bc5b] transition-colors flex items-center gap-2 group"
-          >
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            <span className="text-sm font-semibold tracking-wider">العودة</span>
-          </button>
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 custom-scrollbar p-6">
+        
+        {/* Ornate Frame Container */}
+        <div className="flex-1 border-[3px] border-[#8b6b43]/40 rounded-sm relative p-2">
+          {/* Ornate corners (CSS simulated) */}
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-[#8b6b43]"></div>
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-[#8b6b43]"></div>
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-[#8b6b43]"></div>
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[3px] border-l-[3px] border-[#8b6b43]"></div>
 
-          <div className="flex flex-col items-center mb-4 mt-4">
-            <div className="w-12 h-12 flex items-center justify-center border border-[#e5bc5b] rounded-sm mb-4">
-              <span className="font-serif text-xl font-bold text-[#e5bc5b] tracking-widest">PS</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#fceabb] to-[#f8b500] drop-shadow-lg mb-3" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
-              مَعْرِض التَّصَامِيم المُجْتَمَعِيَّة
-            </h1>
-            <p className="text-gray-400 text-sm md:text-base tracking-wide font-light">
-              اكتشف تصاميم المبدعين، اشترِ ما يعجبك وادعمهم
-            </p>
-          </div>
-        </header>
+          <div className="border border-[#8b6b43]/20 h-full flex flex-col">
+            {/* Header Section */}
+            <header className="relative pt-8 pb-10 px-6 flex flex-col items-center justify-center border-b border-[#8b6b43]/20 mx-10">
+              <button
+                onClick={() => navigate('/')}
+                className="absolute left-0 top-2 text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group"
+              >
+                <span className="text-sm font-bold tracking-wider">العودة</span>
+                <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform rotate-180" />
+              </button>
 
-        {/* Main Grid */}
-        <main className="flex-1 px-6 md:px-12 pb-24">
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-4 border-[#e5bc5b] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : filteredDesigns.length === 0 ? (
-            <div className="text-center py-20 text-gray-500 font-semibold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-              {filteredDesigns.map(design => (
-                <div 
-                  key={design.id} 
-                  className="group relative bg-[#181818] rounded-xl overflow-hidden flex flex-col transition-all duration-500 hover:shadow-[0_0_30px_rgba(229,188,91,0.15)] hover:-translate-y-1"
-                  style={{
-                    boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), 0 10px 30px -10px rgba(0,0,0,0.5)',
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#e5bc5b]/0 to-[#e5bc5b]/0 group-hover:from-[#e5bc5b]/20 group-hover:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-xl"></div>
-                  
-                  <div className="relative aspect-[4/5] bg-[#0a0a0a] m-1 rounded-t-lg overflow-hidden flex items-center justify-center p-6 border-b border-[#222]">
-                    <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] pointer-events-none z-10"></div>
-                    
-                    {design.imageUrl ? (
-                      <img 
-                        src={design.imageUrl} 
-                        alt={design.name} 
-                        className="w-full h-full object-contain relative z-0 transition-transform duration-700 ease-out group-hover:scale-110 drop-shadow-2xl" 
-                      />
-                    ) : (
-                      <span className="text-[#333] font-bold tracking-widest text-sm relative z-0">بدون صورة</span>
-                    )}
-                    
-                    <div className="absolute top-4 right-4 z-20 bg-gradient-to-r from-[#d4af37] to-[#aa8327] text-black text-xs font-bold px-3 py-1.5 rounded-sm shadow-lg flex items-center gap-1">
-                      <span>{design.purchases}</span>
-                      <span>شراء</span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-5 flex flex-col flex-1 relative z-10 bg-[#161616]">
-                    <h3 className="font-bold text-xl text-white mb-1 truncate tracking-wide text-right">{design.name}</h3>
-                    <p className="text-xs text-[#888] mb-6 truncate text-right font-light">
-                      من تصميم: <span className="text-[#ccc]">{design.user.name || 'مبدع مجهول'}</span>
-                    </p>
-                    
-                    <div className="mt-auto">
-                      <button
-                        onClick={() => handleBuy(design)}
-                        className="w-full py-3.5 bg-transparent border border-[#333] group-hover:border-[#e5bc5b] text-gray-300 group-hover:text-[#e5bc5b] hover:bg-[#e5bc5b] hover:text-black text-sm font-bold rounded-md transition-all duration-300 flex items-center justify-center gap-2"
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>شراء التصميم</span>
-                      </button>
-                    </div>
-                  </div>
+              <div className="flex flex-col items-center mt-2">
+                <div className="w-12 h-10 flex items-center justify-center border-[2px] border-[#8b6b43] mb-3 bg-[#eaddc3]">
+                  <span className="font-serif text-lg font-bold text-[#594228]">PS</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </main>
+                <h1 className="text-4xl md:text-5xl font-bold text-[#594228] mb-2" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+                  مَعْرِض التَّصَامِيم المُجْتَمَعِيَّة
+                </h1>
+                <p className="text-[#8b6b43] text-sm md:text-base font-semibold">
+                  اكتشف تصاميم المبدعين، اشترِ ما يعجبك وادعمهم
+                </p>
+              </div>
+            </header>
+
+            {/* Main Grid */}
+            <main className="flex-1 px-6 md:px-12 py-12 overflow-y-auto">
+              {loading ? (
+                <div className="flex justify-center py-20">
+                  <div className="w-10 h-10 border-4 border-[#8b6b43] border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : filteredDesigns.length === 0 ? (
+                <div className="text-center py-20 text-[#8b6b43] font-bold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-12 pt-6">
+                  {filteredDesigns.map(design => (
+                    <div 
+                      key={design.id} 
+                      className="group relative bg-[#ebddc4] rounded-lg overflow-visible flex flex-col transition-all duration-300 hover:-translate-y-1 shadow-lg border-[2px] border-[#8b6b43]/60"
+                    >
+                      {/* Top Circular Badge */}
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full border-[2px] border-[#f3ebd2] shadow-md flex flex-col items-center justify-center bg-gradient-to-b from-[#b1894d] to-[#6a4f2d] text-[#f3ebd2]">
+                        <span className="text-lg font-bold leading-none mt-1" style={{ fontFamily: "'Aref Ruqaa', serif" }}>{design.purchases}</span>
+                      </div>
+                      
+                      {/* Image Container */}
+                      <div className="relative aspect-[4/5] bg-gradient-to-b from-[#222] to-[#111] m-2 rounded-md overflow-hidden flex items-center justify-center p-4 border border-[#8b6b43]/30 shadow-inner">
+                        {design.imageUrl ? (
+                          <img 
+                            src={design.imageUrl} 
+                            alt={design.name} 
+                            className="w-full h-full object-contain relative z-0 transition-transform duration-700 group-hover:scale-105 drop-shadow-xl" 
+                          />
+                        ) : (
+                          <span className="text-gray-400 font-bold text-sm relative z-0">بدون صورة</span>
+                        )}
+                      </div>
+                      
+                      {/* Content Section */}
+                      <div className="p-5 flex flex-col flex-1 relative z-10 text-center">
+                        <h3 className="font-bold text-xl text-[#3d2b1f] mb-1 truncate" style={{ fontFamily: "'Aref Ruqaa', serif" }}>{design.name}</h3>
+                        <p className="text-xs text-[#8b6b43] font-semibold mb-6 truncate">
+                          من تصميم: <span className="text-[#594228] font-bold">{design.user.name || 'مبدع مجهول'}</span>
+                        </p>
+                        
+                        <div className="mt-auto">
+                          <button
+                            onClick={() => handleBuy(design)}
+                            className="w-full py-2.5 bg-gradient-to-b from-[#3d2b1f] to-[#1a120c] border border-[#594228] text-[#eaddc3] hover:text-white text-sm font-bold rounded-full shadow-md transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg"
+                          >
+                            <ShoppingCart className="w-4 h-4" />
+                            <span>شراء التصميم</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
       </div>
 
-      {/* Solid Sidebar (Left Side in RTL) */}
-      <aside className="w-[300px] hidden lg:flex flex-col bg-[#0f0f0f] border-r border-[#222] h-screen sticky top-0 shrink-0 shadow-2xl z-20 relative overflow-y-auto custom-scrollbar">
-        {/* Subtle gradient overlay for the sidebar */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a]/50 to-transparent pointer-events-none"></div>
-        
-        <div className="p-8 relative z-10">
-          <h2 className="text-2xl font-bold text-white mb-10 border-b border-[#333] pb-4" style={{ fontFamily: "'Aref Ruqaa', serif" }}>فلترة التصاميم</h2>
+      {/* Sidebar (Left Side in RTL) */}
+      <aside className="w-[280px] hidden lg:flex flex-col h-screen sticky top-0 shrink-0 z-20 relative overflow-y-auto custom-scrollbar pt-12 pr-4 border-r border-[#8b6b43]/30">
+        <div className="p-6 relative z-10">
+          <div className="flex flex-col items-center mb-10">
+            <h2 className="text-3xl font-bold text-[#594228]" style={{ fontFamily: "'Aref Ruqaa', serif" }}>قائمة الفلترة</h2>
+            <div className="w-16 h-0.5 bg-[#8b6b43]/50 mt-2"></div>
+          </div>
           
           {/* Categories */}
           <div className="mb-10">
-            <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4">
-              <LayoutGrid className="w-5 h-5" />
+            <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
+              <LayoutGrid className="w-5 h-5 text-[#8b6b43]" />
               <span>التصنيفات</span>
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <button 
                 onClick={() => setSelectedCategory('all')}
-                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'all' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                className={`w-full text-right px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === 'all' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
               >
                 الكل
               </button>
               <button 
                 onClick={() => setSelectedCategory('tshirts')}
-                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'tshirts' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                className={`w-full text-right px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === 'tshirts' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
               >
                 تي شيرت (T-Shirts)
               </button>
               <button 
                 onClick={() => setSelectedCategory('hoodies')}
-                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedCategory === 'hoodies' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                className={`w-full text-right px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === 'hoodies' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
               >
                 هوديز (قريباً)
               </button>
@@ -201,14 +207,14 @@ export default function Community() {
 
           {/* Featured Artists */}
           <div>
-            <h3 className="flex items-center gap-2 text-[#e5bc5b] font-bold text-lg mb-4">
-              <Star className="w-5 h-5" />
+            <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
+              <Star className="w-5 h-5 text-[#8b6b43]" />
               <span>أبرز المبدعين</span>
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <button 
                 onClick={() => setSelectedArtist('all')}
-                className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedArtist === 'all' ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                className={`w-full text-right px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedArtist === 'all' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
               >
                 الجميع
               </button>
@@ -216,7 +222,7 @@ export default function Community() {
                 <button 
                   key={artist}
                   onClick={() => setSelectedArtist(artist as string)}
-                  className={`w-full text-right px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${selectedArtist === artist ? 'bg-[#e5bc5b]/10 border border-[#e5bc5b]/30 text-[#e5bc5b]' : 'text-gray-400 hover:text-white hover:bg-[#222] border border-transparent'}`}
+                  className={`w-full text-right px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedArtist === artist ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
                 >
                   {artist}
                 </button>
