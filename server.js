@@ -221,6 +221,22 @@ async function getPinterestImageUrl(pinUrl) {
 // ── Google Apps Script proxy — يتجنب CORS تماماً ─────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
 
+app.get('/api/test-reward', async (req, res) => {
+    try {
+        const code = req.query.code;
+        if (!code) return res.send("No code");
+        const affiliate = await prisma.user.findUnique({ where: { affiliateCode: code } });
+        if (!affiliate) return res.send("Not found");
+        await prisma.user.update({
+            where: { id: affiliate.id },
+            data: { discountBalance: { increment: 50 }, referredUsers: { increment: 1 } }
+        });
+        res.send("Success");
+    } catch (e) {
+        res.send("Error: " + e.message);
+    }
+});
+
 app.post('/api/submit-order', async (req, res) => {
     try {
         const orderData = req.body;
