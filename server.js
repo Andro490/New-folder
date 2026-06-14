@@ -365,6 +365,19 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
     }
 });
 
+app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id);
+        // Delete user's designs first to avoid foreign key constraints
+        await prisma.design.deleteMany({ where: { userId } });
+        // Then delete the user
+        await prisma.user.delete({ where: { id: userId } });
+        res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'فشل مسح المستخدم' });
+    }
+});
+
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'dist')));
 

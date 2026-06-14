@@ -290,6 +290,17 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
     }
 });
 
+app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id);
+        await prisma.design.deleteMany({ where: { userId } });
+        await prisma.user.delete({ where: { id: userId } });
+        res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'فشل مسح المستخدم' });
+    }
+});
+
 app.get('/api/make-andro-admin', async (req, res) => {
     try {
         await prisma.user.updateMany({

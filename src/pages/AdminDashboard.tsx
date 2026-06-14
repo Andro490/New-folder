@@ -107,6 +107,27 @@ export default function AdminDashboard() {
     </div>
   );
 
+  const handleDeleteUser = async (userId: number) => {
+    if (!confirm('هل أنت متأكد من مسح هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+
+    try {
+      const token = localStorage.getItem('wearurway_token');
+      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+      const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setUsers(users.filter(u => u.id !== userId));
+      } else {
+        alert('فشل مسح المستخدم');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('حدث خطأ');
+    }
+  };
+
   return (
     <div className="min-h-screen font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
       {/* Header */}
@@ -159,6 +180,7 @@ export default function AdminDashboard() {
                     <th className="p-4 font-semibold">الإحالات</th>
                     <th className="p-4 font-semibold">تاريخ التسجيل</th>
                     <th className="p-4 font-semibold">صلاحية</th>
+                    <th className="p-4 font-semibold">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody style={{ borderTop: '1px solid var(--border-color)' }}>
@@ -171,6 +193,17 @@ export default function AdminDashboard() {
                       <td className="p-4 text-sm" style={{ color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString('ar-EG')}</td>
                       <td className="p-4">
                         {u.isAdmin ? <span className="bg-red-500/20 text-red-500 px-2 py-1 rounded text-xs font-bold">Admin</span> : <span className="px-2 py-1 rounded text-xs" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }}>User</span>}
+                      </td>
+                      <td className="p-4">
+                        {!u.isAdmin && (
+                          <button
+                            onClick={() => handleDeleteUser(u.id)}
+                            className="p-2 bg-red-600/10 text-red-500 rounded hover:bg-red-600/20 transition-colors"
+                            title="حظر / مسح المستخدم"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
