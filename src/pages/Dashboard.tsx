@@ -72,7 +72,8 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="max-w-4xl w-full mx-auto p-6 md:p-12 mt-10">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 mt-8">
+        <div className="max-w-4xl w-full mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black mb-4">
             أهلاً بك، <span className="text-[#f5c842]">{user.name}</span>!
@@ -142,6 +143,7 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
