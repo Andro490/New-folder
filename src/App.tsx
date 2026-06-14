@@ -129,9 +129,9 @@ function Editor() {
       <header
         className="flex items-center px-6 h-16 shrink-0"
         style={{
-          backgroundColor: 'rgba(5, 5, 5, 0.85)',
+          backgroundColor: 'rgba(243, 235, 210, 0.95)', /* matches --bg-primary */
           backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          borderBottom: '1px solid var(--border-color)',
           zIndex: 50
         }}
       >
@@ -140,27 +140,27 @@ function Editor() {
           <div
             className="w-8 h-8 rounded flex items-center justify-center shrink-0"
             style={{
-              background: 'linear-gradient(135deg, #f5c842, #d4af37)',
-              boxShadow: '0 0 15px rgba(245, 200, 66, 0.2)',
+              background: 'linear-gradient(135deg, #b1894d, #6a4f2d)',
+              boxShadow: '0 0 15px rgba(139, 107, 67, 0.3)',
             }}
           >
-            <Zap size={16} color="#000" fill="#000" />
+            <Zap size={16} color="#f3ebd2" fill="#f3ebd2" />
           </div>
           <span
             className="font-black text-xl tracking-tight shrink-0"
-            style={{ color: '#fff' }}
+            style={{ color: 'var(--text-primary)' }}
           >
-            Print<span style={{ color: '#f5c842' }}>Studio</span>
+            Print<span style={{ color: 'var(--accent-primary)' }}>Studio</span>
           </span>
           
-          <div className="hidden sm:block h-4 w-px bg-[#222] mx-2"></div>
+          <div className="hidden sm:block h-4 w-px mx-2" style={{ backgroundColor: 'var(--border-color)' }}></div>
           
           <span
             className="hidden sm:inline-block text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shrink-0"
             style={{
-              background: 'rgba(245, 200, 66, 0.1)',
-              color: '#f5c842',
-              border: '1px solid rgba(245, 200, 66, 0.2)'
+              background: 'var(--accent-glow)',
+              color: 'var(--accent-secondary)',
+              border: '1px solid var(--border-color)'
             }}
           >
             {view} VIEW
@@ -169,16 +169,16 @@ function Editor() {
 
         {/* Center: Status / Layers */}
         <div className="hidden md:flex items-center justify-center gap-3 w-1/3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a0a0a] border border-[#1a1a1a]">
-            <Layers size={12} color="#666" />
-            <span className="text-[11px] font-medium tracking-[0.1em] uppercase text-[#888]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
+            <Layers size={12} color="var(--text-muted)" />
+            <span className="text-[11px] font-medium tracking-[0.1em] uppercase" style={{ color: 'var(--text-muted)' }}>
               {layers.length} Layer{layers.length !== 1 ? 's' : ''}
             </span>
           </div>
           {selectedLayer && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111] border border-[#333]">
-              <Sparkles size={12} color="#f5c842" />
-              <span className="text-[11px] font-bold tracking-[0.1em] uppercase text-[#f5c842] truncate max-w-[100px]">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--accent-primary)' }}>
+              <Sparkles size={12} color="var(--accent-primary)" />
+              <span className="text-[11px] font-bold tracking-[0.1em] uppercase truncate max-w-[100px]" style={{ color: 'var(--accent-secondary)' }}>
                 {selectedLayer.name}
               </span>
             </div>
@@ -187,12 +187,12 @@ function Editor() {
 
         {/* Right: Branding */}
         <div className="hidden md:flex items-center justify-end gap-6 w-1/3">
-          <span className="text-[10px] font-bold tracking-[0.25em] text-[#555] uppercase">
+          <span className="text-[10px] font-bold tracking-[0.25em] uppercase" style={{ color: 'var(--text-muted)' }}>
             Platform Design
           </span>
-          <div className="h-4 w-px bg-[#222]"></div>
+          <div className="h-4 w-px" style={{ backgroundColor: 'var(--border-color)' }}></div>
           <span
-            className="text-lg font-black tracking-widest text-white"
+            className="text-lg font-black tracking-widest" style={{ color: 'var(--text-primary)', fontFamily: "'Aref Ruqaa', serif" }}
           >
             ويرورواي
           </span>
@@ -215,30 +215,29 @@ function Editor() {
         <main
           className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[500px] lg:min-h-0"
           style={{
-            backgroundImage: 'linear-gradient(45deg, rgb(42, 42, 42) 25%, transparent 25%), linear-gradient(-45deg, rgb(42, 42, 42) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgb(42, 42, 42) 75%), linear-gradient(-45deg, transparent 75%, rgb(42, 42, 42) 75%)',
-            backgroundSize: '24px 24px',
-            backgroundPosition: '0px 0px, 0px 12px, 12px -12px, -12px 0px',
-            backgroundColor: 'rgb(26, 26, 26)'
+            backgroundImage: 'radial-gradient(rgba(139, 107, 67, 0.15) 1px, transparent 1px)',
+            backgroundSize: '30px 30px',
+            backgroundColor: 'var(--bg-primary)'
           }}
         >
 
-          <div className="absolute top-8 z-20 flex" style={{ border: '1px solid rgba(255,255,255,0.15)' }}>
+          <div className="absolute top-8 z-20 flex rounded-full overflow-hidden border-2" style={{ borderColor: 'var(--border-color)', boxShadow: '0 4px 15px rgba(139, 107, 67, 0.1)' }}>
             <button
-              className="text-sm px-10 py-3 font-bold tracking-[0.15em] transition-colors"
+              className="text-sm px-10 py-2.5 font-bold tracking-[0.15em] transition-colors"
               style={{
-                backgroundColor: view === 'front' ? 'white' : 'transparent',
-                color: view === 'front' ? 'black' : 'white',
+                backgroundColor: view === 'front' ? 'var(--accent-primary)' : 'var(--bg-card)',
+                color: view === 'front' ? '#f9f4e6' : 'var(--text-secondary)',
               }}
               onClick={() => setView('front')}
             >
               أمامي
             </button>
-            <div style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.15)' }} />
+            <div style={{ width: 1, backgroundColor: 'var(--border-color)' }} />
             <button
-              className="text-sm px-10 py-3 font-bold tracking-[0.15em] transition-colors"
+              className="text-sm px-10 py-2.5 font-bold tracking-[0.15em] transition-colors"
               style={{
-                backgroundColor: view === 'back' ? 'white' : 'transparent',
-                color: view === 'back' ? 'black' : 'white',
+                backgroundColor: view === 'back' ? 'var(--accent-primary)' : 'var(--bg-card)',
+                color: view === 'back' ? '#f9f4e6' : 'var(--text-secondary)',
               }}
               onClick={() => setView('back')}
             >

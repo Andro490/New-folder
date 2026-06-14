@@ -9,20 +9,25 @@
 }
 
 :root {
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #111111;
-  --bg-card: #080808;
-  --border-color: #1a1a1a;
-  --border-glow: #f5c84220;
-  --accent-primary: #f5c842;
-  --accent-secondary: #e6a800;
-  --accent-glow: #f5c8421a;
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --text-muted: #666666;
-  --success: #22c55e;
-  --danger: #ef4444;
+  /* Vintage Parchment Theme */
+  --bg-primary: #f3ebd2;
+  --bg-secondary: #e8d5a3;
+  --bg-tertiary: #d4b97a;
+  --bg-card: #f9f4e6;
+  
+  --border-color: rgba(139, 107, 67, 0.4); /* #8b6b43 */
+  --border-glow: rgba(139, 107, 67, 0.2);
+  
+  --accent-primary: #b1894d;
+  --accent-secondary: #6a4f2d;
+  --accent-glow: rgba(200, 168, 90, 0.3); /* #c8a85a */
+  
+  --text-primary: #3d2b1f;
+  --text-secondary: #594228;
+  --text-muted: #8b6b43;
+  
+  --success: #2e7d32;
+  --danger: #c62828;
 }
 
 html, body {
@@ -56,29 +61,30 @@ html, body {
 
 /* Glassmorphism card */
 .glass-card {
-  background: rgba(22, 22, 31, 0.85);
+  background: rgba(249, 244, 230, 0.85); /* Light parchment */
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(139, 107, 67, 0.1);
 }
 
 .glass-card-hover:hover {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 4px 25px var(--accent-glow);
   transition: all 0.2s ease;
 }
 
-/* Neon button */
+/* Neon/Vintage button */
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
+  color: #f9f4e6;
   font-weight: 600;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 4px 15px var(--accent-glow);
 }
 .btn-primary:hover {
-  box-shadow: 0 0 30px var(--accent-primary);
+  box-shadow: 0 6px 20px var(--accent-glow);
   transform: translateY(-1px);
 }
 .btn-primary:active {
@@ -87,7 +93,7 @@ html, body {
 
 .btn-ghost {
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.2s ease;
