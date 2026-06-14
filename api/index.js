@@ -149,8 +149,7 @@ app.post('/api/submit-order', async (req, res) => {
                     await prisma.user.update({
                         where: { id: design.userId },
                         data: {
-                            discountBalance: { increment: 50 },
-                            referredUsers: { increment: 1 }
+                            discountBalance: { increment: 50 }
                         }
                     });
                     await prisma.design.update({

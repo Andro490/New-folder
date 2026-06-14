@@ -605,7 +605,8 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 
   console.log('📦 بيانات الطلب اللي هتتبعت:', safe);
 
-  const response = await fetch('/api/submit-order', {
+  const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+  const response = await fetch(`${API_BASE}/api/submit-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(safe),
@@ -615,18 +616,6 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 
   if (!response.ok || !result.success) {
     throw new Error(result.error || 'فشل الإرسال');
-  }
-
-  // ── Track Community Design Purchase ──
-  try {
-    const designId = localStorage.getItem('wearurway_community_design_id');
-    if (designId) {
-      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
-      await fetch(`${API_BASE}/api/designs/${designId}/purchase`, { method: 'POST' });
-      localStorage.removeItem('wearurway_community_design_id');
-    }
-  } catch (e) {
-    console.error('Failed to track purchase', e);
   }
 
   console.log('✅ تم إرسال الطلب بنجاح');
