@@ -281,14 +281,14 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
     >
       <div
         style={{
-          width: 400, backgroundColor: '#0d0d0d',
-          border: '1px solid #222', fontFamily: "'Inter', sans-serif", padding: 24
+          width: 400, backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif", padding: 24
         }}
         onClick={e => e.stopPropagation()}
         dir="rtl"
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ margin: 0, color: '#fff' }}>إضافة صورة من Pinterest</h3>
+          <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>إضافة صورة من Pinterest</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#666', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
@@ -297,7 +297,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
           value={url}
           onChange={e => setUrl(e.target.value)}
           placeholder="ضع رابط Pinterest هنا (مثل https://pin.it/...)"
-          style={{ width: '100%', padding: '10px', marginBottom: 10, background: '#111', color: '#fff', border: '1px solid #333' }}
+          style={{ width: '100%', padding: '10px', marginBottom: 10, background: '#111', color: 'var(--text-primary)', border: '1px solid #333' }}
         />
 
         {error && <p style={{ color: '#e74c3c', fontSize: 13, marginBottom: 10 }}>{error}</p>}
@@ -307,7 +307,7 @@ function PinterestModal({ onClose, onAddLayer, view, setDesignUrl }: PinterestMo
           disabled={loading || !url}
           style={{
             width: '100%', padding: '12px',
-            backgroundColor: loading || !url ? '#333' : '#f5c842',
+            backgroundColor: loading || !url ? '#333' : 'var(--accent-primary)',
             color: loading || !url ? '#666' : '#000',
             border: 'none', cursor: loading || !url ? 'not-allowed' : 'pointer',
             fontWeight: 'bold'
@@ -367,7 +367,7 @@ const FONTS = [
 ];
 
 const PRESET_COLORS = [
-  '#ffffff', '#000000', '#e60023', '#f5c842',
+  '#ffffff', '#000000', '#e60023', 'var(--accent-primary)',
   '#6366f1', '#22d3ee', '#4ade80', '#f97316',
 ];
 
@@ -433,8 +433,8 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
     >
       <div
         style={{
-          width: 460, backgroundColor: '#0d0d0d',
-          border: '1px solid #222', fontFamily: "'Inter', sans-serif",
+          width: 460, backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif",
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -447,7 +447,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
             <p style={{ fontSize: 10, color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 2 }}>
               TEXT LAYER
             </p>
-            <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
               ADD YOUR TEXT
             </p>
           </div>
@@ -461,7 +461,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
 
           {/* Live Preview */}
           <div style={{
-            backgroundColor: '#111', border: '1px solid #222',
+            backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)',
             padding: '20px', marginBottom: 20, minHeight: 80,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             overflow: 'hidden',
@@ -486,7 +486,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
             rows={2}
             style={{
               width: '100%', padding: '10px 12px',
-              backgroundColor: '#0a0a0a', color: '#fff',
+              backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)',
               border: '1px solid #2a2a2a', marginBottom: 16,
               fontSize: 14, outline: 'none', resize: 'none',
               fontFamily: font, boxSizing: 'border-box',
@@ -502,7 +502,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
                 onChange={e => setFont(e.target.value)}
                 style={{
                   width: '100%', padding: '8px 10px',
-                  backgroundColor: '#111', color: '#fff',
+                  backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)',
                   border: '1px solid #2a2a2a', fontSize: 12, outline: 'none',
                 }}
               >
@@ -515,7 +515,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
                 onClick={() => setBold(b => !b)}
                 style={{
                   padding: '8px 14px', height: 34,
-                  backgroundColor: bold ? '#f5c842' : '#111',
+                  backgroundColor: bold ? 'var(--accent-primary)' : '#111',
                   color: bold ? '#000' : '#888',
                   border: '1px solid #2a2a2a', cursor: 'pointer',
                   fontWeight: 900, fontSize: 13,
@@ -534,7 +534,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
             <input
               type="range" min={16} max={120} value={fontSize}
               onChange={e => setFontSize(Number(e.target.value))}
-              style={{ width: '100%', accentColor: '#f5c842' }}
+              style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
             />
           </div>
 
@@ -548,7 +548,7 @@ function TextModal({ onClose, onAddLayer, view }: TextModalProps) {
                   onClick={() => setColor(c)}
                   style={{
                     width: 28, height: 28, backgroundColor: c,
-                    border: color === c ? '2px solid #f5c842' : '1px solid #333',
+                    border: color === c ? '2px solid var(--accent-primary)' : '1px solid #333',
                     cursor: 'pointer', flexShrink: 0,
                   }}
                 />
@@ -643,7 +643,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
-    backgroundColor: '#0a0a0a', color: '#fff',
+    backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)',
     border: '1px solid #2a2a2a', outline: 'none',
     fontSize: 13, fontFamily: 'inherit',
     boxSizing: 'border-box',
@@ -655,19 +655,19 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
       <div
         style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <div style={{ maxWidth: 520, width: '90%', backgroundColor: '#080808', border: '1px solid #1e1e1e', padding: '52px 40px', textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ maxWidth: 520, width: '90%', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', padding: '52px 40px', textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
           {/* Animated checkmark */}
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #f5c842, #e6a800)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 0 40px rgba(245,200,66,0.35)' }}>
+          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-primary), #e6a800)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 0 40px rgba(245,200,66,0.35)' }}>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
 
-          <p style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#f5c842', marginBottom: 12 }}>ORDER CONFIRMED</p>
-          <h2 style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', marginBottom: 16 }}>شكراً لك! 🎉</h2>
+          <p style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--accent-primary)', marginBottom: 12 }}>ORDER CONFIRMED</p>
+          <h2 style={{ fontSize: 28, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 16 }}>شكراً لك! 🎉</h2>
           <p style={{ fontSize: 14, color: '#666', lineHeight: 1.8, marginBottom: 36 }}>
             تم استلام طلبك بنجاح.<br />
-            سيتواصل معك فريقنا خلال <strong style={{ color: '#fff' }}>24 ساعة</strong> لتأكيد التصميم.<br />
+            سيتواصل معك فريقنا خلال <strong style={{ color: 'var(--text-primary)' }}>24 ساعة</strong> لتأكيد التصميم.<br />
             ترقّب تيشيرتك المخصص! 🔥
           </p>
 
@@ -678,16 +678,16 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               { label: 'اللون', value: colorLabel },
               { label: 'الإجمالي', value: `${total} جنيه` },
             ].map(item => (
-              <div key={item.label} style={{ backgroundColor: '#111', border: '1px solid #222', padding: '10px 20px', minWidth: 110 }}>
+              <div key={item.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '10px 20px', minWidth: 110 }}>
                 <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{item.label}</p>
-                <p style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{item.value}</p>
+                <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)' }}>{item.value}</p>
               </div>
             ))}
           </div>
 
           <button
             onClick={onClose}
-            style={{ width: '100%', padding: '14px', backgroundColor: '#f5c842', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
+            style={{ width: '100%', padding: '14px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
           >
             العودة للتصميم
           </button>
@@ -704,13 +704,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
         {/* Refund Policy Modal */}
         {showRefundPolicy && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowRefundPolicy(false)}>
-            <div style={{ width: 480, maxWidth: '90%', backgroundColor: '#111', border: '1px solid #222', padding: 40, fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()} dir="rtl">
+            <div style={{ width: 480, maxWidth: '90%', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: 40, fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()} dir="rtl">
               <p style={{ fontSize: 11, color: '#555', marginBottom: 12 }}>سياسة</p>
-              <h2 style={{ fontSize: 24, fontWeight: 900, color: '#fff', letterSpacing: '0.05em', marginBottom: 24 }}>سياسة الاسترداد</h2>
+              <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 24 }}>سياسة الاسترداد</h2>
               <p style={{ fontSize: 15, color: '#ddd', lineHeight: 1.8, marginBottom: 36 }}>
                 للأسف، لا نقدم خدمة الإرجاع أو الاستبدال لأن هذا التيشيرت مصمم خصيصاً لك. مع ذلك، يمكنك رفض استلام الطلب إذا لم يكن التصميم كما صممته أو طلبته، أو إذا لم تكن راضياً عن الخامة.
               </p>
-              <button onClick={() => setShowRefundPolicy(false)} style={{ width: '100%', padding: '16px', backgroundColor: '#f5c842', color: '#000', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
+              <button onClick={() => setShowRefundPolicy(false)} style={{ width: '100%', padding: '16px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
                 فهمتها
               </button>
             </div>
@@ -726,7 +726,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
         <div className="max-w-[1300px] mx-auto px-4 py-10 min-h-[calc(100vh-60px)] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16 lg:mr-[15%]">
           {/* RIGHT/TOP: Form */}
           <div className="w-full lg:w-[650px]">
-            <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
+            <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
 
             {/* Delivery info */}
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>معلومات التوصيل</p>
@@ -768,13 +768,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               <div
                 key={opt.id}
                 onClick={() => setShipping(opt.id as 'free' | 'premium')}
-                style={{ border: `1px solid ${shipping === opt.id ? '#f5c842' : '#1e1e1e'}`, backgroundColor: shipping === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
+                style={{ border: `1px solid ${shipping === opt.id ? 'var(--accent-primary)' : '#1e1e1e'}`, backgroundColor: shipping === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
               >
-                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${shipping === opt.id ? '#f5c842' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {shipping === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#f5c842' }} />}
+                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${shipping === opt.id ? 'var(--accent-primary)' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {shipping === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent-primary)' }} />}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{opt.icon} {opt.label}</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{opt.icon} {opt.label}</p>
                   <p style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{opt.sub}</p>
                 </div>
                 <p style={{ fontSize: 13, fontWeight: 700, color: '#4ade80', flexShrink: 0 }}>{opt.price}</p>
@@ -790,13 +790,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               <div
                 key={opt.id}
                 onClick={() => setPayMethod(opt.id as 'instapay' | 'cod')}
-                style={{ border: `1px solid ${payMethod === opt.id ? '#f5c842' : '#1e1e1e'}`, backgroundColor: payMethod === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
+                style={{ border: `1px solid ${payMethod === opt.id ? 'var(--accent-primary)' : '#1e1e1e'}`, backgroundColor: payMethod === opt.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a', padding: '16px 20px', marginBottom: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16 }}
               >
-                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${payMethod === opt.id ? '#f5c842' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {payMethod === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#f5c842' }} />}
+                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${payMethod === opt.id ? 'var(--accent-primary)' : '#444'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {payMethod === opt.id && <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--accent-primary)' }} />}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{opt.icon} {opt.label}</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{opt.icon} {opt.label}</p>
                   <p style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{opt.sub}</p>
                 </div>
               </div>
@@ -804,13 +804,13 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
 
             {/* InstaPay Upload Section */}
             {payMethod === 'instapay' && (
-              <div style={{ marginTop: 16, border: '1px dashed #f5c842', padding: '20px', backgroundColor: 'rgba(245,200,66,0.03)' }}>
-                <p style={{ fontSize: 11, color: '#f5c842', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>📎 إرفاق إيصال التحويل</p>
+              <div style={{ marginTop: 16, border: '1px dashed var(--accent-primary)', padding: '20px', backgroundColor: 'rgba(245,200,66,0.03)' }}>
+                <p style={{ fontSize: 11, color: 'var(--accent-primary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>📎 إرفاق إيصال التحويل</p>
                 <label
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     gap: 10, padding: '14px', border: '1px solid #2a2a2a',
-                    backgroundColor: '#0a0a0a', cursor: 'pointer',
+                    backgroundColor: 'var(--bg-secondary)', cursor: 'pointer',
                     fontSize: 12, color: '#888', letterSpacing: '0.08em'
                   }}
                 >
@@ -838,7 +838,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     />
                     <button
                       onClick={() => { setPaymentProof(null); setPaymentProofPreview(null); }}
-                      style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(0,0,0,0.8)', border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 14 }}
+                      style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(0,0,0,0.8)', border: 'none', color: 'var(--text-primary)', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 14 }}
                     >×</button>
                     <p style={{ fontSize: 11, color: '#4ade80', marginTop: 8 }}>✓ تم رفع الإيصال بنجاح</p>
                   </div>
@@ -852,7 +852,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>تصميمك</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
               {[{ id: 'front', label: 'أمام' }, { id: 'back', label: 'خلف' }].map(side => (
-                <div key={side.id} style={{ backgroundColor: '#0a0a0a', border: '1px solid #1a1a1a', padding: 12 }}>
+                <div key={side.id} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: 12 }}>
                   <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8, overflow: 'hidden' }}>
                     <TshirtPreviewBox layers={allLayers} tshirtColor={tshirtColor} view={side.id as TShirtView} width={150} height={160} />
                   </div>
@@ -873,12 +873,12 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             ].map(row => (
               <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #111' }}>
                 <span style={{ fontSize: 12, color: '#555' }}>{row.label}</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{row.value as any}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{row.value as any}</span>
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 4 }}>
               <span style={{ fontSize: 12, color: '#555' }}>المجموع</span>
-              <span style={{ fontSize: 18, fontWeight: 900, color: '#f5c842' }}>جنيه مصري {total}</span>
+              <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-primary)' }}>جنيه مصري {total}</span>
             </div>
 
             <button
@@ -973,7 +973,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               }}
               style={{
                 width: '100%', padding: '16px',
-                backgroundColor: isSubmitting ? '#8a7020' : '#f5c842',
+                backgroundColor: isSubmitting ? '#8a7020' : 'var(--accent-primary)',
                 color: '#000', border: 'none',
                 cursor: isSubmitting ? 'wait' : 'pointer',
                 fontSize: 14, fontWeight: 900,
@@ -999,11 +999,11 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   if (step === 'review') {
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
-        <div style={{ width: '100%', maxWidth: 560, backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
+        <div style={{ width: '100%', maxWidth: 560, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 2 OF 2</p>
-              <h2 style={{ fontSize: 18, fontWeight: 900, color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>REVIEW ORDER</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>REVIEW ORDER</h2>
             </div>
             <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
           </div>
@@ -1014,7 +1014,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>DESIGN PREVIEW</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
               {[{ id: 'front', label: 'FRONT' }, { id: 'back', label: 'BACK' }].map(side => (
-                <div key={side.id} style={{ backgroundColor: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+                <div key={side.id} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
                   <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     <TshirtPreviewBox layers={allLayers} tshirtColor={tshirtColor} view={side.id as TShirtView} width={200} height={200} />
                   </div>
@@ -1030,20 +1030,20 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               { label: 'COLOR', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel.toUpperCase()}</span> },
               { label: 'SIZE', value: selectedSize },
             ].map(row => (
-              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: '#0a0a0a', border: '1px solid #111', marginBottom: 1 }}>
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid #111', marginBottom: 1 }}>
                 <span style={{ fontSize: 11, color: '#444', letterSpacing: '0.1em' }}>{row.label}</span>
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>{row.value as any}</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em' }}>{row.value as any}</span>
               </div>
             ))}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 8 }}>
               <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>TOTAL</span>
-              <span style={{ fontSize: 22, fontWeight: 900, color: '#f5c842' }}>{designPrice} <span style={{ fontSize: 13, color: '#888' }}>EGP</span></span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent-primary)' }}>{designPrice} <span style={{ fontSize: 13, color: '#888' }}>EGP</span></span>
             </div>
 
             <button
               onClick={() => setStep('checkout')}
-              style={{ width: '100%', padding: '16px', backgroundColor: '#f5c842', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
+              style={{ width: '100%', padding: '16px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
             >
               CONFIRM ORDER
             </button>
@@ -1056,12 +1056,12 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
   // ── SIZE SELECTION ───────────────────────────────────────────────
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
-      <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: '#080808', border: '1px solid #1e1e1e', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+      <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 1 OF 2</p>
-            <h2 style={{ fontSize: 18, fontWeight: 900, color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>SELECT SIZE</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>SELECT SIZE</h2>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
@@ -1074,7 +1074,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '6px 12px', backgroundColor: 'rgba(245, 200, 66, 0.1)',
-                color: '#f5c842', border: '1px solid rgba(245, 200, 66, 0.3)',
+                color: 'var(--accent-primary)', border: '1px solid rgba(245, 200, 66, 0.3)',
                 borderRadius: 100, fontSize: 12, fontWeight: 700,
                 cursor: 'pointer', transition: 'all 0.2s ease'
               }}
@@ -1091,15 +1091,15 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                 key={sz.id}
                 onClick={() => { setSelectedSize(sz.id); setStep('review'); }}
                 style={{
-                  border: `1px solid ${selectedSize === sz.id ? '#f5c842' : '#1e1e1e'}`,
+                  border: `1px solid ${selectedSize === sz.id ? 'var(--accent-primary)' : '#1e1e1e'}`,
                   backgroundColor: selectedSize === sz.id ? 'rgba(245,200,66,0.05)' : '#0a0a0a',
                   padding: '28px 20px', cursor: 'pointer', textAlign: 'center',
                   transition: 'all 0.15s',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = '#f5c842')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = selectedSize === sz.id ? '#f5c842' : '#1e1e1e')}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent-primary)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = selectedSize === sz.id ? 'var(--accent-primary)' : '#1e1e1e')}
               >
-                <p style={{ fontSize: 20, fontWeight: 900, color: '#fff', letterSpacing: '0.12em', marginBottom: 8 }}>{sz.label}</p>
+                <p style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.12em', marginBottom: 8 }}>{sz.label}</p>
                 <p style={{ fontSize: 12, color: '#555', marginBottom: 10 }}>
                   {sz.dims.split(' × ')[0]} × {sz.dims.split(' × ')[1]} <span style={{ color: '#4a9eff', fontSize: 10 }}>cm</span>
                 </p>
@@ -1190,20 +1190,20 @@ export default function SettingsSidebar({
           {/* Row: منتج */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ fontSize: 13, color: '#555' }}>منتج</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>تي شيرت</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>تي شيرت</span>
           </div>
 
           {/* Row: ملائم */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ fontSize: 13, color: '#555' }}>ملائم</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>مقاس عادي</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>مقاس عادي</span>
           </div>
 
           {/* Row: لون */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, color: '#555' }}>لون</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                 {tshirtColor === 'black' ? 'أسود'
                   : tshirtColor === 'white' ? 'أبيض'
                     : tshirtColor === 'navy' ? 'كحلي'
@@ -1230,7 +1230,7 @@ export default function SettingsSidebar({
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               width: '100%',
               padding: '16px 0',
-              backgroundColor: '#f5c842',
+              backgroundColor: 'var(--accent-primary)',
               color: '#0d0d0d',
               fontWeight: 900,
               fontSize: 15,
@@ -1261,17 +1261,17 @@ export default function SettingsSidebar({
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '14px 18px',
-                fontSize: 14, fontWeight: 600, color: '#fff',
-                backgroundColor: '#111',
+                fontSize: 14, fontWeight: 600, color: 'var(--text-primary)',
+                backgroundColor: 'var(--bg-card)',
                 borderRadius: 10,
-                border: '1px solid #222',
+                border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#111'; e.currentTarget.style.borderColor = '#222'; }}
             >
               <span>رفع صورة من الجهاز</span>
-              <ImageIcon size={18} color="#f5c842" />
+              <ImageIcon size={18} color="var(--accent-primary)" />
             </button>
 
             {/* إضافة رابط Pinterest */}
@@ -1280,10 +1280,10 @@ export default function SettingsSidebar({
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '14px 18px',
-                fontSize: 14, fontWeight: 600, color: '#fff',
-                backgroundColor: '#111',
+                fontSize: 14, fontWeight: 600, color: 'var(--text-primary)',
+                backgroundColor: 'var(--bg-card)',
                 borderRadius: 10,
-                border: '1px solid #222',
+                border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
@@ -1299,10 +1299,10 @@ export default function SettingsSidebar({
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '14px 18px',
-                fontSize: 14, fontWeight: 600, color: '#fff',
-                backgroundColor: '#111',
+                fontSize: 14, fontWeight: 600, color: 'var(--text-primary)',
+                backgroundColor: 'var(--bg-card)',
                 borderRadius: 10,
-                border: '1px solid #222',
+                border: '1px solid var(--border-color)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1a1a1a'; e.currentTarget.style.borderColor = '#333'; }}
@@ -1314,7 +1314,7 @@ export default function SettingsSidebar({
           </div>
 
           {/* حجم النموذج الأولي */}
-          <div style={{ backgroundColor: '#0a0a0a', padding: 16, borderRadius: 12, border: '1px solid #1a1a1a', marginBottom: 20 }}>
+          <div style={{ backgroundColor: 'var(--bg-secondary)', padding: 16, borderRadius: 12, border: '1px solid var(--border-color)', marginBottom: 20 }}>
             <p style={{ fontSize: 12, color: '#888', marginBottom: 12, textAlign: 'center' }}>
               معاينة حجم التصميم
             </p>
@@ -1324,8 +1324,8 @@ export default function SettingsSidebar({
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   flex: 1, padding: '12px 0',
-                  fontSize: 13, fontWeight: 600, color: '#fff',
-                  backgroundColor: '#161616', borderRadius: 8, border: '1px solid #222',
+                  fontSize: 13, fontWeight: 600, color: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-tertiary)', borderRadius: 8, border: '1px solid var(--border-color)',
                   cursor: 'pointer', transition: 'all 0.2s'
                 }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
@@ -1338,8 +1338,8 @@ export default function SettingsSidebar({
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   flex: 1, padding: '12px 0',
-                  fontSize: 13, fontWeight: 600, color: '#fff',
-                  backgroundColor: '#161616', borderRadius: 8, border: '1px solid #222',
+                  fontSize: 13, fontWeight: 600, color: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-tertiary)', borderRadius: 8, border: '1px solid var(--border-color)',
                   cursor: 'pointer', transition: 'all 0.2s'
                 }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
@@ -1356,15 +1356,15 @@ export default function SettingsSidebar({
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               width: '100%',
               padding: '14px 16px',
-              fontSize: 13, fontWeight: 700, color: '#fff',
-              backgroundColor: 'rgba(255,255,255,0.05)', 
+              fontSize: 13, fontWeight: 700, color: 'var(--text-primary)',
+              backgroundColor: 'var(--bg-card)', 
               borderRadius: 10,
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--border-color)',
               cursor: 'pointer', transition: 'all 0.2s',
               marginBottom: '10px'
             }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
           >
             <Save size={16} />
             حفظ التعديلات للعودة لاحقاً

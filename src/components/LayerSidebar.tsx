@@ -167,8 +167,8 @@ function PinterestModal({
     >
       <div
         style={{
-          width: 480, backgroundColor: '#0d0d0d',
-          border: '1px solid #222',
+          width: 480, backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           fontFamily: "'Inter', sans-serif",
         }}
         onClick={e => e.stopPropagation()}
@@ -190,10 +190,10 @@ function PinterestModal({
               </svg>
             </div>
             <div>
-              <p style={{ fontSize: 10, color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 2 }}>
+              <p style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 2 }}>
                 DESIGN INSPIRATION
               </p>
-              <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                 FIND YOUR DESIGN
               </p>
             </div>
@@ -211,7 +211,7 @@ function PinterestModal({
           {step === 'choose' ? (
             <>
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
-                <p style={{ fontSize: 13, fontWeight: 800, color: '#f5c842', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+                <p style={{ fontSize: 13, fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
                   ⚠ BEFORE YOU CONTINUE ⚠
                 </p>
                 <p style={{ fontSize: 12, color: '#666', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -252,8 +252,8 @@ function PinterestModal({
             </>
           ) : (
             <>
-              <p style={{ fontSize: 13, color: '#aaa', marginBottom: 24, lineHeight: 1.6 }}>
-                الصق رابط Pinterest pin أو رابط الصورة المباشر، ثم اضغط <strong style={{ color: '#fff' }}>Start Design</strong>.
+              <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24, lineHeight: 1.6 }}>
+                الصق رابط Pinterest pin أو رابط الصورة المباشر، ثم اضغط <strong style={{ color: 'var(--text-primary)' }}>Start Design</strong>.
               </p>
 
               <p style={{ fontSize: 10, color: '#666', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 8 }}>
@@ -270,8 +270,8 @@ function PinterestModal({
                   disabled={loading}
                   style={{
                     flex: 1, padding: '12px 14px',
-                    backgroundColor: '#0a0a0a', color: '#fff',
-                    border: '1px solid #2a2a2a', borderRight: 'none',
+                    backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)',
+                    border: '1px solid var(--border-color)', borderRight: 'none',
                     fontSize: 12, outline: 'none',
                     fontFamily: 'inherit',
                     opacity: loading ? 0.5 : 1,
@@ -451,58 +451,59 @@ export default function LayerSidebar({
 
   const S = {
     sidebar: {
-      backgroundColor: '#0a0a0a',
-      borderRight: '1px solid #1a1a1a',
+      backgroundColor: 'var(--bg-primary)',
+      borderRight: '1px solid var(--border-color)',
       display: 'flex', flexDirection: 'column' as const,
       fontFamily: "'Inter', sans-serif",
     },
     header: {
       padding: '20px 24px',
-      borderBottom: '1px solid #1a1a1a',
+      borderBottom: '1px solid var(--border-color)',
     },
     brand: {
-      fontSize: 18, fontWeight: 900, color: '#fff',
+      fontSize: 18, fontWeight: 900, color: 'var(--text-primary)',
       letterSpacing: '0.15em', textTransform: 'uppercase' as const,
       marginBottom: 16,
     },
     sectionTitle: {
-      fontSize: 12, fontWeight: 700, color: '#888',
+      fontSize: 12, fontWeight: 700, color: 'var(--text-muted)',
       letterSpacing: '0.15em', textTransform: 'uppercase' as const,
     },
     layerList: { flex: 1, overflowY: 'auto' as const, padding: '16px' },
     emptyText: {
-      fontSize: 12, fontWeight: 600, color: '#555',
+      fontSize: 12, fontWeight: 600, color: 'var(--text-muted)',
       letterSpacing: '0.05em', lineHeight: 1.6, padding: '20px 0', textAlign: 'center' as const,
     },
     layerCard: (selected: boolean) => ({
-      border: `1px solid ${selected ? '#f5c842' : '#222'}`,
-      backgroundColor: selected ? 'rgba(245, 200, 66, 0.05)' : '#111',
+      border: `1px solid ${selected ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+      backgroundColor: selected ? 'var(--bg-card)' : 'var(--bg-secondary)',
       borderRadius: 12,
       marginBottom: 12, padding: '12px',
       transition: 'all 0.2s ease',
       cursor: 'pointer',
+      boxShadow: selected ? '0 4px 15px rgba(139, 107, 67, 0.1)' : 'none',
     }),
     layerRow: {
       display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8,
     },
     thumb: {
       width: 44, height: 44, objectFit: 'contain' as const,
-      backgroundColor: '#000', borderRadius: 8, border: '1px solid #222', flexShrink: 0,
+      backgroundColor: 'var(--bg-tertiary)', borderRadius: 8, border: '1px solid var(--border-color)', flexShrink: 0,
     },
     layerName: {
-      flex: 1, fontSize: 13, fontWeight: 700, color: '#fff',
+      flex: 1, fontSize: 13, fontWeight: 700, color: 'var(--text-primary)',
       letterSpacing: '0.05em', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis',
     },
     iconBtn: (danger = false) => ({
       background: 'none', border: 'none', cursor: 'pointer',
-      color: danger ? '#e63946' : '#888', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      color: danger ? 'var(--danger)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 6, borderRadius: 6, transition: 'all 0.2s',
     }),
     actionRow: { display: 'flex', gap: 8, marginBottom: 8 },
     actionBtn: (disabled = false) => ({
       flex: 1, padding: '8px 6px',
-      backgroundColor: '#1a1a1a', borderRadius: 8, border: '1px solid #2a2a2a',
-      color: disabled ? '#555' : '#ccc',
+      backgroundColor: 'var(--bg-card)', borderRadius: 8, border: '1px solid var(--border-color)',
+      color: disabled ? 'rgba(89, 66, 40, 0.5)' : 'var(--text-secondary)',
       fontSize: 11, fontWeight: 600,
       cursor: disabled ? 'not-allowed' : 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -510,25 +511,25 @@ export default function LayerSidebar({
     }),
     deleteBtn: {
       padding: '8px', borderRadius: 8,
-      backgroundColor: 'rgba(230, 57, 70, 0.1)', border: '1px solid rgba(230, 57, 70, 0.2)',
-      color: '#e63946', cursor: 'pointer',
+      backgroundColor: 'rgba(198, 40, 40, 0.1)', border: '1px solid rgba(198, 40, 40, 0.2)',
+      color: 'var(--danger)', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       transition: 'all 0.2s',
     },
     uploadZone: {
       margin: '0 12px 12px',
-      border: '1px dashed #1e1e1e', padding: '12px',
+      border: '1px dashed var(--border-color)', padding: '12px',
       textAlign: 'center' as const, cursor: 'pointer',
-      backgroundColor: '#0a0a0a',
+      backgroundColor: 'var(--bg-secondary)',
     },
     uploadText: {
-      fontSize: 10, fontWeight: 700, color: '#444',
+      fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)',
       letterSpacing: '0.1em', textTransform: 'uppercase' as const,
     },
     pinterestCard: {
       margin: '0 12px 12px',
-      backgroundColor: '#1a0000',
-      border: '1px solid #3a0000',
+      backgroundColor: '#fbe9e7', /* Light reddish/parchment tint for pinterest */
+      border: '1px solid #ffccbc',
       borderRadius: 10, padding: '14px',
       cursor: 'pointer', display: 'flex', gap: 10, alignItems: 'flex-start',
     },
@@ -538,7 +539,7 @@ export default function LayerSidebar({
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     },
     pinterestText: {
-      fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1.5,
+      fontSize: 12, fontWeight: 700, color: '#b71c1c', lineHeight: 1.5,
     },
   };
 
@@ -590,7 +591,7 @@ export default function LayerSidebar({
                     <div onClick={e => e.stopPropagation()}>
                       <div style={{ marginBottom: 12 }}>
                         <button
-                          style={{ ...S.actionBtn(), width: '100%', padding: '10px', backgroundColor: '#f5c842', color: '#000', border: 'none' }}
+                          style={{ ...S.actionBtn(), width: '100%', padding: '10px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none' }}
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <Edit2 size={14} /> تغيير الصورة
@@ -600,7 +601,7 @@ export default function LayerSidebar({
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                         {layer.originalImageUrl && layer.originalImageUrl !== layer.imageUrl && (
                           <button
-                            style={{ ...S.actionBtn(), width: '100%', color: '#fff', backgroundColor: 'rgba(255,255,255,0.05)', borderColor: '#333' }}
+                            style={{ ...S.actionBtn(), width: '100%', color: 'var(--text-primary)', backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-color)' }}
                             onClick={() => onUpdate(layer.id, { imageUrl: layer.originalImageUrl, pinterestUrl: '' })}
                             title="إلغاء التعديلات والرجوع للصورة الأصلية"
                           >
