@@ -24,11 +24,13 @@ export default function Auth() {
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
+      // Show debug info if response is not ok
       if (!response.ok) {
-        throw new Error(data.error || 'حدث خطأ');
+        const text = await response.text();
+        throw new Error(`[${response.status}] URL: ${url} | Response: ${text || 'empty'}`);
       }
 
+      const data = await response.json();
       localStorage.setItem('wearurway_token', data.token);
       localStorage.setItem('wearurway_user', JSON.stringify(data.user));
       navigate('/dashboard');
