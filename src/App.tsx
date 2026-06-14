@@ -187,6 +187,15 @@ function Editor() {
           view={view}
         />
 
+        {/* Golden left divider */}
+        <div
+          className="hidden lg:block w-[2px] shrink-0 self-stretch"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, #c8a85a 15%, #b1894d 50%, #c8a85a 85%, transparent)',
+            boxShadow: '0 0 8px rgba(200, 168, 90, 0.5)',
+          }}
+        />
+
         <main
           className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[500px] lg:min-h-0"
           style={{
@@ -257,6 +266,15 @@ function Editor() {
               </div>
             )}
         </main>
+
+        {/* Golden right divider */}
+        <div
+          className="hidden lg:block w-[2px] shrink-0 self-stretch"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, #c8a85a 15%, #b1894d 50%, #c8a85a 85%, transparent)',
+            boxShadow: '0 0 8px rgba(200, 168, 90, 0.5)',
+          }}
+        />
 
         <SettingsSidebar
           view={view}
