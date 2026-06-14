@@ -72,53 +72,75 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="max-w-5xl w-full mx-auto p-6 md:p-10 mt-8">
-        <h1 className="text-3xl font-black mb-2">أهلاً، <span className="text-[#f5c842]">{user.name}</span>!</h1>
-        <p className="text-gray-400 mb-10">مرحباً بك في لوحة التحكم الخاصة بك.</p>
+      <div className="max-w-4xl w-full mx-auto p-6 md:p-12 mt-10">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-black mb-4">
+            أهلاً بك، <span className="text-[#f5c842]">{user.name}</span>!
+          </h1>
+          <p className="text-gray-400 text-lg">
+            مرحباً بك في لوحة التحكم الخاصة بك. تابع أرباحك وتصاميمك من هنا.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Affiliate Card */}
-          <div className="bg-[#111] border border-[#222] rounded-2xl p-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#f5c842]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Layers className="text-[#f5c842]" /> رابط الإحالة الخاص بك
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          {/* Stats Card */}
+          <div className="bg-[#111] border border-[#222] rounded-3xl p-8 flex flex-col justify-center shadow-xl hover:border-[#333] transition-colors">
+            <h2 className="text-xl font-bold mb-8 flex items-center justify-center gap-2 text-gray-300">
+              إحصائياتك الحالية
             </h2>
-            <p className="text-sm text-gray-400 mb-6">
-              شارك هذا الرابط مع أصدقائك أو عملائك. ستحصل على <span className="text-[#f5c842] font-bold">50 جنيه</span> رصيد عن كل عميل يشتري من خلال الرابط الخاص بك.
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 text-center shadow-inner">
+                <p className="text-gray-500 text-sm mb-3">رصيدك الحالي</p>
+                <p className="text-5xl font-black text-[#f5c842]">
+                  {user.discountBalance} <span className="text-base text-gray-500 font-normal">ج.م</span>
+                </p>
+              </div>
+              <div className="bg-[#050505] border border-[#1a1a1a] rounded-2xl p-6 text-center shadow-inner">
+                <p className="text-gray-500 text-sm mb-3">العملاء المحالين</p>
+                <p className="text-5xl font-black text-white">{user.referredUsers}</p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 text-center mt-8 px-4 leading-relaxed">
+              * سيتم خصم رصيدك تلقائياً عند قيامك بشراء تيشيرت خاص بك من المتجر.
             </p>
-            <div className="flex items-center bg-[#1a1a1a] border border-[#333] rounded p-2 gap-2">
+          </div>
+
+          {/* Affiliate Card */}
+          <div className="bg-[#111] border border-[#222] rounded-3xl p-8 relative overflow-hidden group shadow-xl hover:border-[#f5c842]/50 transition-colors">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#f5c842]/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-all group-hover:bg-[#f5c842]/10"></div>
+            
+            <h2 className="text-2xl font-black mb-4 flex items-center gap-3 text-white">
+              <Layers className="text-[#f5c842]" size={28} /> رابط الإحالة الخاص بك
+            </h2>
+            
+            <p className="text-gray-400 mb-8 leading-relaxed text-sm md:text-base">
+              شارك هذا الرابط مع أصدقائك أو عملائك. ستحصل على <span className="text-[#f5c842] font-black bg-[#f5c842]/10 px-2 py-1 rounded">50 جنيه</span> رصيد إضافي عن كل عميل يشتري من خلال الرابط الخاص بك.
+            </p>
+            
+            <div className="flex items-center bg-[#050505] border border-[#333] rounded-xl p-2 gap-2 shadow-inner">
               <input 
                 type="text" 
                 readOnly 
                 value={affiliateLink} 
-                className="bg-transparent flex-1 outline-none text-sm text-gray-300 text-left"
+                className="bg-transparent flex-1 outline-none text-sm md:text-base text-gray-300 text-left px-4 font-mono"
                 dir="ltr"
               />
               <button 
                 onClick={handleCopy}
-                className="bg-[#333] hover:bg-[#444] text-white p-2 rounded transition-colors flex items-center justify-center shrink-0"
+                className="bg-[#f5c842] hover:bg-[#e6b72f] text-black font-bold px-6 py-3 rounded-lg transition-all flex items-center justify-center shrink-0 gap-2 shadow-lg hover:shadow-xl active:scale-95"
                 title="نسخ الرابط"
               >
-                {copied ? <CheckCircle size={16} className="text-green-400" /> : <Copy size={16} />}
+                {copied ? (
+                  <>
+                    <CheckCircle size={18} /> تم النسخ
+                  </>
+                ) : (
+                  <>
+                    <Copy size={18} /> انسخ الرابط
+                  </>
+                )}
               </button>
             </div>
-          </div>
-
-          {/* Stats Card */}
-          <div className="bg-[#111] border border-[#222] rounded-2xl p-6 flex flex-col justify-center">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-4 text-center">
-                <p className="text-gray-500 text-sm mb-2">رصيدك الحالي</p>
-                <p className="text-4xl font-black text-[#f5c842]">{user.discountBalance} <span className="text-sm">ج.م</span></p>
-              </div>
-              <div className="bg-[#050505] border border-[#1a1a1a] rounded-xl p-4 text-center">
-                <p className="text-gray-500 text-sm mb-2">العملاء المحالين</p>
-                <p className="text-4xl font-black text-white">{user.referredUsers}</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 text-center mt-6">
-              سيتم خصم رصيدك تلقائياً عند قيامك بشراء تيشيرت خاص بك.
-            </p>
           </div>
         </div>
       </div>
