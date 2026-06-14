@@ -158,7 +158,8 @@ app.get('/api/user/designs', authenticateToken, async (req, res) => {
             where: { userId: req.user.id },
             orderBy: { createdAt: 'desc' }
         });
-        res.json({ success: true, designs, count: designs.length });
+        const totalSales = designs.reduce((sum, d) => sum + d.purchases, 0);
+        res.json({ success: true, designs, count: designs.length, totalSales });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch user designs' });
     }
