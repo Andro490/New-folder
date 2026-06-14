@@ -34,20 +34,14 @@ export default function Community() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleBuy = async (design: Design) => {
-    // Call API to track the purchase and reward the designer
-    try {
-      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
-      await fetch(`${API_BASE}/api/designs/${design.id}/purchase`, { method: 'POST' });
-      // Update local count
-      setDesigns(prev => prev.map(d => d.id === design.id ? { ...d, purchases: d.purchases + 1 } : d));
-    } catch(e) { console.error(e); }
-
+  const handleBuy = (design: Design) => {
     // Save layers to localstorage and navigate to editor
     try {
       const front = JSON.parse(design.frontDesign || '[]');
       const back = JSON.parse(design.backDesign || '[]');
       localStorage.setItem('wearurway_layers', JSON.stringify([...front, ...back]));
+      // Save the design ID so we can track the purchase on order submission
+      localStorage.setItem('wearurway_community_design_id', String(design.id));
     } catch(e) {}
     
     navigate(`/editor?color=${design.tshirtColor}&designId=${design.id}`);
