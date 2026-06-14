@@ -962,7 +962,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     totalPrice: String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
-                    designId: new URLSearchParams(window.location.search).get('designId') || '',
+                    designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
                   });
                   setStep('thanks');
                 } catch (err: any) {
