@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
-import blackMockupBack from '../assets/black-mockup-back.png';
-import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 
 interface Design {
   id: number;
@@ -115,19 +113,7 @@ export default function Community() {
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-10 pt-8">
                   {filteredDesigns.map(design => {
-                    // Parse back design layers using correct 'imageUrl' property
-                    let backLayers: Array<{imageUrl: string; x: number; y: number; width: number; height: number; rotation: number; opacity: number; visible: boolean}> = [];
-                    let hasBackDesign = false;
-                    try {
-                      const parsed = JSON.parse(design.backDesign || '[]');
-                      if (Array.isArray(parsed) && parsed.length > 0) {
-                        backLayers = parsed.filter((l: any) => l.imageUrl);
-                        hasBackDesign = backLayers.length > 0;
-                      }
-                    } catch(e) {}
 
-                    // Choose correct back mockup based on tshirt color
-                    const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
 
                     return (
                     /* ─── Sleek Card ─── */

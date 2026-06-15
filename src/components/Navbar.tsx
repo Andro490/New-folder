@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap } from 'lucide-react';
+import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings } from 'lucide-react';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -159,57 +159,42 @@ export default function Navbar() {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div
-                className="absolute left-0 sm:left-auto sm:right-0 top-[120%] mt-2 w-56 rounded-2xl rounded-tr-sm overflow-hidden shadow-2xl z-50 transition-all"
-                style={{
-                  backgroundColor: '#fdfaf6',
-                  border: '1px solid #d4ba7b',
-                  boxShadow: '0 10px 40px rgba(139, 107, 67, 0.2)',
-                }}
-                dir="rtl"
+                className="absolute right-0 top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]"
+                style={{ backgroundColor: '#fdfaf6' }}
               >
                 {/* User info header */}
-                <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(212, 186, 123, 0.3)' }}>
-                  <p className="text-sm font-black truncate text-[#4a3b2c]">{user.name}</p>
-                  <p className="text-xs truncate text-[#8b6b43] mt-0.5 font-medium">{user.email}</p>
+                <div className="px-4 py-2.5 flex justify-between items-center border-b border-[#eaddc3]">
+                  <p className="text-sm font-bold text-[#1a0e06]">{user.name}</p>
+                  <Settings size={16} className="text-[#c8a85a]" />
                 </div>
 
                 {/* Menu items */}
-                <div className="py-2">
+                <div className="flex flex-col">
                   <button
                     onClick={() => { navigate('/dashboard'); setDropdownOpen(false); }}
-                    className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#4a3b2c] hover:text-[#b1894d]"
-                    style={{ backgroundColor: 'transparent' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(212, 186, 123, 0.1)'}
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                    className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#4a3b2c] hover:bg-[#f3ebd2] transition-colors border-b border-[#eaddc3]"
                   >
-                    <LayoutDashboard size={16} className="text-[#b1894d]" />
-                    لوحة التحكم
+                    <span>لوحة التحكم</span>
+                    <LayoutDashboard size={15} className="text-[#8b6b43]" />
                   </button>
 
                   {(user.isAdmin || user.name === 'ANDRO') && (
                     <button
                       onClick={() => { navigate('/admin'); setDropdownOpen(false); }}
-                      className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#e74c3c] hover:opacity-80"
-                      style={{ backgroundColor: 'transparent' }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(231, 76, 60, 0.05)'}
-                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                      className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] transition-colors border-b border-[#eaddc3]"
+                      style={{ background: 'linear-gradient(90deg, transparent 0%, #f5e09a 100%)' }}
                     >
-                      <LayoutDashboard size={16} />
-                      لوحة الإدارة
+                      <span>لوحة الإدارة</span>
+                      <LayoutDashboard size={15} className="text-[#8b3a3a]" />
                     </button>
                   )}
 
-                  <div className="mx-4 my-2" style={{ height: 1, backgroundColor: 'rgba(212, 186, 123, 0.3)' }} />
-
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#e74c3c] hover:opacity-80"
-                    style={{ backgroundColor: 'transparent' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(231, 76, 60, 0.05)'}
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                    className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] hover:bg-[#fff5f5] transition-colors"
                   >
-                    <LogOut size={16} />
-                    تسجيل الخروج
+                    <span>تسجيل الخروج</span>
+                    <LogOut size={15} className="text-[#8b3a3a]" />
                   </button>
                 </div>
               </div>
