@@ -4,6 +4,7 @@ import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import Community from './pages/Community';
 import AdminDashboard from './pages/AdminDashboard';
+import GoogleSuccess from './pages/GoogleSuccess';
 import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
@@ -575,6 +576,7 @@ export default function App() {
       <Route path="/color" element={<ColorStep />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/google/success" element={<GoogleSuccess />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/community" element={<Community />} />
       <Route path="/admin" element={<AdminDashboard />} />

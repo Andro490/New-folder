@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import session from 'express-session';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,15 +17,99 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 
 app.use(cors({
-  origin: '*',
+  origin: [CLIENT_URL, 'http://localhost:5173', 'http://localhost:3001'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
-app.options('/{*path}', cors()); // handle preflight for all routes
+app.options('/{*path}', cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// ── Session (required for passport OAuth flow) ─────────────────────
+app.use(session({
+  secret: JWT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 5 * 60 * 1000 } // 5 min temp session
+}));
+
+// ── Passport Google Strategy ────────────────────────────────────────
+passport.use(new GoogleStrategy({
+  clientID: GOOGLE_CLIENT_ID,
+  clientSecret: GOOGLE_CLIENT_SECRET,
+  callbackURL: `${SERVER_URL}/api/auth/google/callback`,
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails?.[0]?.value;
+    const name  = profile.displayName;
+    const avatarUrl = profile.photos?.[0]?.value;
+    const googleId  = profile.id;
+
+    if (!email) return done(new Error('No email from Google'), undefined);
+
+    // Find or create user
+    let user = await prisma.user.findUnique({ where: { googleId } });
+
+    if (!user) {
+      // Check if email already exists (link accounts)
+      user = await prisma.user.findUnique({ where: { email } });
+      if (user) {
+        // Link Google account to existing email account
+        user = await prisma.user.update({
+          where: { email },
+          data: { googleId, avatarUrl }
+        });
+      } else {
+        // Create brand new user
+        const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        user = await prisma.user.create({
+          data: { name, email, googleId, avatarUrl, affiliateCode }
+        });
+      }
+    }
+
+    return done(null, user);
+  } catch (err) {
+    return done(err, undefined);
+  }
+}));
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ── Google OAuth Routes ─────────────────────────────────────────────
+app.get('/api/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/api/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: `${CLIENT_URL}/auth?error=google_failed` }),
+  (req, res) => {
+    const user = req.user;
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+    // Redirect to frontend with token in query string
+    res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      affiliateCode: user.affiliateCode,
+      discountBalance: user.discountBalance,
+      referredUsers: user.referredUsers,
+      isAdmin: user.isAdmin,
+      avatarUrl: user.avatarUrl
+    }))}`);
+  }
+);
 
 // Auth Middleware
 const authenticateToken = (req, res, next) => {

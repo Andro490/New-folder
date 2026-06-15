@@ -11,7 +11,9 @@ model User {
   id              Int      @id @default(autoincrement())
   name            String?
   email           String   @unique
-  password        String
+  password        String?  // Optional - null for Google OAuth users
+  googleId        String?  @unique // Google OAuth ID
+  avatarUrl       String?  // Google profile picture
   affiliateCode   String   @unique
   discountBalance Float    @default(0) // الرصيد بالجنيه
   createdAt       DateTime @default(now())
