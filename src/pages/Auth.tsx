@@ -9,6 +9,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t, dir } = useLanguage();
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
     const url = isLogin ? `${API_BASE}/api/auth/login` : `${API_BASE}/api/auth/register`;
@@ -35,8 +37,15 @@ export default function Auth() {
       });
 
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`[${response.status}] URL: ${url} | Response: ${text || 'empty'}`);
+        let errorMsg = `HTTP Error ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.error || errorMsg;
+        } catch {
+          const text = await response.text();
+          errorMsg = text ? text.substring(0, 100) : errorMsg;
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -44,7 +53,10 @@ export default function Auth() {
       localStorage.setItem('wearurway_user', JSON.stringify(data.user));
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      console.error("Login Error:", err);
+      setError(err.message || 'حدث خطأ غير متوقع. تأكد من اتصالك بالإنترنت.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,12 +76,12 @@ export default function Auth() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-10">
+          <form onSubmit={handleSubmit} className="flex flex-col relative z-10 w-full" style={{ minHeight: 'fit-content' }}>
             {!isLogin && (
               <input
                 type="text"
                 placeholder={t('auth.fullName')}
-                className="p-3 rounded focus:outline-none transition-colors"
+                className="p-3 mb-4 rounded focus:outline-none transition-colors"
                 style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                 onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
                 onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
@@ -81,7 +93,7 @@ export default function Auth() {
             <input
               type="email"
               placeholder={t('auth.email')}
-              className={`p-3 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+              className={`p-3 mb-4 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
               style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
               onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
@@ -93,7 +105,7 @@ export default function Auth() {
             <input
               type="password"
               placeholder={t('auth.password')}
-              className={`p-3 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+              className={`p-3 mb-4 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
               style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
               onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
@@ -104,17 +116,18 @@ export default function Auth() {
             />
             <button
               type="submit"
-              className="mt-2 py-3 font-bold rounded transition-all"
-              style={{ backgroundColor: 'var(--accent-primary)', color: '#000' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 20px var(--accent-glow)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
+              disabled={isLoading}
+              className="mt-2 py-3 mb-4 font-bold rounded transition-all"
+              style={{ backgroundColor: 'var(--accent-primary)', color: '#000', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+              onMouseEnter={e => !isLoading && (e.currentTarget.style.boxShadow = '0 4px 20px var(--accent-glow)')}
+              onMouseLeave={e => !isLoading && (e.currentTarget.style.boxShadow = 'none')}
             >
-              {isLogin ? t('auth.loginBtn') : t('auth.registerBtn')}
+              {isLoading ? 'جاري التحميل...' : (isLogin ? t('auth.loginBtn') : t('auth.registerBtn'))}
             </button>
           </form>
 
           {/* ── Divider ── */}
-          <div className="relative my-6 flex items-center z-10">
+          <div className="relative mb-6 mt-2 flex items-center z-10 w-full">
             <div className="flex-1 h-px" style={{ backgroundColor: 'var(--border-color)' }} />
             <span className="mx-3 text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>أو</span>
             <div className="flex-1 h-px" style={{ backgroundColor: 'var(--border-color)' }} />
