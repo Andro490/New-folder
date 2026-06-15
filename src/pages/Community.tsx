@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
+import blackMockupBack from '../assets/black-mockup-back.png';
+import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 
 interface Design {
   id: number;
@@ -111,9 +113,20 @@ export default function Community() {
               ) : filteredDesigns.length === 0 ? (
                 <div className="text-center py-20 text-[#8b6b43] font-bold text-lg">لا توجد تصاميم مطابقة للبحث.</div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-10 pt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-10 pt-8 pr-5">
                   {filteredDesigns.map(design => {
+                    // Parse back design layers
+                    let backLayers: Array<{imageUrl: string; x: number; y: number; width: number; height: number; rotation: number; opacity: number; visible: boolean}> = [];
+                    let hasBackDesign = false;
+                    try {
+                      const parsed = JSON.parse(design.backDesign || '[]');
+                      if (Array.isArray(parsed) && parsed.length > 0) {
+                        backLayers = parsed.filter((l: any) => l.imageUrl);
+                        hasBackDesign = backLayers.length > 0;
+                      }
+                    } catch(e) {}
 
+                    const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
 
                     return (
                     /* ─── Sleek Card ─── */
@@ -125,11 +138,41 @@ export default function Community() {
                       }}
                     >
                       {/* Image Area */}
-                      <div className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent">
-                        {design.imageUrl ? (
-                          <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105" />
-                        ) : (
-                          <span className="text-[#8b6b43]/50 font-bold text-sm">بدون صورة</span>
+                      <div className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden">
+                        {/* FRONT IMAGE */}
+                        <div className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 ${hasBackDesign ? 'group-hover:opacity-0' : ''}`}>
+                          {design.imageUrl ? (
+                            <img src={design.imageUrl} alt={design.name} className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105" />
+                          ) : (
+                            <span className="text-[#8b6b43]/50 font-bold text-sm">بدون صورة</span>
+                          )}
+                        </div>
+
+                        {/* BACK IMAGE (Revealed on Hover) */}
+                        {hasBackDesign && (
+                          <div className="absolute inset-0 flex items-center justify-center p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              <img src={backMockup} alt="Back" className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105" />
+                              {/* Layers composited on back mockup */}
+                              {backLayers.map((layer, idx) => (
+                                <img 
+                                  key={idx}
+                                  src={layer.imageUrl}
+                                  className="absolute z-10"
+                                  style={{
+                                    left: `${(layer.x / 500) * 100}%`,
+                                    top: `${(layer.y / 600) * 100}%`,
+                                    width: `${(layer.width / 500) * 100}%`,
+                                    height: `${(layer.height / 600) * 100}%`,
+                                    transform: `rotate(${layer.rotation || 0}deg)`,
+                                    opacity: layer.opacity ?? 1,
+                                    pointerEvents: 'none'
+                                  }}
+                                  alt="layer"
+                                />
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </div>
 
