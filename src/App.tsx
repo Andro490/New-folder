@@ -8,6 +8,8 @@ import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
 import Navbar from './components/Navbar';
+import { useLanguage } from './contexts/LanguageContext';
+import { appConfig } from './config';
 import { DesignLayer, TShirtColor, TShirtView } from './types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './utils/tshirtSvg';
 import { Layers, Sparkles, Zap, Paintbrush } from 'lucide-react';
@@ -23,6 +25,7 @@ import oversizeImg from './assets/oversize.png';
 import regularFitImg from './assets/reugulert.png';
 
 function Editor() {
+  const { t } = useLanguage();
   const [layers, setLayers] = useState<DesignLayer[]>(() => {
     const saved = localStorage.getItem('wearurway_layers');
     if (saved) {
@@ -145,14 +148,14 @@ function Editor() {
       >
         {/* Left: view badge */}
         <span
-          className="text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full"
+          className="px-6 py-2 rounded-full text-xs font-black tracking-[0.2em] shadow-sm hidden sm:block"
           style={{
             background: 'var(--accent-glow)',
             color: 'var(--accent-secondary)',
             border: '1px solid var(--border-color)',
           }}
         >
-          {view} VIEW
+          {view === 'front' ? t('home.front') : t('home.back')} VIEW
         </span>
 
         {/* Center: layers */}
@@ -219,7 +222,7 @@ function Editor() {
               }}
               onClick={() => setView('front')}
             >
-              أمامي
+              {t('home.front')}
             </button>
             <div style={{ width: 1, backgroundColor: 'var(--border-color)' }} />
             <button
@@ -230,7 +233,7 @@ function Editor() {
               }}
               onClick={() => setView('back')}
             >
-              خلفي
+              {t('home.back')}
             </button>
           </div>
 
@@ -303,6 +306,7 @@ function Editor() {
 
 function ProductStep() {
   const navigate = useNavigate();
+  const { t, dir, language } = useLanguage();
   return (
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
@@ -317,8 +321,8 @@ function ProductStep() {
       >
         {/* Subtle wood texture effect via repeating gradient */}
         <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px)' }}></div>
-        <h1 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-[#f3ebd2] z-10" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>SELECT PRODUCT</h1>
-        <p className="text-sm mt-2 text-[#d4c3a3] z-10">.Choose your canvas</p>
+        <h1 className="text-4xl md:text-5xl font-black uppercase tracking-wider text-[#f3ebd2] z-10 text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>{t('home.selectProduct')}</h1>
+        <p className="text-sm mt-2 text-[#d4c3a3] z-10 text-center">.{t('home.chooseCanvas')}</p>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-start px-4 py-12">
@@ -326,34 +330,48 @@ function ProductStep() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-5">
             {/* SWEATPANTS */}
-            <div className="flex flex-col items-center pt-10 relative">
+            <div className="flex flex-col items-center relative">
               <div 
-                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : 'opacity-80'}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+                onClick={() => appConfig.products.sweatpants.enabled && navigate('/fit')}
               >
-                <img src={pantImg} alt="Sweatpants" className="w-4/5 h-auto object-contain opacity-60" />
-                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
-                  <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>COMING SOON</span>
-                </div>
+                <img src={pantImg} alt="Sweatpants" className={`w-4/5 h-auto object-contain ${!appConfig.products.sweatpants.enabled && 'opacity-60'} transition-transform group-hover:scale-105`} />
+                {!appConfig.products.sweatpants.enabled && (
+                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
+                    <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
+              <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
+              </span>
             </div>
 
             {/* SWEATSHIRT */}
-            <div className="flex flex-col items-center pt-10 relative">
+            <div className="flex flex-col items-center relative">
               <div 
-                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : 'opacity-80'}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+                onClick={() => appConfig.products.sweatshirt.enabled && navigate('/fit')}
               >
-                <img src={hodyImg} alt="Sweatshirt" className="w-4/5 h-auto object-contain opacity-60" />
-                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
-                  <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>COMING SOON</span>
-                </div>
+                <img src={hodyImg} alt="Sweatshirt" className={`w-4/5 h-auto object-contain ${!appConfig.products.sweatshirt.enabled && 'opacity-60'} transition-transform group-hover:scale-105`} />
+                {!appConfig.products.sweatshirt.enabled && (
+                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
+                    <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
+              <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
+              </span>
             </div>
 
             {/* T-SHIRT (Active) */}
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl font-black mb-4 text-[#3d3329]">T-SHIRT</h2>
+              <h2 className="text-3xl font-black mb-4 text-[#3d3329] uppercase">
+                {language === 'ar' ? appConfig.products.tshirt.nameAr : appConfig.products.tshirt.nameEn}
+              </h2>
               <div 
                 className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center p-4 transition-transform hover:-translate-y-2 cursor-pointer group"
                 onClick={() => navigate('/fit')}
@@ -366,16 +384,18 @@ function ProductStep() {
                 <img src={whiteMockupFront} alt="T-Shirt" className="w-[90%] h-auto object-contain flex-1 filter drop-shadow-xl transition-transform group-hover:scale-105" />
                 
                 <div className="w-full mt-4 flex flex-col items-center gap-3">
-                  <span className="font-bold text-sm text-[#3d3329]">T-SHIRT</span>
+                  <span className="font-bold text-sm text-[#3d3329] uppercase">
+                    {language === 'ar' ? appConfig.products.tshirt.nameAr : appConfig.products.tshirt.nameEn}
+                  </span>
                   <div
-                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all flex items-center justify-center pointer-events-none"
+                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all flex items-center justify-center pointer-events-none uppercase"
                     style={{ 
                       background: 'linear-gradient(to right, #6a4f2d, #b1894d, #6a4f2d)',
                       backgroundSize: '200% auto',
                       boxShadow: '0 4px 10px rgba(106, 79, 45, 0.4)'
                     }}
                   >
-                    GET STARTED
+                    {t('home.getStarted')}
                   </div>
                 </div>
               </div>
@@ -390,32 +410,37 @@ function ProductStep() {
 
 function FitStep() {
   const navigate = useNavigate();
+  const { t, dir, language } = useLanguage();
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir={dir}>
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-start px-4 py-12 relative">
         <div className="w-full max-w-5xl md:px-10 flex flex-col items-center text-center">
           
-          <h2 className="text-4xl md:text-5xl font-black mb-2 text-[#3d3329]" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>صمّم تيشرتك</h2>
-          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wide mb-3" style={{ color: 'var(--text-primary)' }}>?WHICH FIT DO YOU PREFER</h1>
-          <p className="text-md italic mb-10" style={{ color: 'var(--text-muted)' }}>.Define the silhouette</p>
+          <h2 className="text-4xl md:text-5xl font-black mb-2 text-[#3d3329]" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
+          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wide mb-3 text-center" style={{ color: 'var(--text-primary)' }}>{t('home.whichFit')}</h1>
+          <p className="text-md italic mb-10 text-center" style={{ color: 'var(--text-muted)' }}>.{t('home.defineSilhouette')}</p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-2">
             
             {/* OVERSIZE */}
-            <div className="flex flex-col items-center relative">
+            <div className={`flex flex-col items-center ${appConfig.fits.oversize.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.oversize.enabled && navigate('/color')}>
               <div 
-                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                className={`w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2 ${!appConfig.fits.oversize.enabled && 'opacity-80'}`}
                 style={{ 
                   background: 'linear-gradient(145deg, #d4c8b8, #c4b6a2)',
                   boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.1)'
                 }}
               >
-                <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain opacity-70 filter drop-shadow-2xl" />
-                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">
-                  <span className="font-bold text-xl tracking-wider text-[#f3ebd2]" style={{ textShadow: '1px 2px 4px rgba(0,0,0,0.6)' }}>COMING SOON</span>
-                </div>
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">OVERSIZE</span>
+                <img src={oversizeImg} alt="Oversize" className={`w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105 ${!appConfig.fits.oversize.enabled && 'opacity-70'}`} />
+                {!appConfig.fits.oversize.enabled && (
+                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">
+                    <span className="font-bold text-xl tracking-wider text-[#f3ebd2]" style={{ textShadow: '1px 2px 4px rgba(0,0,0,0.6)' }}>{t('home.comingSoon')}</span>
+                  </div>
+                )}
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                  {language === 'ar' ? appConfig.fits.oversize.nameAr : appConfig.fits.oversize.nameEn}
+                </span>
               </div>
             </div>
 
@@ -430,7 +455,9 @@ function FitStep() {
                 }}
               >
                 <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">REGULAR FIT</span>
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                  {language === 'ar' ? appConfig.fits.regularFit.nameAr : appConfig.fits.regularFit.nameEn}
+                </span>
               </div>
             </div>
 
@@ -445,7 +472,9 @@ function FitStep() {
                 }}
               >
                 <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">BOXY FIT</span>
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                  {language === 'ar' ? appConfig.fits.boxyFit.nameAr : appConfig.fits.boxyFit.nameEn}
+                </span>
               </div>
             </div>
 
@@ -458,8 +487,9 @@ function FitStep() {
 
 function ColorStep() {
   const navigate = useNavigate();
+  const { t, dir } = useLanguage();
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir={dir}>
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-20 lg:px-40 py-12">
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-16 md:gap-8">
@@ -467,16 +497,16 @@ function ColorStep() {
           {/* Left Side: Main Title */}
           <div className="flex flex-col items-center md:items-end text-center md:text-right w-full md:w-1/2 mt-10 md:mt-0">
             <div className="flex items-center gap-4 mb-2">
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider text-[#4a3b2c]" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>SELECT COLOR</h1>
+              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider text-[#4a3b2c]" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>{t('home.selectColor')}</h1>
               <Paintbrush size={48} className="text-[#4a3b2c] opacity-80" strokeWidth={1.5} />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-[#4a3b2c] tracking-wide" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>صمّم تيشرتك</h2>
+            <h2 className="text-4xl md:text-5xl font-black text-[#4a3b2c] tracking-wide" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
           </div>
 
           {/* Right Side: Options */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/2">
-            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-wide text-[#4a3b2c] mb-1">SELECT COLOR</h3>
-            <p className="text-sm italic text-[#6a543f] mb-8">.Set the tone</p>
+            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-wide text-[#4a3b2c] mb-1">{t('home.selectColor')}</h3>
+            <p className="text-sm italic text-[#6a543f] mb-8">.{t('home.setTone')}</p>
             
             <div className="flex items-center gap-8 md:gap-12 w-full justify-center md:justify-start pl-0 md:pl-4">
               
@@ -496,7 +526,7 @@ function ColorStep() {
                   {/* Subtle inner shadow/fabric effect */}
                   <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.05), inset 0 -10px 20px rgba(255,255,255,0.8)' }}></div>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">WHITE</span>
+                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">{t('home.white')}</span>
               </button>
 
               {/* Black Swatch */}
@@ -515,7 +545,7 @@ function ColorStep() {
                   {/* Subtle inner shadow/fabric effect */}
                   <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(255,255,255,0.05), inset 0 -10px 20px rgba(0,0,0,0.8)' }}></div>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">BLACK</span>
+                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">{t('home.black')}</span>
               </button>
 
             </div>

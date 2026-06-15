@@ -1,16 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings } from 'lucide-react';
+import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings, Globe } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t, dir, language, setLanguage } = useLanguage();
 
   const userRaw = localStorage.getItem('wearurway_user');
   const user = userRaw ? JSON.parse(userRaw) : null;
-  const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : '؟';
+  const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : '?';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -41,26 +43,37 @@ export default function Navbar() {
         borderBottom: '1px solid var(--border-color)',
         boxShadow: '0 1px 12px rgba(139, 107, 67, 0.08)',
       }}
-      dir="rtl"
+      dir={dir}
     >
       {/* Logo */}
-      <button
-        onClick={() => navigate('/')}
-        className="flex items-center gap-2 shrink-0"
-      >
-        <div
-          className="w-7 h-7 rounded flex items-center justify-center"
-          style={{
-            background: 'linear-gradient(135deg, #b1894d, #6a4f2d)',
-            boxShadow: '0 0 10px rgba(139, 107, 67, 0.3)',
-          }}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 shrink-0"
         >
-          <Zap size={13} color="#f3ebd2" fill="#f3ebd2" />
-        </div>
-        <span className="font-black text-base tracking-tight" style={{ color: 'var(--text-primary)' }}>
-          Print<span style={{ color: 'var(--accent-primary)' }}>Studio</span>
-        </span>
-      </button>
+          <div
+            className="w-7 h-7 rounded flex items-center justify-center shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, #b1894d, #6a4f2d)',
+              boxShadow: '0 0 10px rgba(139, 107, 67, 0.3)',
+            }}
+          >
+            <Zap size={13} color="#f3ebd2" fill="#f3ebd2" />
+          </div>
+          <span className="font-black text-base tracking-tight hidden md:block" style={{ color: 'var(--text-primary)' }}>
+            Print<span style={{ color: 'var(--accent-primary)' }}>Studio</span>
+          </span>
+        </button>
+        
+        {/* Language Switcher */}
+        <button
+          onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+          className="flex items-center justify-center w-8 h-8 rounded-full transition-all text-[#8b6b43] hover:bg-[#8b6b43]/10"
+          title="تغيير اللغة / Change Language"
+        >
+          <Globe size={18} />
+        </button>
+      </div>
 
       {/* Center Nav Links */}
       <div className="flex items-center gap-1">
@@ -87,7 +100,7 @@ export default function Navbar() {
           }}
         >
           <ShoppingBag size={15} />
-          متجر
+          <span className="hidden sm:inline">{t('navbar.store')}</span>
         </button>
 
         {/* Design T-shirt */}
@@ -115,7 +128,7 @@ export default function Navbar() {
           }}
         >
           <Palette size={15} />
-          صمم تيشيرتك
+          <span className="hidden sm:inline">{t('navbar.design')}</span>
         </button>
       </div>
 
@@ -125,12 +138,12 @@ export default function Navbar() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(o => !o)}
-              className="flex items-center justify-between px-1.5 py-1.5 rounded-full transition-all w-[150px]"
+              className="flex items-center justify-between px-1.5 py-1.5 rounded-full transition-all w-auto sm:w-[150px]"
               style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)' }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onMouseLeave={e => { if (!dropdownOpen) e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              {/* Avatar circle with first letter (Right in RTL) */}
+              {/* Avatar circle with first letter */}
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm select-none shrink-0"
                 style={{
@@ -148,7 +161,7 @@ export default function Navbar() {
                 {user.name}
               </span>
 
-              {/* Chevron (Left in RTL) */}
+              {/* Chevron */}
               <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 <ChevronDown
                   size={16}
@@ -164,7 +177,7 @@ export default function Navbar() {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div
-                className="absolute right-0 top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]"
+                className={`absolute ${dir === 'rtl' ? 'right-0' : 'left-0'} top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]`}
                 style={{ backgroundColor: '#fdfaf6' }}
               >
                 {/* User info header */}
@@ -177,28 +190,28 @@ export default function Navbar() {
                 <div className="flex flex-col">
                   <button
                     onClick={() => { navigate('/dashboard'); setDropdownOpen(false); }}
-                    className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#4a3b2c] hover:bg-[#f3ebd2] transition-colors border-b border-[#eaddc3]"
+                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#4a3b2c] hover:bg-[#f3ebd2] transition-colors border-b border-[#eaddc3]`}
                   >
-                    <span>لوحة التحكم</span>
+                    <span>{t('navbar.dashboard')}</span>
                     <LayoutDashboard size={15} className="text-[#8b6b43]" />
                   </button>
 
                   {(user.isAdmin || user.name === 'ANDRO') && (
                     <button
                       onClick={() => { navigate('/admin'); setDropdownOpen(false); }}
-                      className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] transition-colors border-b border-[#eaddc3]"
+                      className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] transition-colors border-b border-[#eaddc3]`}
                       style={{ background: 'linear-gradient(90deg, transparent 0%, #f5e09a 100%)' }}
                     >
-                      <span>لوحة الإدارة</span>
+                      <span>{t('navbar.admin')}</span>
                       <LayoutDashboard size={15} className="text-[#8b3a3a]" />
                     </button>
                   )}
 
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-end gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] hover:bg-[#fff5f5] transition-colors"
+                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] hover:bg-[#fff5f5] transition-colors`}
                   >
-                    <span>تسجيل الخروج</span>
+                    <span>{t('navbar.logout')}</span>
                     <LogOut size={15} className="text-[#8b3a3a]" />
                   </button>
                 </div>
@@ -213,7 +226,7 @@ export default function Navbar() {
             onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)'}
             onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
           >
-            تسجيل الدخول
+            {t('navbar.login')}
           </button>
         )}
       </div>

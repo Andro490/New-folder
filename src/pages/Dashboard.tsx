@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layers, Copy, CheckCircle, Paintbrush, ShoppingCart, Wallet, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [designCount, setDesignCount] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
+  const { t, dir } = useLanguage();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,7 +48,7 @@ export default function Dashboard() {
     fetchUser();
   }, [navigate]);
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>جاري التحميل...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>{t('dashboard.loading')}</div>;
 
   const affiliateLink = `${window.location.origin}/?ref=${user.affiliateCode}`;
 
@@ -63,7 +65,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir="rtl">
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir={dir}>
       <Navbar />
 
       <div className="flex-1 w-full flex flex-col items-center p-6 md:p-10 relative">
@@ -74,10 +76,10 @@ export default function Dashboard() {
           {/* Top Title & Subtitle */}
           <div className="text-center mb-4 mt-4">
             <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: '#4a3b2c' }}>
-               أهلاً بك، <span style={{ color: '#b1894d' }}>{user.name} !</span>
+               {t('dashboard.welcome')}، <span style={{ color: '#b1894d' }}>{user.name} !</span>
             </h1>
             <p className="text-sm md:text-base font-medium" style={{ color: '#6a543f' }}>
-              مرحباً بك في لوحة التحكم الخاصة بك، بائع ازيائك وتصاميمك من هنا .
+              {t('dashboard.subtitle')}
             </p>
           </div>
 
@@ -88,9 +90,9 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-3">
               <Layers size={20} style={{ color: '#b1894d' }} />
-              <h2 className="text-base font-bold text-[#4a3b2c]">رابط الإحالة الخاص بك</h2>
-              <p className="text-xs text-[#6a543f] hidden lg:block mr-2">
-                شارك هذا الرابط مع أصدقائك أو عملائك واحصل على 50 جنيه عن كل شراء.
+              <h2 className="text-base font-bold text-[#4a3b2c]">{t('dashboard.affiliateLink')}</h2>
+              <p className={`text-xs text-[#6a543f] hidden lg:block ${dir === 'rtl' ? 'mr-2' : 'ml-2'}`}>
+                {t('dashboard.affiliateDesc')}
               </p>
             </div>
             
@@ -107,7 +109,7 @@ export default function Dashboard() {
                 className="font-bold px-6 py-2 text-sm rounded-lg transition-all text-white shadow-sm"
                 style={{ backgroundColor: '#a68048' }}
               >
-                {copied ? 'Copied!' : 'Copy'}
+                {copied ? t('dashboard.copied') : t('dashboard.copy')}
               </button>
             </div>
           </div>
@@ -116,34 +118,34 @@ export default function Dashboard() {
           <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
             
             <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">رصيدك الحالي</p>
-              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.balance')}</p>
+              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.discountBalance}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">.ع ج</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.currency')}</span>
               </div>
             </div>
 
             <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">العملاء المحالين</p>
-              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.referred')}</p>
+              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.referredUsers}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">شخص</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.person')}</span>
               </div>
             </div>
 
             <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">المبيعات الإجمالية</p>
-              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.totalSales')}</p>
+              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{totalSales}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">طلبية</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.order')}</span>
               </div>
             </div>
 
             <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">التصاميم المنشورة</p>
-              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.designs')}</p>
+              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{designCount}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">تصميم</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.design')}</span>
               </div>
             </div>
 
