@@ -10,7 +10,7 @@ import SettingsSidebar from './components/SettingsSidebar';
 import Navbar from './components/Navbar';
 import { DesignLayer, TShirtColor, TShirtView } from './types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './utils/tshirtSvg';
-import { Layers, Sparkles, Zap } from 'lucide-react';
+import { Layers, Sparkles, Zap, Paintbrush } from 'lucide-react';
 
 import blackMockupFront from './assets/black-mockup.png';
 import blackMockupBack from './assets/black-mockup-back.png';
@@ -463,26 +463,66 @@ function ColorStep() {
   return (
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-5xl md:px-10 flex flex-col items-center md:items-start text-center md:text-left">
-          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Select Color</h1>
-          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Set the tone.</p>
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-14 mt-2 md:mt-5 w-full max-w-xs md:max-w-none">
-            <button
-              onClick={() => navigate('/editor?color=black')}
-              className="flex flex-col items-center group w-full md:w-auto"
-            >
-              <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#111', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
-              <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>Black</span>
-            </button>
-            <button
-              onClick={() => navigate('/editor?color=white')}
-              className="flex flex-col items-center group w-full md:w-auto"
-            >
-              <div className="w-full aspect-square md:w-40 md:h-40 transition-colors mb-4 md:mb-5" style={{ backgroundColor: '#e5e5e5', border: '2px solid var(--border-color)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}></div>
-              <span className="text-xs font-bold uppercase transition-colors" style={{ color: 'var(--text-primary)' }}>White</span>
-            </button>
+      <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-20 lg:px-40 py-12">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-16 md:gap-8">
+          
+          {/* Left Side: Main Title */}
+          <div className="flex flex-col items-center md:items-end text-center md:text-right w-full md:w-1/2 mt-10 md:mt-0">
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider text-[#4a3b2c]" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>SELECT COLOR</h1>
+              <Paintbrush size={48} className="text-[#4a3b2c] opacity-80" strokeWidth={1.5} />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-[#4a3b2c] tracking-wide" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>صمّم تيشرتك</h2>
           </div>
+
+          {/* Right Side: Options */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/2">
+            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-wide text-[#4a3b2c] mb-1">SELECT COLOR</h3>
+            <p className="text-sm italic text-[#6a543f] mb-8">.Set the tone</p>
+            
+            <div className="flex items-center gap-8 md:gap-12 w-full justify-center md:justify-start pl-0 md:pl-4">
+              
+              {/* White Swatch */}
+              <button
+                onClick={() => navigate('/editor?color=white')}
+                className="flex flex-col items-center group transition-transform hover:-translate-y-2"
+              >
+                <div 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] mb-4 relative overflow-hidden" 
+                  style={{ 
+                    background: 'linear-gradient(145deg, #ffffff, #e6e6e6)',
+                    boxShadow: '8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(255,255,255,0.4)',
+                    border: '4px solid #b1894d'
+                  }}
+                >
+                  {/* Subtle inner shadow/fabric effect */}
+                  <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.05), inset 0 -10px 20px rgba(255,255,255,0.8)' }}></div>
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">WHITE</span>
+              </button>
+
+              {/* Black Swatch */}
+              <button
+                onClick={() => navigate('/editor?color=black')}
+                className="flex flex-col items-center group transition-transform hover:-translate-y-2"
+              >
+                <div 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] mb-4 relative overflow-hidden" 
+                  style={{ 
+                    background: 'linear-gradient(145deg, #222222, #000000)',
+                    boxShadow: '8px 8px 16px rgba(0,0,0,0.3), -8px -8px 16px rgba(255,255,255,0.1)',
+                    border: '4px solid #b1894d'
+                  }}
+                >
+                  {/* Subtle inner shadow/fabric effect */}
+                  <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(255,255,255,0.05), inset 0 -10px 20px rgba(0,0,0,0.8)' }}></div>
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">BLACK</span>
+              </button>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
