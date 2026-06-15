@@ -18,6 +18,9 @@ import whiteMockupFront from './assets/—Pngtree—white t shirt mockup realist
 import whiteMockupBack from './assets/—Pngtree—back white t shirt_13029479.png';
 import pantImg from './assets/pant.png';
 import hodyImg from './assets/hody.png';
+import boxyFitImg from './assets/boxy-fit.png';
+import oversizeImg from './assets/oversize.png';
+import regularFitImg from './assets/reugulert.png';
 
 function Editor() {
   const [layers, setLayers] = useState<DesignLayer[]>(() => {
@@ -126,7 +129,7 @@ function Editor() {
   return (
     <div
       className="flex flex-col"
-      style={{ background: 'var(--bg-primary)', overflow: 'hidden', height: '100dvh' }}
+      style={{ overflow: 'hidden', height: '100dvh' }}
     >
       {/* Top Bar - replaced with shared Navbar */}
       <Navbar />
@@ -203,7 +206,7 @@ function Editor() {
           style={{
             backgroundImage: 'radial-gradient(rgba(139, 107, 67, 0.15) 1px, transparent 1px)',
             backgroundSize: '30px 30px',
-            backgroundColor: 'var(--bg-primary)'
+            backgroundColor: 'transparent'
           }}
         >
 
@@ -301,7 +304,7 @@ function Editor() {
 function ProductStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
       
       {/* Banner */}
@@ -390,35 +393,64 @@ function ProductStep() {
 function FitStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-5xl md:px-10">
-          <h1 className="text-3xl md:text-5xl font-black uppercase leading-tight mb-2 md:mb-5" style={{ color: 'var(--text-primary)' }}>Which Fit Do You Prefer?</h1>
-          <p className="text-sm mb-6 md:mb-5" style={{ color: 'var(--text-muted)' }}>Define the silhouette.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-            <button
-              onClick={() => navigate('/color')}
-              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-            >
-              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>BOXY FIT</span>
-            </button>
-            <button
-              onClick={() => navigate('/color')}
-              className="h-52 transition-colors flex flex-col items-center justify-center relative group"
-              style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
-            >
-              <span className="font-bold text-sm transition-colors" style={{ color: 'var(--text-primary)' }}>REGULAR FIT</span>
-            </button>
-            <button disabled className="h-52 flex flex-col items-center justify-center relative opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <span className="font-bold text-sm mb-4" style={{ color: 'var(--text-muted)' }}>OVERSIZE</span>
-              <span className="text-[10px] px-3 py-1 uppercase" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}>Coming Soon</span>
-            </button>
+      <div className="flex-1 flex flex-col items-center justify-start px-4 py-12 relative">
+        <div className="w-full max-w-5xl md:px-10 flex flex-col items-center text-center">
+          
+          <h2 className="text-4xl md:text-5xl font-black mb-2 text-[#3d3329]" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>صمّم تيشرتك</h2>
+          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wide mb-3" style={{ color: 'var(--text-primary)' }}>?WHICH FIT DO YOU PREFER</h1>
+          <p className="text-md italic mb-10" style={{ color: 'var(--text-muted)' }}>.Define the silhouette</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-2">
+            
+            {/* OVERSIZE */}
+            <div className="flex flex-col items-center relative">
+              <div 
+                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center opacity-80"
+                style={{ 
+                  background: 'linear-gradient(145deg, #d4c8b8, #c4b6a2)',
+                  boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.1)'
+                }}
+              >
+                <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain opacity-70 filter drop-shadow-2xl" />
+                <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">
+                  <span className="font-bold text-xl tracking-wider text-[#f3ebd2]" style={{ textShadow: '1px 2px 4px rgba(0,0,0,0.6)' }}>COMING SOON</span>
+                </div>
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">OVERSIZE</span>
+              </div>
+            </div>
+
+            {/* REGULAR FIT */}
+            <div className="flex flex-col items-center cursor-pointer group" onClick={() => navigate('/color')}>
+              <div 
+                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
+                style={{ 
+                  background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
+                  boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
+                  border: '1px solid rgba(255,255,255,0.5)'
+                }}
+              >
+                <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">REGULAR FIT</span>
+              </div>
+            </div>
+
+            {/* BOXY FIT */}
+            <div className="flex flex-col items-center cursor-pointer group" onClick={() => navigate('/color')}>
+              <div 
+                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
+                style={{ 
+                  background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
+                  boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
+                  border: '1px solid rgba(255,255,255,0.5)'
+                }}
+              >
+                <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
+                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329]">BOXY FIT</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -429,7 +461,7 @@ function FitStep() {
 function ColorStep() {
   const navigate = useNavigate();
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-5xl md:px-10 flex flex-col items-center md:items-start text-center md:text-left">

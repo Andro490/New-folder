@@ -41,7 +41,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }}>
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>

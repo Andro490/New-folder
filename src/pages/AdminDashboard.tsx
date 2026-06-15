@@ -96,10 +96,10 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>جاري التحميل...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>جاري التحميل...</div>;
 
   if (error) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6" style={{ color: 'var(--text-primary)' }} dir="rtl">
       <ShieldAlert className="text-red-500" size={64} />
       <h1 className="text-2xl font-black text-red-400">وصول مرفوض</h1>
       <p className="max-w-md text-center" style={{ color: 'var(--text-muted)' }}>{error}</p>
@@ -129,9 +129,9 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
+    <div className="min-h-screen font-['Inter']" style={{ color: 'var(--text-primary)' }} dir="rtl">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 md:px-12 py-6 border-b sticky top-0 backdrop-blur-md z-50" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+      <header className="flex items-center justify-between px-6 md:px-12 py-6 border-b sticky top-0 backdrop-blur-md z-50" style={{ backgroundColor: 'rgba(243, 235, 210, 0.8)', borderColor: 'var(--border-color)' }}>
         <div className="flex items-center gap-3">
           <ShieldAlert className="text-red-500" size={28} />
           <h1 className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>لوحة الإدارة <span className="text-red-500">(Admin)</span></h1>

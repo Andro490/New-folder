@@ -46,7 +46,7 @@ export default function Dashboard() {
     fetchUser();
   }, [navigate]);
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>جاري التحميل...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center" style={{ color: 'var(--text-primary)' }}>جاري التحميل...</div>;
 
   const affiliateLink = `${window.location.origin}/?ref=${user.affiliateCode}`;
 
@@ -63,7 +63,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir="rtl">
+    <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir="rtl">
       <Navbar />
 
       <div className="flex-1 w-full flex flex-col items-center p-6 md:p-10">
