@@ -264,3 +264,14 @@ background-size: 500px;
   50% { transform: translateY(-8px); }
 }
 .float-anim { animation: float 3s ease-in-out infinite; }
+
+/* Toast animation */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate(-50%, -16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

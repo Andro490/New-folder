@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { DesignLayer, TShirtColor, TShirtView } from '../types';
-import { Info, Image as ImageIcon, Link as LinkIcon, Type, Save, CheckCircle, ZoomIn, ZoomOut } from 'lucide-react';
+import { Info, Image as ImageIcon, Link as LinkIcon, Type, Save, CheckCircle, ZoomIn, ZoomOut, X, Upload } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { SizeGuideModal } from './SizeGuideModal';
 import { PRINT_AREA, getTshirtSVG, CANVAS_WIDTH, CANVAS_HEIGHT } from '../utils/tshirtSvg';
@@ -1134,9 +1134,17 @@ export default function SettingsSidebar({
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [showTextModal, setShowTextModal] = useState(false);
   const [showPinterestModal, setShowPinterestModal] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishName, setPublishName] = useState('');
+  const [publishToast, setPublishToast] = useState<string | null>(null);
   const [designUrl, setDesignUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+
+  const showToast = useCallback((msg: string) => {
+    setPublishToast(msg);
+    setTimeout(() => setPublishToast(null), 3500);
+  }, []);
 
   const printArea = PRINT_AREA[view];
 
@@ -1165,6 +1173,43 @@ export default function SettingsSidebar({
     onAddLayer(createLayer(url, name));
     e.target.value = '';
   }
+
+  const handlePublish = async () => {
+    const token = localStorage.getItem('wearurway_token');
+    if (!token || !publishName.trim()) return;
+    setIsPublishing(true);
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+      const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400);
+      let imageUrl = '';
+      try { imageUrl = await uploadToImgBB(frontBase64); } catch(e) {}
+      const res = await fetch(`${API_BASE}/api/designs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          name: publishName.trim(),
+          tshirtColor,
+          frontDesign: allLayers.filter(l => l.view === 'front'),
+          backDesign: allLayers.filter(l => l.view === 'back'),
+          imageUrl
+        })
+      });
+      if (!res.ok) { const text = await res.text(); throw new Error(text); }
+      const data = await res.json();
+      setShowPublishModal(false);
+      if (data.success) {
+        showToast('✅ تم رفع التصميم بنجاح!');
+      } else {
+        showToast('❌ فشل النشر: ' + (data.error || 'خطأ غير معروف'));
+      }
+    } catch (err: any) {
+      setShowPublishModal(false);
+      showToast('❌ فشل النشر: ' + err.message);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
 
   return (
     <>
@@ -1372,54 +1417,14 @@ export default function SettingsSidebar({
           
           <button
             disabled={isPublishing}
-            onClick={async () => {
+            onClick={() => {
               const token = localStorage.getItem('wearurway_token');
               if (!token) {
-                alert('يرجى تسجيل الدخول أولاً لنشر التصميم');
+                showToast('⚠️ يرجى تسجيل الدخول أولاً');
                 return;
               }
-              const name = prompt('أدخل اسماً مميزاً لتصميمك:');
-              if (!name) return;
-              
-              setIsPublishing(true);
-              try {
-                const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
-                
-                const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400);
-                let imageUrl = '';
-                try {
-                   imageUrl = await uploadToImgBB(frontBase64);
-                } catch(e) {}
-                
-                const res = await fetch(`${API_BASE}/api/designs`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                  body: JSON.stringify({
-                    name,
-                    tshirtColor,
-                    frontDesign: allLayers.filter(l => l.view === 'front'),
-                    backDesign: allLayers.filter(l => l.view === 'back'),
-                    imageUrl
-                  })
-                });
-                
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(`Server Error: ${text}`);
-                }
-                
-                const data = await res.json();
-                if(data.success) {
-                  alert('تم نشر التصميم بنجاح! يمكن للآخرين الآن شراؤه من صفحة المعرض (Gallery).');
-                } else {
-                  alert('خطأ: ' + (data.error || 'فشل النشر'));
-                }
-              } catch (err: any) {
-                console.error(err);
-                alert('فشل النشر: ' + err.message);
-              } finally {
-                setIsPublishing(false);
-              }
+              setPublishName('');
+              setShowPublishModal(true);
             }}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -1455,6 +1460,130 @@ export default function SettingsSidebar({
           onAddLayer={onAddLayer}
           view={view}
         />
+      )}
+
+      {/* ── Toast Notification ── */}
+      {publishToast && (
+        <div
+          style={{
+            position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
+            zIndex: 9999, backgroundColor: '#1a2e1a', color: '#4ade80',
+            border: '1px solid #4ade80', borderRadius: 12,
+            padding: '12px 24px', fontSize: 14, fontWeight: 700,
+            boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
+            display: 'flex', alignItems: 'center', gap: 10,
+            animation: 'fadeInDown 0.3s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <CheckCircle size={18} />
+          {publishToast}
+        </div>
+      )}
+
+      {/* ── Custom Publish Modal ── */}
+      {showPublishModal && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9000,
+            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '16px',
+          }}
+          onClick={() => setShowPublishModal(false)}
+        >
+          <div
+            style={{
+              width: '100%', maxWidth: 400,
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 20,
+              padding: '28px 24px',
+              fontFamily: "'Inter', sans-serif",
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            }}
+            onClick={e => e.stopPropagation()}
+            dir="rtl"
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg, #4ade80, #22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Upload size={18} color="#000" />
+                </div>
+                <div>
+                  <p style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.12em', marginBottom: 2 }}>نشر التصميم</p>
+                  <h2 style={{ fontSize: 16, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>اسم التصميم</h2>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPublishModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Input */}
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
+              أدخل اسماً مميزاً لتصميمك
+            </label>
+            <input
+              autoFocus
+              value={publishName}
+              onChange={e => setPublishName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && publishName.trim()) handlePublish(); }}
+              placeholder="مثال: Spider Street تيشيرت"
+              style={{
+                width: '100%', padding: '14px 16px',
+                fontSize: 14, fontWeight: 600,
+                backgroundColor: 'var(--bg-secondary)',
+                border: '1.5px solid var(--border-color)',
+                borderRadius: 10, color: 'var(--text-primary)',
+                outline: 'none', marginBottom: 20,
+                boxSizing: 'border-box',
+                textAlign: 'right',
+                direction: 'rtl',
+              }}
+              onFocus={e => e.target.style.borderColor = 'var(--accent-primary)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
+            />
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setShowPublishModal(false)}
+                style={{
+                  flex: 1, padding: '13px',
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 10, fontSize: 13, fontWeight: 700,
+                  color: 'var(--text-muted)', cursor: 'pointer',
+                }}
+              >
+                إلغاء
+              </button>
+              <button
+                disabled={!publishName.trim() || isPublishing}
+                onClick={handlePublish}
+                style={{
+                  flex: 2, padding: '13px',
+                  backgroundColor: !publishName.trim() || isPublishing ? '#888' : '#4ade80',
+                  border: 'none', borderRadius: 10,
+                  fontSize: 13, fontWeight: 900,
+                  color: '#000', cursor: !publishName.trim() || isPublishing ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}
+              >
+                {isPublishing ? (
+                  <><span style={{ width: 16, height: 16, border: '2px solid #000', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> جاري الرفع...</>
+                ) : (
+                  <><Upload size={15} /> نشر الآن</>  
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
