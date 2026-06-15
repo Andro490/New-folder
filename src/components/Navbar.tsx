@@ -177,7 +177,7 @@ export default function Navbar() {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div
-                className={`absolute ${dir === 'rtl' ? 'right-0' : 'left-0'} top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]`}
+                className={`absolute ${dir === 'rtl' ? 'left-0' : 'right-0'} top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]`}
                 style={{ backgroundColor: '#fdfaf6' }}
               >
                 {/* User info header */}

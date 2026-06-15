@@ -60,6 +60,75 @@ export default function Community() {
     return true;
   });
 
+  const renderSidebar = (isMobile: boolean) => (
+    <aside className={isMobile 
+      ? "w-full flex flex-col lg:hidden z-20 relative pt-4 pb-8 mb-4 border-b border-[#8b6b43]/30" 
+      : "hidden lg:flex w-[280px] flex-col h-screen sticky top-0 shrink-0 z-20 relative overflow-y-auto custom-scrollbar pt-12 px-4 pr-4 border-r border-[#8b6b43]/30"}>
+      <div className="relative z-10 w-full max-w-sm mx-auto lg:max-w-none">
+
+        <div className="flex flex-col items-center mb-10">
+          <h2 className="text-3xl font-bold text-[#594228]" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+            {t('community.filterMenu')}
+          </h2>
+          <div className="w-16 h-0.5 bg-[#8b6b43]/50 mt-2"></div>
+        </div>
+        
+        {/* Categories */}
+        <div className="mb-10">
+          <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
+            <LayoutGrid className="w-5 h-5 text-[#8b6b43]" />
+            <span>{t('community.categories')}</span>
+          </h3>
+          <div className="space-y-1">
+            {[
+              { key: 'all', label: t('community.all') },
+              { key: 'tshirts', label: t('community.tshirts') },
+            ].map(cat => (
+              <button 
+                key={cat.key}
+                onClick={() => setSelectedCategory(cat.key)}
+                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === cat.key ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+              >
+                {cat.label}
+              </button>
+            ))}
+            <button 
+              disabled
+              className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold text-[#8b6b43] opacity-40 cursor-not-allowed`}
+            >
+              {t('community.hoodies')}
+            </button>
+          </div>
+        </div>
+
+        {/* Featured Artists */}
+        <div>
+          <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
+            <Star className="w-5 h-5 text-[#8b6b43]" />
+            <span>{t('community.featuredArtists')}</span>
+          </h3>
+          <div className="space-y-1">
+            <button 
+              onClick={() => setSelectedArtist('all')}
+              className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedArtist === 'all' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+            >
+              {t('community.allArtists')}
+            </button>
+            {uniqueArtists.map(artist => (
+              <button 
+                key={artist}
+                onClick={() => setSelectedArtist(artist as string)}
+                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold truncate ${selectedArtist === artist ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+              >
+                {artist}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen relative" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir={dir}>
       {/* Vintage Paper Texture Overlay */}
@@ -72,9 +141,10 @@ export default function Community() {
         <header className="relative pt-10 pb-12 flex flex-col items-center justify-center">
           <button
             onClick={() => navigate('/')}
-            className="absolute top-0 px-4 py-2 rounded-xl text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group"
+            className="absolute px-4 py-2 rounded-xl text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group z-50"
             style={{
-              [dir === 'rtl' ? 'left' : 'right']: 0,
+              [dir === 'rtl' ? 'left' : 'right']: '16px',
+              top: '16px',
               backgroundColor: 'var(--bg-card)',
               border: '1px solid var(--border-color)',
               boxShadow: '0 4px 15px rgba(139, 107, 67, 0.1)',
@@ -105,6 +175,9 @@ export default function Community() {
             </p>
           </div>
         </header>
+
+        {/* Mobile Sidebar */}
+        {renderSidebar(true)}
 
         {/* Grid */}
         <main className="flex-1 pb-12">
@@ -231,71 +304,7 @@ export default function Community() {
       </div>
 
       {/* ── Sidebar ─────────────────────────────────────── */}
-      <aside className="w-full lg:w-[280px] flex flex-col lg:h-screen lg:sticky top-0 shrink-0 z-20 relative overflow-visible lg:overflow-y-auto custom-scrollbar pt-8 lg:pt-12 px-6 lg:px-4 lg:pr-4 border-b lg:border-b-0 lg:border-r border-[#8b6b43]/30 pb-8 lg:pb-0">
-        <div className="p-0 lg:p-6 relative z-10 w-full max-w-sm mx-auto lg:max-w-none">
-
-
-          <div className="flex flex-col items-center mb-10">
-            <h2 className="text-3xl font-bold text-[#594228]" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
-              {t('community.filterMenu')}
-            </h2>
-            <div className="w-16 h-0.5 bg-[#8b6b43]/50 mt-2"></div>
-          </div>
-          
-          {/* Categories */}
-          <div className="mb-10">
-            <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
-              <LayoutGrid className="w-5 h-5 text-[#8b6b43]" />
-              <span>{t('community.categories')}</span>
-            </h3>
-            <div className="space-y-1">
-              {[
-                { key: 'all', label: t('community.all') },
-                { key: 'tshirts', label: t('community.tshirts') },
-              ].map(cat => (
-                <button 
-                  key={cat.key}
-                  onClick={() => setSelectedCategory(cat.key)}
-                  className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === cat.key ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-              <button 
-                disabled
-                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold text-[#8b6b43] opacity-40 cursor-not-allowed`}
-              >
-                {t('community.hoodies')}
-              </button>
-            </div>
-          </div>
-
-          {/* Featured Artists */}
-          <div>
-            <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
-              <Star className="w-5 h-5 text-[#8b6b43]" />
-              <span>{t('community.featuredArtists')}</span>
-            </h3>
-            <div className="space-y-1">
-              <button 
-                onClick={() => setSelectedArtist('all')}
-                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedArtist === 'all' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
-              >
-                {t('community.allArtists')}
-              </button>
-              {uniqueArtists.map(artist => (
-                <button 
-                  key={artist}
-                  onClick={() => setSelectedArtist(artist as string)}
-                  className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold truncate ${selectedArtist === artist ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'}`}
-                >
-                  {artist}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </aside>
+      {renderSidebar(false)}
     </div>
   );
 }
