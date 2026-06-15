@@ -115,33 +115,33 @@ export default function Dashboard() {
           {/* Small Arabic Stats Row */}
           <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
             
-            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-left">رصيدك الحالي</p>
-              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">رصيدك الحالي</p>
+              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.discountBalance}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">.ع ج</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-left">العملاء المحالين</p>
-              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">العملاء المحالين</p>
+              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.referredUsers}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">شخص</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-left">المبيعات الإجمالية</p>
-              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">المبيعات الإجمالية</p>
+              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{totalSales}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">طلبية</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-left">التصاميم المنشورة</p>
-              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-center">التصاميم المنشورة</p>
+              <div className="flex items-end justify-center gap-1 mt-2 flex-row-reverse">
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{designCount}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">تصميم</span>
               </div>
@@ -187,20 +187,7 @@ export default function Dashboard() {
 
         </div>
 
-        {/* Footer Area */}
-        <div className="w-full mt-auto pt-10 flex flex-col items-center z-10 relative">
-          <div className="w-full h-12 flex items-center justify-between px-10 rounded-t-xl" style={{ backgroundColor: 'rgba(230, 230, 230, 0.5)', backdropFilter: 'blur(5px)' }}>
-            <div className="flex gap-4 text-[#666]">
-              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
-              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
-              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
-              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
-            </div>
-            <span className="text-sm font-semibold text-[#4a3b2c]">Site map</span>
-            <span className="text-sm font-semibold text-[#4a3b2c]">6/15/2026</span>
-          </div>
-        </div>
-        
+
       </div>
     </div>
   );
