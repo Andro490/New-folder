@@ -355,30 +355,28 @@ function ProductStep() {
             <div className="flex flex-col items-center">
               <h2 className="text-3xl font-black mb-4 text-[#3d3329]">T-SHIRT</h2>
               <div 
-                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center p-4 transition-transform hover:-translate-y-2"
+                className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center p-4 transition-transform hover:-translate-y-2 cursor-pointer group"
+                onClick={() => navigate('/fit')}
                 style={{ 
                   background: 'linear-gradient(145deg, #e6ded0, #f5f0e6)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.2)',
                   border: '2px solid #fff'
                 }}
               >
-                <img src={whiteMockupFront} alt="T-Shirt" className="w-[90%] h-auto object-contain flex-1 filter drop-shadow-xl" />
+                <img src={whiteMockupFront} alt="T-Shirt" className="w-[90%] h-auto object-contain flex-1 filter drop-shadow-xl transition-transform group-hover:scale-105" />
                 
                 <div className="w-full mt-4 flex flex-col items-center gap-3">
                   <span className="font-bold text-sm text-[#3d3329]">T-SHIRT</span>
-                  <button
-                    onClick={() => navigate('/fit')}
-                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all"
+                  <div
+                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all flex items-center justify-center pointer-events-none"
                     style={{ 
                       background: 'linear-gradient(to right, #6a4f2d, #b1894d, #6a4f2d)',
                       backgroundSize: '200% auto',
                       boxShadow: '0 4px 10px rgba(106, 79, 45, 0.4)'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundPosition = 'right center'}
-                    onMouseLeave={e => e.currentTarget.style.backgroundPosition = 'left center'}
                   >
                     GET STARTED
-                  </button>
+                  </div>
                 </div>
               </div>
             </div>

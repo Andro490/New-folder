@@ -123,17 +123,16 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         {user ? (
           <div className="relative" ref={dropdownRef}>
-            {/* Avatar Button */}
             <button
               onClick={() => setDropdownOpen(o => !o)}
-              className="flex items-center gap-2 px-2 py-1 rounded-full transition-all"
-              style={{ border: '1px solid var(--border-color)' }}
+              className="flex items-center justify-between px-1.5 py-1.5 rounded-full transition-all w-[150px]"
+              style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)' }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onMouseLeave={e => { if (!dropdownOpen) e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              {/* Avatar circle with first letter */}
+              {/* Avatar circle with first letter (Right in RTL) */}
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm select-none"
+                className="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm select-none shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, var(--accent-primary), #6a4f2d)',
                   color: '#f9f4e6',
@@ -143,17 +142,23 @@ export default function Navbar() {
               >
                 {firstLetter}
               </div>
-              <span className="hidden sm:block text-sm font-bold" style={{ color: 'var(--text-primary)', maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+
+              {/* Username (Center) */}
+              <span className="flex-1 text-center hidden sm:block text-sm font-bold truncate px-2" style={{ color: 'var(--text-primary)' }}>
                 {user.name}
               </span>
-              <ChevronDown
-                size={14}
-                style={{
-                  color: 'var(--text-muted)',
-                  transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s',
-                }}
-              />
+
+              {/* Chevron (Left in RTL) */}
+              <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                <ChevronDown
+                  size={16}
+                  style={{
+                    color: 'var(--text-muted)',
+                    transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s',
+                  }}
+                />
+              </div>
             </button>
 
             {/* Dropdown Menu */}
