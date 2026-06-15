@@ -78,10 +78,10 @@ export default function Community() {
       <div className="fixed inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/old-wall.png")' }}></div>
 
       {/* Main Content Area (Right Side in RTL) */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 custom-scrollbar p-6">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto relative z-10 custom-scrollbar p-8 md:p-12">
         
         {/* Ornate Frame Container */}
-        <div className="flex-1 border-[3px] border-[#8b6b43]/40 rounded-sm relative p-2">
+        <div className="flex-1 border-[3px] border-[#8b6b43]/40 rounded-sm relative p-2 md:p-3">
           {/* Ornate corners (CSS simulated) */}
           <div className="absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-[#8b6b43]"></div>
           <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-[#8b6b43]"></div>
@@ -90,7 +90,7 @@ export default function Community() {
 
           <div className="border border-[#8b6b43]/20 h-full flex flex-col">
             {/* Header Section */}
-            <header className="relative pt-8 pb-10 px-6 flex flex-col items-center justify-center border-b border-[#8b6b43]/20 mx-10">
+            <header className="relative pt-16 pb-10 px-6 flex flex-col items-center justify-center border-b border-[#8b6b43]/20 mx-10">
               <button
                 onClick={() => navigate('/')}
                 className="absolute left-0 top-2 text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group"

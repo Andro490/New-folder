@@ -159,55 +159,56 @@ export default function Navbar() {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div
-                className="absolute left-0 top-full mt-2 w-52 rounded-xl overflow-hidden shadow-xl"
+                className="absolute left-0 sm:left-auto sm:right-0 top-[120%] mt-2 w-56 rounded-2xl rounded-tr-sm overflow-hidden shadow-2xl z-50 transition-all"
                 style={{
-                  backgroundColor: 'var(--bg-card)',
-                  border: '1px solid var(--border-color)',
-                  boxShadow: '0 8px 30px rgba(139, 107, 67, 0.15)',
+                  backgroundColor: '#fdfaf6',
+                  border: '1px solid #d4ba7b',
+                  boxShadow: '0 10px 40px rgba(139, 107, 67, 0.2)',
                 }}
+                dir="rtl"
               >
                 {/* User info header */}
-                <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <p className="text-xs font-bold truncate" style={{ color: 'var(--text-primary)' }}>{user.name}</p>
-                  <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
+                <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(212, 186, 123, 0.3)' }}>
+                  <p className="text-sm font-black truncate text-[#4a3b2c]">{user.name}</p>
+                  <p className="text-xs truncate text-[#8b6b43] mt-0.5 font-medium">{user.email}</p>
                 </div>
 
                 {/* Menu items */}
-                <div className="py-1">
+                <div className="py-2">
                   <button
                     onClick={() => { navigate('/dashboard'); setDropdownOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-right transition-colors"
-                    style={{ color: 'var(--text-primary)' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                    className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#4a3b2c] hover:text-[#b1894d]"
+                    style={{ backgroundColor: 'transparent' }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(212, 186, 123, 0.1)'}
                     onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <LayoutDashboard size={15} style={{ color: 'var(--accent-primary)' }} />
+                    <LayoutDashboard size={16} className="text-[#b1894d]" />
                     لوحة التحكم
                   </button>
 
                   {(user.isAdmin || user.name === 'ANDRO') && (
                     <button
                       onClick={() => { navigate('/admin'); setDropdownOpen(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-right transition-colors"
-                      style={{ color: '#e74c3c' }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                      className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#e74c3c] hover:opacity-80"
+                      style={{ backgroundColor: 'transparent' }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(231, 76, 60, 0.05)'}
                       onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      <LayoutDashboard size={15} />
+                      <LayoutDashboard size={16} />
                       لوحة الإدارة
                     </button>
                   )}
 
-                  <div style={{ height: 1, backgroundColor: 'var(--border-color)', margin: '4px 0' }} />
+                  <div className="mx-4 my-2" style={{ height: 1, backgroundColor: 'rgba(212, 186, 123, 0.3)' }} />
 
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-right transition-colors"
-                    style={{ color: '#e74c3c' }}
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#fff5f5'}
+                    className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold transition-all text-[#e74c3c] hover:opacity-80"
+                    style={{ backgroundColor: 'transparent' }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(231, 76, 60, 0.05)'}
                     onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <LogOut size={15} />
+                    <LogOut size={16} />
                     تسجيل الخروج
                   </button>
                 </div>
