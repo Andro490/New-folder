@@ -458,7 +458,7 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Catch-all route to serve the React app for any other request (client-side routing)
-app.get('/{*path}', (req, res) => {
+app.get('/(.*)', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
