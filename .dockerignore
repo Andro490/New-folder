@@ -4,14 +4,5 @@ dist
 .env
 .env.local
 .cache
-.next
 *.log
 npm-debug.log*
-src
-public
-tailwind.config.js
-vite.config.ts
-tsconfig*.json
-eslint.config.js
-index.html
-test-browser.js
