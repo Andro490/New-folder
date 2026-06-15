@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node server.js",
-    "postinstall": "prisma generate && prisma db push --accept-data-loss"
+    "start": "prisma db push --accept-data-loss && node server.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
