@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
-import Navbar from '../components/Navbar';
+
 import { useLanguage } from '../contexts/LanguageContext';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
@@ -233,10 +233,7 @@ export default function Community() {
       {/* ── Sidebar ─────────────────────────────────────── */}
       <aside className="w-full lg:w-[280px] flex flex-col lg:h-screen lg:sticky top-0 shrink-0 z-20 relative overflow-visible lg:overflow-y-auto custom-scrollbar pt-8 lg:pt-12 px-6 lg:px-4 lg:pr-4 border-b lg:border-b-0 lg:border-r border-[#8b6b43]/30 pb-8 lg:pb-0">
         <div className="p-0 lg:p-6 relative z-10 w-full max-w-sm mx-auto lg:max-w-none">
-          {/* Navbar in sidebar area for Desktop */}
-          <div className="hidden lg:block mb-8">
-            <Navbar />
-          </div>
+
 
           <div className="flex flex-col items-center mb-10">
             <h2 className="text-3xl font-bold text-[#594228]" style={{ fontFamily: "'Aref Ruqaa', serif" }}>

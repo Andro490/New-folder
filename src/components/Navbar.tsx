@@ -77,7 +77,31 @@ export default function Navbar() {
 
       {/* Center Nav Links */}
       <div className="flex items-center gap-1">
-
+        {/* Store */}
+        <button
+          onClick={() => navigate('/community')}
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all"
+          style={{
+            backgroundColor: isActive('/community') ? 'var(--accent-primary)' : 'transparent',
+            color: isActive('/community') ? '#fff8e8' : 'var(--text-primary)',
+            border: isActive('/community') ? '1px solid var(--accent-primary)' : '1px solid transparent',
+          }}
+          onMouseEnter={e => {
+            if (!isActive('/community')) {
+              e.currentTarget.style.backgroundColor = 'var(--bg-card)';
+              e.currentTarget.style.borderColor = 'var(--border-color)';
+            }
+          }}
+          onMouseLeave={e => {
+            if (!isActive('/community')) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = 'transparent';
+            }
+          }}
+        >
+          <ShoppingBag size={15} />
+          <span className="hidden sm:inline">{t('navbar.store')}</span>
+        </button>
 
         {/* Design T-shirt */}
         <button
