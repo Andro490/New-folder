@@ -7,9 +7,6 @@ import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import session from 'express-session';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,93 +20,84 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 
 app.use(cors({
-  origin: [CLIENT_URL, 'http://localhost:5173', 'http://localhost:3001'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
 }));
 app.options('/{*path}', cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// ── Session (required for passport OAuth flow) ─────────────────────
-app.use(session({
-  secret: JWT_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false, maxAge: 5 * 60 * 1000 } // 5 min temp session
-}));
+// ── Google OAuth (native - no passport needed) ──────────────────────
+const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
 
-// ── Passport Google Strategy ────────────────────────────────────────
-passport.use(new GoogleStrategy({
-  clientID: GOOGLE_CLIENT_ID,
-  clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: `${SERVER_URL}/api/auth/google/callback`,
-}, async (accessToken, refreshToken, profile, done) => {
+// Step 1: Redirect user to Google login
+app.get('/api/auth/google', (req, res) => {
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+    response_type: 'code',
+    scope: 'openid email profile',
+    access_type: 'offline',
+    prompt: 'select_account',
+  });
+  res.redirect(`${GOOGLE_AUTH_URL}?${params}`);
+});
+
+// Step 2: Google redirects back with a code
+app.get('/api/auth/google/callback', async (req, res) => {
+  const { code } = req.query;
+  if (!code) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
+
   try {
-    const email = profile.emails?.[0]?.value;
-    const name  = profile.displayName;
-    const avatarUrl = profile.photos?.[0]?.value;
-    const googleId  = profile.id;
+    // Exchange code for access token
+    const tokenRes = await axios.post(GOOGLE_TOKEN_URL, {
+      code,
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+      grant_type: 'authorization_code',
+    });
 
-    if (!email) return done(new Error('No email from Google'), undefined);
+    const { access_token } = tokenRes.data;
 
-    // Find or create user
+    // Get user profile from Google
+    const userInfoRes = await axios.get(GOOGLE_USERINFO_URL, {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+
+    const { sub: googleId, email, name, picture: avatarUrl } = userInfoRes.data;
+    if (!email) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
+
+    // Find or create user in DB
     let user = await prisma.user.findUnique({ where: { googleId } });
-
     if (!user) {
-      // Check if email already exists (link accounts)
       user = await prisma.user.findUnique({ where: { email } });
       if (user) {
-        // Link Google account to existing email account
-        user = await prisma.user.update({
-          where: { email },
-          data: { googleId, avatarUrl }
-        });
+        user = await prisma.user.update({ where: { email }, data: { googleId, avatarUrl } });
       } else {
-        // Create brand new user
         const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        user = await prisma.user.create({
-          data: { name, email, googleId, avatarUrl, affiliateCode }
-        });
+        user = await prisma.user.create({ data: { name, email, googleId, avatarUrl, affiliateCode } });
       }
     }
 
-    return done(null, user);
-  } catch (err) {
-    return done(err, undefined);
-  }
-}));
-
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-// ── Google OAuth Routes ─────────────────────────────────────────────
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: `${CLIENT_URL}/auth?error=google_failed` }),
-  (req, res) => {
-    const user = req.user;
+    // Return JWT to frontend via redirect
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-    // Redirect to frontend with token in query string
-    res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${encodeURIComponent(JSON.stringify({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      affiliateCode: user.affiliateCode,
-      discountBalance: user.discountBalance,
-      referredUsers: user.referredUsers,
-      isAdmin: user.isAdmin,
-      avatarUrl: user.avatarUrl
-    }))}`);
+    const userData = encodeURIComponent(JSON.stringify({
+      id: user.id, name: user.name, email: user.email,
+      affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
+      referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
+    }));
+    res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
+
+  } catch (err) {
+    console.error('Google OAuth error:', err.response?.data || err.message);
+    res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
   }
-);
+});
+
 
 // Auth Middleware
 const authenticateToken = (req, res, next) => {
