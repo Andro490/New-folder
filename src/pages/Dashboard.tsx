@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layers, Copy, CheckCircle } from 'lucide-react';
+import { Layers, Copy, CheckCircle, Paintbrush, ShoppingCart, Wallet, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 export default function Dashboard() {
@@ -66,99 +66,141 @@ export default function Dashboard() {
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir="rtl">
       <Navbar />
 
-      <div className="flex-1 w-full flex flex-col items-center p-6 md:p-10">
+      <div className="flex-1 w-full flex flex-col items-center p-6 md:p-10 relative">
         
-        {/* Main Content Container matching the reference image layout */}
-        <div className="max-w-7xl w-full mx-auto flex flex-col gap-8">
+        {/* Main Content Container */}
+        <div className="max-w-7xl w-full mx-auto flex flex-col gap-6 z-10">
           
           {/* Top Title & Subtitle */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-black mb-3 flex items-center justify-center gap-3" style={{ color: 'var(--text-primary)' }}>
-               أهلاً بك، <span style={{ color: 'var(--accent-primary)' }}>{user.name}</span>!
+          <div className="text-center mb-4 mt-4">
+            <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: '#4a3b2c' }}>
+               أهلاً بك، <span style={{ color: '#b1894d' }}>{user.name} !</span>
             </h1>
-            <p className="text-gray-400 text-sm md:text-base">
-              مرحباً بك في لوحة التحكم الخاصة بك. تابع أرباحك وتصاميمك من هنا.
+            <p className="text-sm md:text-base font-medium" style={{ color: '#6a543f' }}>
+              مرحباً بك في لوحة التحكم الخاصة بك، بائع ازيائك وتصاميمك من هنا .
             </p>
           </div>
 
-          {/* Wide Top Box: Affiliate Link (Like 'إدارة التصنيفات' in ref) */}
-          <div className="w-full rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="flex items-center gap-3 min-w-fit">
-              <Layers size={24} style={{ color: 'var(--accent-primary)' }} />
-              <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>رابط الإحالة الخاص بك</h2>
+          {/* Affiliate Link Bar */}
+          <div 
+            className="w-full rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md" 
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: '1px solid rgba(177, 137, 77, 0.3)', backdropFilter: 'blur(10px)' }}
+          >
+            <div className="flex items-center gap-3">
+              <Layers size={20} style={{ color: '#b1894d' }} />
+              <h2 className="text-base font-bold text-[#4a3b2c]">رابط الإحالة الخاص بك</h2>
+              <p className="text-xs text-[#6a543f] hidden lg:block mr-2">
+                شارك هذا الرابط مع أصدقائك أو عملائك واحصل على 50 جنيه عن كل شراء.
+              </p>
             </div>
             
-            <p className="text-sm flex-1 hidden lg:block" style={{ color: 'var(--text-muted)' }}>
-              شارك هذا الرابط مع أصدقائك أو عملائك واحصل على <span style={{ color: 'var(--accent-primary)' }}>50 جنيه</span> عن كل شراء.
-            </p>
-
-            <div className="flex items-center rounded-xl p-1.5 gap-2 w-full md:w-auto flex-1 md:flex-none" style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)' }}>
+            <div className="flex items-center rounded-xl p-1 gap-2 w-full md:w-[450px]" style={{ backgroundColor: '#f2ece4', border: '1px solid rgba(177, 137, 77, 0.2)' }}>
               <input
                 type="text"
                 readOnly
                 value={affiliateLink}
-                className="bg-transparent flex-1 outline-none text-xs md:text-sm text-left px-3 font-mono min-w-[200px]"
-                style={{ color: 'var(--text-primary)' }}
+                className="bg-transparent flex-1 outline-none text-xs md:text-sm px-3 font-mono text-[#4a3b2c]"
                 dir="ltr"
               />
               <button
                 onClick={handleCopy}
-                className="font-semibold px-4 py-2 text-sm rounded-lg transition-all flex items-center justify-center shrink-0 gap-2 border"
-                style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
+                className="font-bold px-6 py-2 text-sm rounded-lg transition-all text-white shadow-sm"
+                style={{ backgroundColor: '#a68048' }}
               >
-                {copied ? <CheckCircle size={16} style={{ color: 'var(--accent-primary)' }} /> : <Copy size={16} />}
-                {copied ? 'تم النسخ' : 'نسخ'}
+                {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
           </div>
 
-          {/* Stats Row (4 columns layout style) */}
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Small Arabic Stats Row */}
+          <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
             
-            {/* Stat 1: Balance */}
-            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>رصيدك الحالي</p>
-              <div className="flex items-end gap-2">
-                <span className="text-4xl font-black" style={{ color: 'var(--accent-primary)' }}>{user.discountBalance}</span>
-                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>ج.م</span>
+            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-left">رصيدك الحالي</p>
+              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.discountBalance}</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">.ع ج</span>
               </div>
             </div>
 
-            {/* Stat 2: Referrals */}
-            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>العملاء المحالين</p>
-              <div className="flex items-end gap-2">
-                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{user.referredUsers}</span>
-                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>شخص</span>
+            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-left">العملاء المحالين</p>
+              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.referredUsers}</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">شخص</span>
               </div>
             </div>
 
-            {/* Stat 3: Total Sales */}
-            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>المبيعات الإجمالية</p>
-              <div className="flex items-end gap-2">
-                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{totalSales}</span>
-                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>عملية</span>
+            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-left">المبيعات الإجمالية</p>
+              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{totalSales}</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">طلبية</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-6 flex flex-col justify-between shadow-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <p className="text-sm mb-4 font-semibold" style={{ color: 'var(--text-muted)' }}>التصاميم المنشورة</p>
-              <div className="flex items-end gap-2">
-                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{designCount}</span>
-                <span className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>تصميم</span>
+            <div className="rounded-2xl p-4 flex flex-col justify-between shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+              <p className="text-xs font-bold text-[#4a3b2c] text-left">التصاميم المنشورة</p>
+              <div className="flex items-end justify-start gap-1 mt-2 flex-row-reverse">
+                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{designCount}</span>
+                <span className="text-xs font-bold text-[#3d2b1f] mb-1">تصميم</span>
               </div>
             </div>
 
           </div>
 
-          <p className="text-xs text-gray-500 text-center mt-4">
-            * سيتم خصم رصيدك تلقائياً عند قيامك بشراء تيشيرت خاص بك من المتجر.
+          <p className="text-[10px] text-center mt-2 text-[#8b6b43]">
+            * سيتم خصم رصيدك تلقائياً عند طلب شراء كشرط خصم منك من المتجر
           </p>
 
+          {/* Large English Stats Row */}
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+            
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
+              <Paintbrush size={32} className="text-[#8b6b43] mb-4" />
+              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Designs Submitted</p>
+              <span className="text-4xl font-black text-[#2a1e15]">{designCount}</span>
+            </div>
+
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
+              <ShoppingCart size={32} className="text-[#8b6b43] mb-4" />
+              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Total Sales</p>
+              <span className="text-4xl font-black text-[#2a1e15]">{totalSales}</span>
+            </div>
+
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
+              <Wallet size={32} className="text-[#8b6b43] mb-4" />
+              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Total Commissions</p>
+              <div className="flex items-baseline gap-1" dir="ltr">
+                <span className="text-4xl font-black text-[#2a1e15]">{user.discountBalance}</span>
+                <span className="text-xl font-bold text-[#2a1e15]">.ع ج</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
+              <Users size={32} className="text-[#8b6b43] mb-4" />
+              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Referrals</p>
+              <span className="text-4xl font-black text-[#2a1e15]">{user.referredUsers}</span>
+            </div>
+
+          </div>
+
         </div>
+
+        {/* Footer Area */}
+        <div className="w-full mt-auto pt-10 flex flex-col items-center z-10 relative">
+          <div className="w-full h-12 flex items-center justify-between px-10 rounded-t-xl" style={{ backgroundColor: 'rgba(230, 230, 230, 0.5)', backdropFilter: 'blur(5px)' }}>
+            <div className="flex gap-4 text-[#666]">
+              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
+              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
+              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
+              <div className="w-5 h-5 rounded-full bg-[#8b6b43] opacity-60"></div>
+            </div>
+            <span className="text-sm font-semibold text-[#4a3b2c]">Site map</span>
+            <span className="text-sm font-semibold text-[#4a3b2c]">6/15/2026</span>
+          </div>
+        </div>
+        
       </div>
     </div>
   );
