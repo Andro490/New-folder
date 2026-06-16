@@ -441,8 +441,8 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_v
 
 // ── Helper: إرسال إيميل إشعار برصيد جديد عبر GAS ───────────────────
 async function sendBalanceNotification({ to, userName, amount, reason, newBalance }) {
-  const gasUrl = process.env.GAS_EMAIL_URL;
-  if (!gasUrl) return; // GAS not configured, skip silently
+  const gasUrl = process.env.GAS_NOTIFY_URL;  // متغير منفصل عن OTP
+  if (!gasUrl) return; // GAS_NOTIFY_URL not configured, skip silently
 
   const htmlBody = `
     <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 480px; margin: auto; padding: 36px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b; text-align: center;">
