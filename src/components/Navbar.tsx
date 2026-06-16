@@ -80,8 +80,9 @@ export default function Navbar() {
         {/* Store */}
         <button
           onClick={() => navigate('/community')}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all"
+          className="flex items-center gap-2 rounded-full text-sm font-bold transition-all"
           style={{
+            padding: '8px 20px',
             backgroundColor: isActive('/community') ? 'var(--accent-primary)' : 'transparent',
             color: isActive('/community') ? '#fff8e8' : 'var(--text-primary)',
             border: isActive('/community') ? '1px solid var(--accent-primary)' : '1px solid transparent',
@@ -106,8 +107,9 @@ export default function Navbar() {
         {/* Design T-shirt */}
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all"
+          className="flex items-center gap-2 rounded-full text-sm font-bold transition-all"
           style={{
+            padding: '8px 20px',
             backgroundColor: isActive('/editor') || isActive('/') || isActive('/fit') || isActive('/color') ? 'var(--accent-primary)' : 'transparent',
             color: isActive('/editor') || isActive('/') || isActive('/fit') || isActive('/color') ? '#fff8e8' : 'var(--text-primary)',
             border: '1px solid transparent',
@@ -221,8 +223,8 @@ export default function Navbar() {
         ) : (
           <button
             onClick={() => navigate('/auth')}
-            className="px-5 py-2 rounded-full text-sm font-bold transition-all"
-            style={{ backgroundColor: 'var(--accent-primary)', color: '#fff8e8' }}
+            className="rounded-full text-sm font-bold transition-all"
+            style={{ backgroundColor: 'var(--accent-primary)', color: '#fff8e8', padding: '10px 24px' }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 15px var(--accent-glow)'}
             onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
           >
