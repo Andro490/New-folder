@@ -1,10 +1,197 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+
+interface Design {
+  id: number;
+  name: string;
+  tshirtColor: string;
+  imageUrl: string | null;
+  frontDesign: string;
+  backDesign: string;
+  purchases: number;
+  user: {
+    name: string;
+    affiliateCode: string;
+  };
+}
+
+// ── DesignCard with swipe (mobile) + hover (desktop) ──────────────
+function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => void }) {
+  const [showBack, setShowBack] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  let backLayers: any[] = [];
+  let hasBackDesign = false;
+  try {
+    const parsed = JSON.parse(design.backDesign || '[]');
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      backLayers = parsed.filter((l: any) => l.imageUrl);
+      hasBackDesign = backLayers.length > 0;
+    }
+  } catch(e) {}
+
+  const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!hasBackDesign) return;
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!hasBackDesign || touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(deltaX) > 40) {
+      setShowBack(prev => !prev);
+    }
+    touchStartX.current = null;
+  };
+
+  return (
+    <div
+      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 border border-[#d4ba7b]/40"
+      style={{
+        backgroundColor: 'var(--bg-card)',
+        boxShadow: '0 8px 30px rgba(139,107,67,0.08)',
+        transform: 'translateY(0)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+        (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(139,107,67,0.2)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+        (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(139,107,67,0.08)';
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Swipe hint badge — mobile only */}
+      {hasBackDesign && (
+        <div
+          className="absolute top-3 left-3 z-20 text-[10px] font-bold px-2 py-1 rounded-full sm:hidden"
+          style={{ backgroundColor: 'rgba(139,107,67,0.85)', color: '#fff8e8', backdropFilter: 'blur(4px)' }}
+        >
+          ← اسحب للضهر
+        </div>
+      )}
+
+      {/* Image Area */}
+      <div
+        className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden"
+      >
+        {/* Front image */}
+        <div
+          className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500"
+          style={{ opacity: hasBackDesign && (showBack) ? 0 : 1 }}
+        >
+          {design.imageUrl ? (
+            <img
+              src={design.imageUrl}
+              alt={design.name}
+              className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <span className="text-[#8b6b43]/50 font-bold text-sm">لا توجد صورة</span>
+          )}
+        </div>
+
+        {/* Back image — desktop: hover | mobile: swipe */}
+        {hasBackDesign && (
+          <div
+            className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500"
+            style={{
+              // Desktop: use CSS group-hover; Mobile: use showBack state
+              opacity: undefined,
+            }}
+          >
+            <div
+              style={{ opacity: showBack ? 1 : undefined }}
+              className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
+              /* This handles BOTH: group-hover on desktop, and inline opacity on mobile via showBack */
+              ref={el => {
+                if (el) el.style.opacity = showBack ? '1' : '';
+              }}
+            >
+              <div
+                className="relative flex items-center justify-center"
+                style={{ width: '100%', height: '100%', aspectRatio: '500/600', maxWidth: '100%', maxHeight: '100%' }}
+              >
+                <img
+                  src={backMockup}
+                  alt="Back"
+                  className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                  {backLayers.map((layer: any, idx: number) => (
+                    <img
+                      key={idx}
+                      src={layer.imageUrl}
+                      className="absolute z-10"
+                      style={{
+                        left: `${(layer.x / 500) * 100}%`,
+                        top: `${(layer.y / 600) * 100}%`,
+                        width: `${(layer.width / 500) * 100}%`,
+                        height: `${(layer.height / 600) * 100}%`,
+                        transform: `rotate(${layer.rotation || 0}deg)`,
+                        opacity: layer.opacity ?? 1,
+                        pointerEvents: 'none',
+                      }}
+                      alt="layer"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="px-5 pt-2 pb-4 flex flex-col items-end">
+        <h3
+          className="font-bold text-base text-[#1a0e06] truncate text-right w-full mb-1"
+          style={{ fontFamily: "'Cairo', sans-serif" }}
+        >
+          {design.name}
+        </h3>
+        <p className="text-xs text-[#8b6b43] text-right font-semibold truncate w-full">
+          من تصميم: <span className="text-[#1a0e06] font-bold">{design.user.name || 'فنان مجهول'}</span>
+        </p>
+      </div>
+
+      {/* Buy Button */}
+      <button
+        onClick={() => onBuy(design)}
+        className="w-full py-3.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-auto"
+        style={{
+          backgroundColor: 'var(--bg-primary)',
+          color: 'var(--text-primary)',
+          borderTop: '1px solid var(--border-color)',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
+          e.currentTarget.style.color = '#1a0e06';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
+          e.currentTarget.style.color = 'var(--text-primary)';
+        }}
+      >
+        <ShoppingCart className="w-4 h-4" />
+        <span>شراء التصميم</span>
+      </button>
+    </div>
+  );
+}
+
+
 
 interface Design {
   id: number;
@@ -141,10 +328,11 @@ export default function Community() {
         <header className="relative pt-10 pb-12 flex flex-col items-center justify-center">
           <button
             onClick={() => navigate('/')}
-            className="absolute px-4 py-2 rounded-xl text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group z-50"
+            className="absolute rounded-xl text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group z-50"
             style={{
               [dir === 'rtl' ? 'left' : 'right']: '16px',
               top: '16px',
+              padding: '10px 20px',
               backgroundColor: 'var(--bg-card)',
               border: '1px solid var(--border-color)',
               boxShadow: '0 4px 15px rgba(139, 107, 67, 0.1)',
@@ -153,7 +341,7 @@ export default function Community() {
             <ArrowRight
               className={`w-4 h-4 group-hover:-translate-x-1 transition-transform ${dir === 'rtl' ? 'rotate-180' : ''}`}
             />
-            <span className="text-sm font-bold tracking-wider">{dir === 'rtl' ? 'العودة' : 'Back'}</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '0.05em' }}>{dir === 'rtl' ? 'العودة' : 'Back'}</span>
           </button>
 
           <div className="flex flex-col items-center mt-2 relative z-10">
@@ -191,125 +379,9 @@ export default function Community() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-12 pt-8 w-full">
-              {filteredDesigns.map(design => {
-                // Parse back design layers for hover reveal
-                let backLayers: any[] = [];
-                let hasBackDesign = false;
-                try {
-                  const parsed = JSON.parse(design.backDesign || '[]');
-                  if (Array.isArray(parsed) && parsed.length > 0) {
-                    backLayers = parsed.filter((l: any) => l.imageUrl);
-                    hasBackDesign = backLayers.length > 0;
-                  }
-                } catch(e) {}
-
-                const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
-
-                return (
-                  <div
-                    key={design.id}
-                    className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(139,107,67,0.2)] border border-[#d4ba7b]/40"
-                    style={{ backgroundColor: 'var(--bg-card)', boxShadow: '0 8px 30px rgba(139,107,67,0.08)' }}
-                  >
-                    {/* Image Area */}
-                    <div className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden">
-                      {/* Front image */}
-                      <div className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 ${hasBackDesign ? 'group-hover:opacity-0' : ''}`}>
-                        {design.imageUrl ? (
-                          <img
-                            src={design.imageUrl}
-                            alt={design.name}
-                            className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <span className="text-[#8b6b43]/50 font-bold text-sm">{t('community.noImage')}</span>
-                        )}
-                      </div>
-
-                      {/* Back image — revealed on hover */}
-                      {hasBackDesign && (
-                        <div className="absolute inset-0 flex items-center justify-center p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                          <div 
-                            className="relative flex items-center justify-center" 
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              aspectRatio: '500/600',
-                              maxWidth: '100%',
-                              maxHeight: '100%'
-                            }}
-                          >
-                            <img
-                              src={backMockup}
-                              alt="Back"
-                              className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                            />
-                            {/* Layer Container with same scale as image */}
-                            <div className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-500 group-hover:scale-105">
-                              {backLayers.map((layer: any, idx: number) => (
-                                <img
-                                  key={idx}
-                                  src={layer.imageUrl}
-                                  className="absolute z-10"
-                                  style={{
-                                    left: `${(layer.x / 500) * 100}%`,
-                                    top: `${(layer.y / 600) * 100}%`,
-                                    width: `${(layer.width / 500) * 100}%`,
-                                    height: `${(layer.height / 600) * 100}%`,
-                                    transform: `rotate(${layer.rotation || 0}deg)`,
-                                    opacity: layer.opacity ?? 1,
-                                    pointerEvents: 'none',
-                                  }}
-                                  alt="layer"
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Info */}
-                    <div className="px-5 pt-2 pb-4 flex flex-col items-end">
-                      <h3
-                        className="font-bold text-base text-[#1a0e06] truncate text-right w-full mb-1"
-                        style={{ fontFamily: "'Cairo', sans-serif" }}
-                      >
-                        {design.name}
-                      </h3>
-                      <p
-                        className="text-xs text-[#8b6b43] text-right font-semibold truncate w-full"
-                      >
-                        {t('community.designedBy')} <span className="text-[#1a0e06] font-bold">
-                          {design.user.name || t('community.unknownArtist')}
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* Buy Button */}
-                    <button
-                      onClick={() => handleBuy(design)}
-                      className="w-full py-3.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-auto"
-                      style={{
-                        backgroundColor: 'var(--bg-primary)',
-                        color: 'var(--text-primary)',
-                        borderTop: '1px solid var(--border-color)',
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
-                        e.currentTarget.style.color = '#1a0e06';
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
-                        e.currentTarget.style.color = 'var(--text-primary)';
-                      }}
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      <span>{t('community.buyDesign')}</span>
-                    </button>
-                  </div>
-                );
-              })}
+              {filteredDesigns.map(design => (
+                <DesignCard key={design.id} design={design} onBuy={handleBuy} />
+              ))}
             </div>
           )}
         </main>
