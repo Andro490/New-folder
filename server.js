@@ -482,21 +482,6 @@ async function sendBalanceNotification({ to, userName, amount, reason, newBalanc
     }
 }
 
-app.get('/api/test-reward', async (req, res) => {
-    try {
-        const code = req.query.code;
-        if (!code) return res.send("No code");
-        const affiliate = await prisma.user.findUnique({ where: { affiliateCode: code } });
-        if (!affiliate) return res.send("Not found");
-        await prisma.user.update({
-            where: { id: affiliate.id },
-            data: { discountBalance: { increment: 50 }, referredUsers: { increment: 1 } }
-        });
-        res.send("Success");
-    } catch (e) {
-        res.send("Error: " + e.message);
-    }
-});
 
 app.post('/api/submit-order', async (req, res) => {
     try {
@@ -586,6 +571,12 @@ app.post('/api/pinterest-image', async (req, res) => {
     }
 
     try {
+        const parsed = new URL(url);
+        const ALLOWED_HOSTS = ['pinterest.com', 'www.pinterest.com', 'i.pinimg.com', 'pin.it'];
+        if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
+            return res.status(403).json({ error: 'Domain not allowed.' });
+        }
+        
         const imageUrl = await getPinterestImageUrl(url);
         res.json({ success: true, imageUrl });
     } catch (error) {

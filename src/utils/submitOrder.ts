@@ -113,8 +113,8 @@ function showSuccessModal(name: string): void {
       ">
         <div style="font-size:56px; margin-bottom:16px;">🎉</div>
 
-        <h2 style="color:#f5c842; font-size:26px; font-weight:900; margin:0 0 12px;">
-          تم استقبال طلبك يا ${name}!
+        <h2 style="color:#f5c842; font-size:26px; font-weight:900; margin:0 0 12px;" id="success-name-title">
+          تم استقبال طلبك!
         </h2>
 
         <p style="color:#ccc; font-size:15px; line-height:1.8; margin-bottom:24px;">
@@ -163,6 +163,13 @@ function showSuccessModal(name: string): void {
   `;
 
   document.body.appendChild(modal);
+  
+  // Safe injection using textContent
+  const titleEl = document.getElementById('success-name-title');
+  if (titleEl) {
+    titleEl.textContent = \`تم استقبال طلبك يا \${name}!\`;
+  }
+  
   document.getElementById('close-success-modal')?.addEventListener('click', () => modal.remove());
 }
 
