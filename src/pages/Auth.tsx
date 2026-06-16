@@ -81,8 +81,8 @@ export default function Auth() {
               <input
                 type="text"
                 placeholder={t('auth.fullName')}
-                className="p-3 mb-4 rounded focus:outline-none transition-colors"
-                style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+                className={`rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '12px 16px', marginBottom: '16px', borderRadius: '8px' }}
                 onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
                 onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
                 value={name}
@@ -93,8 +93,8 @@ export default function Auth() {
             <input
               type="email"
               placeholder={t('auth.email')}
-              className={`p-3 mb-4 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
-              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+              className={`rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '12px 16px', marginBottom: '16px', borderRadius: '8px' }}
               onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
               value={email}
@@ -105,8 +105,8 @@ export default function Auth() {
             <input
               type="password"
               placeholder={t('auth.password')}
-              className={`p-3 mb-4 rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
-              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+              className={`rounded focus:outline-none transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '12px 16px', marginBottom: '16px', borderRadius: '8px' }}
               onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
               onBlur={e => e.currentTarget.style.borderColor = 'var(--border-color)'}
               value={password}
@@ -117,8 +117,8 @@ export default function Auth() {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-2 py-3 mb-4 font-bold rounded transition-all"
-              style={{ backgroundColor: 'var(--accent-primary)', color: '#000', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+              className="font-bold rounded transition-all"
+              style={{ backgroundColor: 'var(--accent-primary)', color: '#000', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer', padding: '14px 24px', marginTop: '8px', marginBottom: '16px', borderRadius: '8px' }}
               onMouseEnter={e => !isLoading && (e.currentTarget.style.boxShadow = '0 4px 20px var(--accent-glow)')}
               onMouseLeave={e => !isLoading && (e.currentTarget.style.boxShadow = 'none')}
             >
