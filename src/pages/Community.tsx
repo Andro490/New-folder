@@ -146,13 +146,13 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Info */}
       <div className="px-5 pt-2 pb-4 flex flex-col items-end">
         <h3
-          className="font-bold text-base text-[#1a0e06] truncate text-right w-full mb-1"
-          style={{ fontFamily: "'Cairo', sans-serif" }}
+          className="font-bold text-base truncate text-right w-full mb-1"
+          style={{ fontFamily: "'Cairo', sans-serif", color: 'var(--text-primary)' }}
         >
           {design.name}
         </h3>
-        <p className="text-xs text-[#8b6b43] text-right font-semibold truncate w-full">
-          من تصميم: <span className="text-[#1a0e06] font-bold">{design.user.name || 'فنان مجهول'}</span>
+        <p className="text-xs text-right font-semibold truncate w-full" style={{ color: 'var(--text-secondary)' }}>
+          من تصميم: <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{design.user.name || 'فنان مجهول'}</span>
         </p>
       </div>
 
@@ -167,7 +167,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
         }}
         onMouseEnter={e => {
           e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
-          e.currentTarget.style.color = '#1a0e06';
+          e.currentTarget.style.color = 'var(--text-primary)';
         }}
         onMouseLeave={e => {
           e.currentTarget.style.backgroundColor = 'var(--bg-primary)';
