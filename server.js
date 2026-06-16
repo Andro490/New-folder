@@ -611,6 +611,55 @@ app.get('/api/proxy-image', async (req, res) => {
         res.status(500).send('Error proxying image');
     }
 });
+// ── Admin Routes ───────────────────────────────────────────────────
+
+// Middleware to check if admin
+const authenticateAdmin = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (user && user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ error: 'Access denied. Admins only.' });
+        }
+    } catch (e) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const users = await prisma.user.findMany({
+            select: { id: true, name: true, email: true, discountBalance: true, referredUsers: true, isAdmin: true, createdAt: true }
+        });
+        res.json({ success: true, users });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const designId = parseInt(req.params.id);
+        await prisma.design.delete({ where: { id: designId } });
+        res.json({ success: true, message: 'تم مسح التصميم بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'فشل مسح التصميم' });
+    }
+});
+
+app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id);
+        // Delete designs first to avoid foreign key constraints
+        await prisma.design.deleteMany({ where: { userId } });
+        await prisma.user.delete({ where: { id: userId } });
+        res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'فشل مسح المستخدم' });
+    }
+});
+
 // ── Make Admin Route ───────────────────────────────────────────────
 app.get('/api/make-andro-admin', async (req, res) => {
     // Protected by a secret parameter
