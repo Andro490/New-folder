@@ -367,41 +367,49 @@ function ProductStep() {
             </div>
 
             {/* SWEATSHIRT */}
-            <div className="flex flex-col items-center relative">
+            <div className="flex flex-col items-center">
+              <h2 className={`text-3xl font-black mb-4 text-[#3d3329] uppercase ${!appConfig.products.sweatshirt.enabled && 'opacity-0'}`}>
+                {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
+              </h2>
               <div 
-                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center p-4 ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatshirt.enabled && navigate('/fit')}
               >
-                <img src={hodyImg} alt="Sweatshirt" className="w-4/5 h-auto object-contain transition-transform group-hover:scale-105" />
+                <img src={hodyImg} alt="Sweatshirt" className="w-[85%] h-auto object-contain transition-transform group-hover:scale-105" />
+                <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                  {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
+                </span>
+
+                {!appConfig.products.sweatshirt.enabled && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[#e6ded0]/30">
+                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
-              <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
-                {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
-              </span>
-              {!appConfig.products.sweatshirt.enabled && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#e6ded0]/20 rounded-xl" style={{ margin: '-10px', padding: '10px' }}>
-                  <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
-                </div>
-              )}
             </div>
 
             {/* SWEATPANTS */}
-            <div className="flex flex-col items-center relative">
+            <div className="flex flex-col items-center">
+              <h2 className={`text-3xl font-black mb-4 text-[#3d3329] uppercase ${!appConfig.products.sweatpants.enabled && 'opacity-0'}`}>
+                {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
+              </h2>
               <div 
-                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center p-4 ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatpants.enabled && navigate('/fit')}
               >
-                <img src={pantImg} alt="Sweatpants" className="w-4/5 h-auto object-contain transition-transform group-hover:scale-105" />
+                <img src={pantImg} alt="Sweatpants" className="w-[85%] h-auto object-contain transition-transform group-hover:scale-105" />
+                <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                  {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
+                </span>
+
+                {!appConfig.products.sweatpants.enabled && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-md bg-[#e6ded0]/30">
+                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
-              <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
-                {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
-              </span>
-              {!appConfig.products.sweatpants.enabled && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#e6ded0]/20 rounded-xl" style={{ margin: '-10px', padding: '10px' }}>
-                  <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
-                </div>
-              )}
             </div>
 
           </div>
