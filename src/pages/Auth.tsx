@@ -64,9 +64,9 @@ export default function Auth() {
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir={dir}>
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+        <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '2rem', borderRadius: '1rem' }}>
           <div className="absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none" style={{ background: 'linear-gradient(135deg, var(--accent-glow), transparent)' }}></div>
-          <h2 className="text-3xl font-black text-center mb-6" style={{ color: 'var(--accent-primary)' }}>
+          <h2 className="text-3xl font-black text-center mb-6" style={{ color: 'var(--accent-primary)', marginBottom: '1.5rem', fontSize: '1.875rem' }}>
             {isLogin ? t('auth.loginTitle') : t('auth.registerTitle')}
           </h2>
 

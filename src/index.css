@@ -69,6 +69,8 @@ background-size: 500px;
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 20px rgba(139, 107, 67, 0.1);
+  padding: 32px;
+  border-radius: 16px;
 }
 
 .glass-card-hover:hover {
@@ -78,6 +80,11 @@ background-size: 500px;
 }
 
 /* Neon/Vintage button */
+button, .btn-primary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+}
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: #f9f4e6;
@@ -141,12 +148,22 @@ background-size: 500px;
 }
 
 /* Input styles */
+input, textarea, select {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  width: 100%;
+}
+
 .dark-input {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   outline: none;
   transition: border-color 0.2s;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
 }
 .dark-input:focus {
   border-color: var(--accent-primary);
