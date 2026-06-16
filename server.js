@@ -14,7 +14,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) console.error("❌ FATAL: JWT_SECRET is not set in environment!");
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -28,9 +29,6 @@ const emailTransporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER || '',
         pass: process.env.EMAIL_PASS || '',
-    },
-    tls: {
-        rejectUnauthorized: false
     }
 });
 
@@ -38,9 +36,10 @@ const emailTransporter = nodemailer.createTransport({
 const otpStore = new Map();
 
 app.use(cors({
-    origin: '*',
+    origin: process.env.CLIENT_URL || 'https://new-folder-peach-rho.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    credentials: true,
     optionsSuccessStatus: 200
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -594,9 +593,14 @@ app.post('/api/pinterest-image', async (req, res) => {
 app.get('/api/proxy-image', async (req, res) => {
     const { url } = req.query;
     if (!url) return res.status(400).send('No url provided');
-
+    
     try {
-        const response = await axios.get(url, { responseType: 'stream' });
+        const parsedUrl = new URL(url);
+        if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1' || !parsedUrl.hostname.includes('.')) {
+            return res.status(403).send('❌ مسار غير مسموح');
+        }
+        
+        const response = await axios.get(url, { responseType: 'stream', timeout: 5000 });
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
         response.data.pipe(res);
@@ -606,6 +610,10 @@ app.get('/api/proxy-image', async (req, res) => {
 });
 // ── Make Admin Route ───────────────────────────────────────────────
 app.get('/api/make-andro-admin', async (req, res) => {
+    if (req.query.secret !== (process.env.ADMIN_SECRET || 'admin12345')) {
+        return res.status(403).send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ غير مصرح لك!</h1>');
+    }
+    
     try {
         const nameParam = req.query.name;
         const emailParam = req.query.email;
