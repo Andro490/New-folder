@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
+import { OrderModal } from '../components/SettingsSidebar';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 
@@ -216,6 +217,8 @@ export default function Community() {
       .finally(() => setLoading(false));
   }, []);
 
+  const [buyingDesign, setBuyingDesign] = useState<Design | null>(null);
+
   const handleBuy = (design: Design) => {
     localStorage.setItem('wearurway_community_design_id', String(design.id));
     try {
@@ -223,7 +226,8 @@ export default function Community() {
       const back = JSON.parse(design.backDesign || '[]');
       localStorage.setItem('wearurway_layers', JSON.stringify([...front, ...back]));
     } catch(e) {}
-    navigate(`/editor?color=${design.tshirtColor}&designId=${design.id}`);
+    // Show OrderModal directly instead of navigating to editor
+    setBuyingDesign(design);
   };
 
   const uniqueArtists = Array.from(new Set(designs.map(d => d.user.name || t('community.unknownArtist'))));
@@ -378,6 +382,22 @@ export default function Community() {
 
       {/* ── Sidebar ─────────────────────────────────────── */}
       {renderSidebar(false)}
+
+      {/* ── Buy Modal (Size + Checkout) ───────────────── */}
+      {buyingDesign && (
+        <OrderModal
+          onClose={() => setBuyingDesign(null)}
+          tshirtColor={buyingDesign.tshirtColor as any}
+          allLayers={(() => {
+            try {
+              const front = JSON.parse(buyingDesign.frontDesign || '[]');
+              const back = JSON.parse(buyingDesign.backDesign || '[]');
+              return [...front, ...back];
+            } catch { return []; }
+          })()}
+          designLink={buyingDesign.imageUrl || ''}
+        />
+      )}
     </div>
   );
 }

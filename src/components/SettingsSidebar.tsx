@@ -623,7 +623,7 @@ async function sendOrderToSheet(orderData: Record<string, string>): Promise<void
 }
 
 
-function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
+export function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
