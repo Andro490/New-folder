@@ -21,5 +21,6 @@ RUN npm run build
 
 EXPOSE 3001
 
-# At runtime: push schema then start server
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node server.js"]
+# At runtime: start server
+ENV PRISMA_TELEMETRY_DISABLED=1
+CMD ["node", "server.js"]
