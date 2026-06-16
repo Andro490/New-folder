@@ -30,17 +30,46 @@
   --danger: #c62828;
 }
 
+html.dark {
+  /* Dark Cinematic Theme */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #171717;
+  --bg-tertiary: #262626;
+  --bg-card: rgba(23, 23, 23, 0.85);
+  
+  --border-color: rgba(245, 200, 66, 0.3);
+  --border-glow: rgba(245, 200, 66, 0.1);
+  
+  --accent-primary: #f5c842;
+  --accent-secondary: #d4af37;
+  --accent-glow: rgba(245, 200, 66, 0.15);
+  
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #a3a3a3;
+  
+  --success: #10b981;
+  --danger: #ef4444;
+}
+
 html, body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-primary);
   background-image: url('./assets/back.png');
-background-size: 500px; 
+  background-size: 500px; 
   background-position: top left;
   background-attachment: fixed;
   background-repeat: repeat;
   color: var(--text-primary);
   min-height: 100%;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark body {
+  background-image: url('./assets/bakke.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 #root {

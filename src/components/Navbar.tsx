@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings, Globe } from 'lucide-react';
+import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings, Globe, Moon, Sun } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Navbar() {
@@ -9,6 +9,20 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t, dir, language, setLanguage } = useLanguage();
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const userRaw = localStorage.getItem('wearurway_user');
   const user = userRaw ? JSON.parse(userRaw) : null;
@@ -38,7 +52,7 @@ export default function Navbar() {
     <nav
       className="w-full flex items-center justify-between px-6 h-14 shrink-0 sticky top-0 z-50"
       style={{
-        backgroundColor: 'rgba(243, 235, 210, 0.97)',
+        backgroundColor: 'var(--bg-card)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border-color)',
         boxShadow: '0 1px 12px rgba(139, 107, 67, 0.08)',
@@ -72,6 +86,18 @@ export default function Navbar() {
           title="تغيير اللغة / Change Language"
         >
           <Globe size={18} />
+        </button>
+
+        {/* Dark Mode Switcher */}
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className="flex items-center justify-center w-8 h-8 rounded-full transition-all"
+          style={{ color: 'var(--text-muted)' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-glow)'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+          title="تغيير المظهر / Toggle Theme"
+        >
+          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
       </div>
 
@@ -179,42 +205,44 @@ export default function Navbar() {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div
-                className={`absolute ${dir === 'rtl' ? 'left-0' : 'right-0'} top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all border border-[#d4ba7b]`}
-                style={{ backgroundColor: '#fdfaf6' }}
+                className={`absolute ${dir === 'rtl' ? 'left-0' : 'right-0'} top-full mt-2 w-48 rounded-md overflow-hidden shadow-lg z-50 transition-all`}
+                style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
               >
                 {/* User info header */}
-                <div className="px-4 py-2.5 flex justify-between items-center border-b border-[#eaddc3]">
-                  <p className="text-sm font-bold text-[#1a0e06]">{user.name}</p>
-                  <Settings size={16} className="text-[#c8a85a]" />
+                <div className="px-4 py-2.5 flex justify-between items-center border-b" style={{ borderColor: 'var(--border-color)' }}>
+                  <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{user.name}</p>
+                  <Settings size={16} style={{ color: 'var(--accent-primary)' }} />
                 </div>
 
                 {/* Menu items */}
                 <div className="flex flex-col">
                   <button
                     onClick={() => { navigate('/dashboard'); setDropdownOpen(false); }}
-                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#4a3b2c] hover:bg-[#f3ebd2] transition-colors border-b border-[#eaddc3]`}
+                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold transition-colors border-b hover:bg-[var(--accent-glow)]`}
+                    style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
                   >
                     <span>{t('navbar.dashboard')}</span>
-                    <LayoutDashboard size={15} className="text-[#8b6b43]" />
+                    <LayoutDashboard size={15} style={{ color: 'var(--text-muted)' }} />
                   </button>
 
                   {(user.isAdmin || user.name === 'ANDRO') && (
                     <button
                       onClick={() => { navigate('/admin'); setDropdownOpen(false); }}
-                      className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] transition-colors border-b border-[#eaddc3]`}
-                      style={{ background: 'linear-gradient(90deg, transparent 0%, #f5e09a 100%)' }}
+                      className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold transition-colors border-b`}
+                      style={{ color: 'var(--danger)', borderColor: 'var(--border-color)', background: 'linear-gradient(90deg, transparent 0%, var(--accent-glow) 100%)' }}
                     >
                       <span>{t('navbar.admin')}</span>
-                      <LayoutDashboard size={15} className="text-[#8b3a3a]" />
+                      <LayoutDashboard size={15} style={{ color: 'var(--danger)' }} />
                     </button>
                   )}
 
                   <button
                     onClick={handleLogout}
-                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold text-[#8b3a3a] hover:bg-[#fff5f5] transition-colors`}
+                    className={`w-full flex items-center ${dir === 'rtl' ? 'justify-end' : 'justify-start flex-row-reverse'} gap-3 px-4 py-2 text-[13px] font-bold transition-colors hover:bg-[var(--danger)] hover:text-white`}
+                    style={{ color: 'var(--danger)' }}
                   >
                     <span>{t('navbar.logout')}</span>
-                    <LogOut size={15} className="text-[#8b3a3a]" />
+                    <LogOut size={15} />
                   </button>
                 </div>
               </div>
