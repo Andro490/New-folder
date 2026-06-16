@@ -41,25 +41,41 @@ export default function Auth() {
     return () => clearTimeout(timer);
   }, [resendCountdown]);
 
-  // ── Step 1: Send OTP ──────────────────────────────────────────────
-  const handleSendOtp = async (e: React.FormEvent) => {
+  // ── Step 1: Send OTP (Register) OR Direct Login ──────────────────────
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, isLogin }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'حدث خطأ');
+      if (isLogin) {
+        // Direct Login
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'حدث خطأ في تسجيل الدخول');
+        
+        localStorage.setItem('wearurway_token', data.token);
+        localStorage.setItem('wearurway_user', JSON.stringify(data.user));
+        navigate('/dashboard');
+      } else {
+        // Register -> Send OTP
+        const res = await fetch(`${API_BASE}/api/auth/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, isLogin }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'حدث خطأ');
 
-      setSuccess(`✅ تم إرسال الكود إلى ${email}`);
-      setStep('otp');
-      setResendCountdown(60);
-      setTimeout(() => otpRefs.current[0]?.focus(), 200);
+        setSuccess(`✅ تم إرسال الكود إلى ${email}`);
+        setStep('otp');
+        setResendCountdown(60);
+        setTimeout(() => otpRefs.current[0]?.focus(), 200);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -156,7 +172,7 @@ export default function Auth() {
           )}
           {step === 'credentials' && (
             <p className="text-center text-xs" style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-              {isLogin ? 'أدخل بياناتك وسنرسل لك كود تحقق' : 'سنرسل كود تحقق على بريدك لتأكيد التسجيل'}
+              {isLogin ? 'أدخل بياناتك لتسجيل الدخول مباشرة' : 'سنرسل كود تحقق على بريدك لتأكيد التسجيل'}
             </p>
           )}
 
@@ -176,7 +192,7 @@ export default function Auth() {
               STEP 1 — Credentials Form
           ══════════════════════════════════════════════════════════ */}
           {step === 'credentials' && (
-            <form onSubmit={handleSendOtp} style={{ display: 'flex', flexDirection: 'column' }}>
+            <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
               {!isLogin && (
                 <input
                   type="text"
@@ -227,7 +243,7 @@ export default function Auth() {
                   marginBottom: '12px',
                 }}
               >
-                {isLoading ? 'جاري الإرسال...' : '📩 إرسال كود التحقق'}
+                {isLoading ? (isLogin ? 'جاري تسجيل الدخول...' : 'جاري الإرسال...') : (isLogin ? 'تسجيل الدخول' : '📩 إرسال كود التحقق')}
               </button>
             </form>
           )}
@@ -290,7 +306,7 @@ export default function Auth() {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
                 <button
                   type="button"
-                  onClick={handleSendOtp}
+                  onClick={handleAuthSubmit}
                   disabled={resendCountdown > 0 || isLoading}
                   style={{
                     background: 'none',

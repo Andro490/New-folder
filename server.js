@@ -151,27 +151,36 @@ app.post('/api/auth/send-otp', async (req, res) => {
         // Store pending data
         otpStore.set(email, { otp, expires, pendingData: { name, email, password, isLogin } });
 
-        // Send email
-        await emailTransporter.sendMail({
-            from: `"PrintStudio" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: '🔐 كود التحقق - PrintStudio',
-            html: `
-                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
-                    <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
-                    <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
-                    <div style="text-align: center; margin: 24px 0;">
-                        <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
-                    </div>
-                    <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
-                </div>
-            `,
-        });
+        // Send email or fallback to console if no email configured
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            console.log(`\n\n[MOCK EMAIL] OTP for ${email} is: ${otp}\n\n`);
+            return res.json({ success: true, message: 'تم إنشاء الكود (راجع سجلات السيرفر لأن الإيميل غير مفعّل)' });
+        }
 
-        res.json({ success: true, message: 'تم إرسال الكود على بريدك الإلكتروني' });
+        try {
+            await emailTransporter.sendMail({
+                from: `"PrintStudio" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: '🔐 كود التحقق - PrintStudio',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
+                        <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
+                        <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
+                        <div style="text-align: center; margin: 24px 0;">
+                            <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
+                        </div>
+                        <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
+                    </div>
+                `,
+            });
+            res.json({ success: true, message: 'تم إرسال الكود على بريدك الإلكتروني' });
+        } catch (mailError) {
+            console.error('Nodemailer Error:', mailError);
+            res.status(500).json({ error: 'تعذر إرسال الإيميل. تأكد من إعدادات EMAIL_PASS في Railway' });
+        }
     } catch (error) {
         console.error('OTP send error:', error);
-        res.status(500).json({ error: 'فشل إرسال الكود. تحقق من إعدادات الإيميل.' });
+        res.status(500).json({ error: 'فشل إرسال الكود. حدث خطأ داخلي.' });
     }
 });
 
