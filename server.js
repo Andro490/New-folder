@@ -103,16 +103,14 @@ app.get('/api/auth/google/callback', async (req, res) => {
             }
         }
 
-        // Return JWT to frontend via secure httpOnly cookie and redirect
+        // Return JWT to frontend via redirect
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        // Set auth token in a secure, httpOnly cookie. Frontend should call /api/auth/me to fetch user profile.
-        res.cookie("auth_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
-        });
-        res.redirect(`${CLIENT_URL}/auth/google/success`);
+        const userData = encodeURIComponent(JSON.stringify({
+            id: user.id, name: user.name, email: user.email,
+            affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
+            referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
+        }));
+        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
 
     } catch (err) {
         console.error('Google OAuth error:', err.response?.data || err.message);
