@@ -68,8 +68,10 @@ html, body {
 
 html.dark body {
   background-image: url('./assets/bakke.jpg');
-  background-size: cover;
-  background-position: center;
+  background-size: 500px;
+  background-position: top left;
+  background-attachment: fixed;
+  background-repeat: repeat;
 }
 
 #root {

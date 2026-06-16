@@ -445,12 +445,12 @@ function FitStep() {
                 }}
               >
                 <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105" />
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                <span className="absolute bottom-6 font-bold text-lg text-[var(--text-primary)] uppercase">
                   {language === 'ar' ? appConfig.fits.oversize.nameAr : appConfig.fits.oversize.nameEn}
                 </span>
                 {!appConfig.fits.oversize.enabled && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
-                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                    <span className="font-black text-2xl tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.comingSoon')}</span>
                   </div>
                 )}
               </div>
@@ -467,12 +467,12 @@ function FitStep() {
                 }}
               >
                 <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                <span className="absolute bottom-6 font-bold text-lg uppercase" style={{ color: 'var(--text-primary)' }}>
                   {language === 'ar' ? appConfig.fits.regularFit.nameAr : appConfig.fits.regularFit.nameEn}
                 </span>
                 {!appConfig.fits.regularFit.enabled && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
-                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                    <span className="font-black text-2xl tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.comingSoon')}</span>
                   </div>
                 )}
               </div>
@@ -489,12 +489,12 @@ function FitStep() {
                 }}
               >
                 <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
-                <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
+                <span className="absolute bottom-6 font-bold text-lg uppercase" style={{ color: 'var(--text-primary)' }}>
                   {language === 'ar' ? appConfig.fits.boxyFit.nameAr : appConfig.fits.boxyFit.nameEn}
                 </span>
                 {!appConfig.fits.boxyFit.enabled && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
-                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                    <span className="font-black text-2xl tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.comingSoon')}</span>
                   </div>
                 )}
               </div>
@@ -519,16 +519,16 @@ function ColorStep() {
           {/* Left Side: Main Title */}
           <div className="flex flex-col items-center md:items-end text-center md:text-right w-full md:w-1/2 mt-10 md:mt-0">
             <div className="flex items-center gap-4 mb-2">
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider text-[#4a3b2c]" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>{t('home.selectColor')}</h1>
-              <Paintbrush size={48} className="text-[#4a3b2c] opacity-80" strokeWidth={1.5} />
+              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wider" style={{ color: 'var(--text-primary)', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>{t('home.selectColor')}</h1>
+              <Paintbrush size={48} className="opacity-80" strokeWidth={1.5} style={{ color: 'var(--text-primary)' }} />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-[#4a3b2c] tracking-wide" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
+            <h2 className="text-4xl md:text-5xl font-black tracking-wide" style={{ color: 'var(--text-primary)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
           </div>
 
           {/* Right Side: Options */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/2">
-            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-wide text-[#4a3b2c] mb-1">{t('home.selectColor')}</h3>
-            <p className="text-sm italic text-[#6a543f] mb-8">.{t('home.setTone')}</p>
+            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-wide mb-1" style={{ color: 'var(--text-primary)' }}>{t('home.selectColor')}</h3>
+            <p className="text-sm italic mb-8" style={{ color: 'var(--text-secondary)' }}>.{t('home.setTone')}</p>
             
             <div className="flex items-center gap-8 md:gap-12 w-full justify-center md:justify-start pl-0 md:pl-4">
               
@@ -548,7 +548,7 @@ function ColorStep() {
                   {/* Subtle inner shadow/fabric effect */}
                   <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.05), inset 0 -10px 20px rgba(255,255,255,0.8)' }}></div>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">{t('home.white')}</span>
+                <span className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.white')}</span>
               </button>
 
               {/* Black Swatch */}
@@ -567,7 +567,7 @@ function ColorStep() {
                   {/* Subtle inner shadow/fabric effect */}
                   <div className="absolute inset-0 rounded-[2rem]" style={{ boxShadow: 'inset 0 10px 20px rgba(255,255,255,0.05), inset 0 -10px 20px rgba(0,0,0,0.8)' }}></div>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-wider text-[#4a3b2c]">{t('home.black')}</span>
+                <span className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.black')}</span>
               </button>
 
             </div>
