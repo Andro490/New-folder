@@ -369,39 +369,39 @@ function ProductStep() {
             {/* SWEATSHIRT */}
             <div className="flex flex-col items-center relative">
               <div 
-                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : 'opacity-80'}`}
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatshirt.enabled && navigate('/fit')}
               >
-                <img src={hodyImg} alt="Sweatshirt" className={`w-4/5 h-auto object-contain ${!appConfig.products.sweatshirt.enabled && 'opacity-60'} transition-transform group-hover:scale-105`} />
-                {!appConfig.products.sweatshirt.enabled && (
-                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
-                    <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>{t('home.comingSoon')}</span>
-                  </div>
-                )}
+                <img src={hodyImg} alt="Sweatshirt" className="w-4/5 h-auto object-contain transition-transform group-hover:scale-105" />
               </div>
               <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
                 {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
               </span>
+              {!appConfig.products.sweatshirt.enabled && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#e6ded0]/20 rounded-xl" style={{ margin: '-10px', padding: '10px' }}>
+                  <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                </div>
+              )}
             </div>
 
             {/* SWEATPANTS */}
             <div className="flex flex-col items-center relative">
               <div 
-                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : 'opacity-80'}`}
+                className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
                 style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatpants.enabled && navigate('/fit')}
               >
-                <img src={pantImg} alt="Sweatpants" className={`w-4/5 h-auto object-contain ${!appConfig.products.sweatpants.enabled && 'opacity-60'} transition-transform group-hover:scale-105`} />
-                {!appConfig.products.sweatpants.enabled && (
-                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[2px]">
-                    <span className="font-black text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.5)' }}>{t('home.comingSoon')}</span>
-                  </div>
-                )}
+                <img src={pantImg} alt="Sweatpants" className="w-4/5 h-auto object-contain transition-transform group-hover:scale-105" />
               </div>
               <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
                 {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
               </span>
+              {!appConfig.products.sweatpants.enabled && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#e6ded0]/20 rounded-xl" style={{ margin: '-10px', padding: '10px' }}>
+                  <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                </div>
+              )}
             </div>
 
           </div>
@@ -430,19 +430,21 @@ function FitStep() {
             <div className={`flex flex-col items-center ${appConfig.fits.oversize.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.oversize.enabled && navigate('/color')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
-                style={appConfig.fits.oversize.enabled ? { 
+                style={{ 
                   background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
                   border: '1px solid rgba(255,255,255,0.5)'
-                } : {
-                  background: 'linear-gradient(145deg, #d4c8b8, #c4b6a2)',
-                  boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.1)'
                 }}
               >
-                <img src={oversizeImg} alt="Oversize" className={`w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105`} />
+                <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105" />
                 <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
                   {language === 'ar' ? appConfig.fits.oversize.nameAr : appConfig.fits.oversize.nameEn}
                 </span>
+                {!appConfig.fits.oversize.enabled && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
+                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -450,19 +452,21 @@ function FitStep() {
             <div className={`flex flex-col items-center ${appConfig.fits.regularFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.regularFit.enabled && navigate('/color')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
-                style={appConfig.fits.regularFit.enabled ? { 
+                style={{ 
                   background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
                   border: '1px solid rgba(255,255,255,0.5)'
-                } : {
-                  background: 'linear-gradient(145deg, #d4c8b8, #c4b6a2)',
-                  boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.1)'
                 }}
               >
-                <img src={regularFitImg} alt="Regular Fit" className={`w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105`} />
+                <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
                 <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
                   {language === 'ar' ? appConfig.fits.regularFit.nameAr : appConfig.fits.regularFit.nameEn}
                 </span>
+                {!appConfig.fits.regularFit.enabled && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
+                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -470,19 +474,21 @@ function FitStep() {
             <div className={`flex flex-col items-center ${appConfig.fits.boxyFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.boxyFit.enabled && navigate('/color')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
-                style={appConfig.fits.boxyFit.enabled ? { 
+                style={{ 
                   background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
                   border: '1px solid rgba(255,255,255,0.5)'
-                } : {
-                  background: 'linear-gradient(145deg, #d4c8b8, #c4b6a2)',
-                  boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.1)'
                 }}
               >
-                <img src={boxyFitImg} alt="Boxy Fit" className={`w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105`} />
+                <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
                 <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
                   {language === 'ar' ? appConfig.fits.boxyFit.nameAr : appConfig.fits.boxyFit.nameEn}
                 </span>
+                {!appConfig.fits.boxyFit.enabled && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
+                    <span className="font-black text-2xl tracking-wider text-[#3d3329]">{t('home.comingSoon')}</span>
+                  </div>
+                )}
               </div>
             </div>
 
