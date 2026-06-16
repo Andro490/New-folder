@@ -15,7 +15,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) console.error("❌ FATAL: JWT_SECRET is not set in environment!");
+if (!JWT_SECRET) {
+    console.error("❌ FATAL: JWT_SECRET is not set in environment!");
+    process.exit(1);
+}
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -100,14 +103,16 @@ app.get('/api/auth/google/callback', async (req, res) => {
             }
         }
 
-        // Return JWT to frontend via redirect
+        // Return JWT to frontend via secure httpOnly cookie and redirect
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        const userData = encodeURIComponent(JSON.stringify({
-            id: user.id, name: user.name, email: user.email,
-            affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
-            referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
-        }));
-        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
+        // Set auth token in a secure, httpOnly cookie. Frontend should call /api/auth/me to fetch user profile.
+        res.cookie("auth_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+        res.redirect(`${CLIENT_URL}/auth/google/success`);
 
     } catch (err) {
         console.error('Google OAuth error:', err.response?.data || err.message);
@@ -608,40 +613,9 @@ app.get('/api/proxy-image', async (req, res) => {
         res.status(500).send('Error proxying image');
     }
 });
-// ── Make Admin Route ───────────────────────────────────────────────
-app.get('/api/make-andro-admin', async (req, res) => {
-    if (req.query.secret !== (process.env.ADMIN_SECRET || 'admin12345')) {
-        return res.status(403).send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ غير مصرح لك!</h1>');
-    }
-    
-    try {
-        const nameParam = req.query.name;
-        const emailParam = req.query.email;
-
-        let where = {};
-        if (emailParam) {
-            where = { email: emailParam };
-        } else if (nameParam) {
-            where = { name: nameParam };
-        } else {
-            where = { name: 'ANDRO' }; // default fallback
-        }
-
-        const result = await prisma.user.updateMany({
-            where,
-            data: { isAdmin: true }
-        });
-
-        if (result.count === 0) {
-            return res.send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ لم يتم العثور على أي مستخدم بهذا الاسم أو الإيميل.</h1>');
-        }
-
-        const target = emailParam || nameParam || 'ANDRO';
-        res.send(`<h1 style="color:green; text-align:center; margin-top:50px;">✅ تمت الترقية بنجاح! (${target}) أصبح أدمن الآن.<br><br><small style="font-size:16px; color:#555;">قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</small></h1>`);
-    } catch (error) {
-        res.send('Error: ' + error.message);
-    }
-});
+// Removed unsafe admin-promote endpoint (/api/make-andro-admin).
+// This endpoint allowed privilege escalation and was deleted for security reasons.
+// Use an authenticated, audited admin-only API to promote users instead.
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'dist')));

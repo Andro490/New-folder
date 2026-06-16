@@ -8,9 +8,18 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error("❌ FATAL: JWT_SECRET is not set in environment!");
+    process.exit(1);
+}
 
-app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 // ── Auth Middleware ────────────────────────────────────────────────
@@ -301,17 +310,7 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
     }
 });
 
-app.get('/api/make-andro-admin', async (req, res) => {
-    try {
-        await prisma.user.updateMany({
-            where: { name: 'ANDRO' },
-            data: { isAdmin: true }
-        });
-        res.send('<h1 style="color:green; text-align:center; margin-top:50px;">تمت الترقية بنجاح! ANDRO الآن أصبح أدمن. قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</h1>');
-    } catch (error) {
-        res.send('Error: ' + error.message);
-    }
-});
+// Removed unsafe make-andro-admin endpoint: use authenticated admin API instead.
 
 export default app;
 
