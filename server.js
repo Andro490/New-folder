@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,18 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
+
+// ── Email Transporter (Nodemailer) ──────────────────────────────────
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || '',
+    pass: process.env.EMAIL_PASS || '', // Gmail App Password
+  },
+});
+
+// ── OTP In-Memory Store (email -> { code, expires, pendingData }) ──
+const otpStore = new Map();
 
 app.use(cors({
   origin: '*',
@@ -112,22 +125,101 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// User Registration
+// ── Step 1: Send OTP (register or login) ──────────────────────────
+app.post('/api/auth/send-otp', async (req, res) => {
+    try {
+        const { name, email, password, isLogin } = req.body;
+        if (!email || !password) return res.status(400).json({ error: 'يرجى تعبئة جميع الحقول' });
+
+        // Validate credentials BEFORE sending OTP
+        if (isLogin) {
+            const user = await prisma.user.findUnique({ where: { email } });
+            if (!user) return res.status(400).json({ error: 'البريد الإلكتروني غير مسجل' });
+            if (!user.password) return res.status(400).json({ error: 'هذا الحساب مسجل عبر جوجل' });
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) return res.status(400).json({ error: 'كلمة المرور غير صحيحة' });
+        } else {
+            const existingUser = await prisma.user.findUnique({ where: { email } });
+            if (existingUser) return res.status(400).json({ error: 'البريد الإلكتروني مسجل بالفعل' });
+            if (!name || name.trim().length < 2) return res.status(400).json({ error: 'يرجى إدخال اسم صحيح' });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+        // Store pending data
+        otpStore.set(email, { otp, expires, pendingData: { name, email, password, isLogin } });
+
+        // Send email
+        await emailTransporter.sendMail({
+            from: `"PrintStudio" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: '🔐 كود التحقق - PrintStudio',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
+                    <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
+                    <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
+                    <div style="text-align: center; margin: 24px 0;">
+                        <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
+                    </div>
+                    <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
+                </div>
+            `,
+        });
+
+        res.json({ success: true, message: 'تم إرسال الكود على بريدك الإلكتروني' });
+    } catch (error) {
+        console.error('OTP send error:', error);
+        res.status(500).json({ error: 'فشل إرسال الكود. تحقق من إعدادات الإيميل.' });
+    }
+});
+
+// ── Step 2: Verify OTP and complete auth ──────────────────────────
+app.post('/api/auth/verify-otp', async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const entry = otpStore.get(email);
+
+        if (!entry) return res.status(400).json({ error: 'لم يتم إرسال كود لهذا البريد' });
+        if (Date.now() > entry.expires) {
+            otpStore.delete(email);
+            return res.status(400).json({ error: 'انتهت صلاحية الكود. أعد الإرسال.' });
+        }
+        if (entry.otp !== otp.trim()) return res.status(400).json({ error: 'الكود غير صحيح' });
+
+        otpStore.delete(email);
+        const { name, password, isLogin } = entry.pendingData;
+
+        let user;
+        if (isLogin) {
+            user = await prisma.user.findUnique({ where: { email } });
+        } else {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            user = await prisma.user.create({ data: { name, email, password: hashedPassword, affiliateCode } });
+        }
+
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+        res.json({
+            success: true, token,
+            user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin }
+        });
+    } catch (error) {
+        console.error('OTP verify error:', error);
+        res.status(500).json({ error: 'حدث خطأ أثناء التحقق' });
+    }
+});
+
+// User Registration (kept for backward compat)
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) return res.status(400).json({ error: 'البريد الإلكتروني مسجل بالفعل' });
-
         const hashedPassword = await bcrypt.hash(password, 10);
-        // Generate a random affiliate code
         const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-        const user = await prisma.user.create({
-            data: { name, email, password: hashedPassword, affiliateCode }
-        });
-
+        const user = await prisma.user.create({ data: { name, email, password: hashedPassword, affiliateCode } });
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
         res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers } });
     } catch (error) {
@@ -136,17 +228,14 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-// User Login
+// User Login (kept for backward compat)
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
-
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) return res.status(400).json({ error: 'كلمة المرور غير صحيحة' });
-
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
         res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin } });
     } catch (error) {
