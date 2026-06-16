@@ -611,10 +611,41 @@ app.get('/api/proxy-image', async (req, res) => {
         res.status(500).send('Error proxying image');
     }
 });
-// Removed unsafe admin-promote endpoint (/api/make-andro-admin).
-// This endpoint allowed privilege escalation and was deleted for security reasons.
-// Use an authenticated, audited admin-only API to promote users instead.
+// ── Make Admin Route ───────────────────────────────────────────────
+app.get('/api/make-andro-admin', async (req, res) => {
+    // Protected by a secret parameter
+    if (req.query.secret !== (process.env.ADMIN_SECRET || 'admin12345')) {
+        return res.status(403).send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ غير مصرح لك!</h1>');
+    }
+    
+    try {
+        const nameParam = req.query.name;
+        const emailParam = req.query.email;
 
+        let where = {};
+        if (emailParam) {
+            where = { email: emailParam };
+        } else if (nameParam) {
+            where = { name: nameParam };
+        } else {
+            where = { name: 'ANDRO' }; // default fallback
+        }
+
+        const result = await prisma.user.updateMany({
+            where,
+            data: { isAdmin: true }
+        });
+
+        if (result.count === 0) {
+            return res.send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ لم يتم العثور على أي مستخدم بهذا الاسم أو الإيميل.</h1>');
+        }
+
+        const target = emailParam || nameParam || 'ANDRO';
+        res.send(`<h1 style="color:green; text-align:center; margin-top:50px;">✅ تمت الترقية بنجاح! (${target}) أصبح أدمن الآن.<br><br><small style="font-size:16px; color:#555;">قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</small></h1>`);
+    } catch (error) {
+        res.send('Error: ' + error.message);
+    }
+});
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'dist')));
 
