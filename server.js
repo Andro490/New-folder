@@ -666,11 +666,29 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 3001;
 app.get('/api/make-andro-admin', async (req, res) => {
     try {
-        await prisma.user.updateMany({
-            where: { name: 'ANDRO' },
+        const nameParam = req.query.name;
+        const emailParam = req.query.email;
+
+        let where = {};
+        if (emailParam) {
+            where = { email: emailParam };
+        } else if (nameParam) {
+            where = { name: nameParam };
+        } else {
+            where = { name: 'ANDRO' }; // default fallback
+        }
+
+        const result = await prisma.user.updateMany({
+            where,
             data: { isAdmin: true }
         });
-        res.send('<h1 style="color:green; text-align:center; margin-top:50px;">تمت الترقية بنجاح! ANDRO الآن أصبح أدمن. قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</h1>');
+
+        if (result.count === 0) {
+            return res.send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ لم يتم العثور على أي مستخدم بهذا الاسم أو الإيميل.</h1>');
+        }
+
+        const target = emailParam || nameParam || 'ANDRO';
+        res.send(`<h1 style="color:green; text-align:center; margin-top:50px;">✅ تمت الترقية بنجاح! (${target}) أصبح أدمن الآن.<br><br><small style="font-size:16px; color:#555;">قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</small></h1>`);
     } catch (error) {
         res.send('Error: ' + error.message);
     }
