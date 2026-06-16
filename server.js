@@ -168,13 +168,17 @@ app.post('/api/auth/send-otp', async (req, res) => {
         }
 
         const htmlContent = `
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
-                <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
-                <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
-                <div style="text-align: center; margin: 24px 0;">
-                    <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
+            <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 400px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b; text-align: center;">
+                <h2 style="color: #4a3b2c; margin-bottom: 16px;">PrintStudio 🎨</h2>
+                <p style="color: #6a543f; font-size: 16px;">مرحباً بك! هذا هو كود التحقق الخاص بك:</p>
+                <div style="margin: 32px 0;">
+                    <div style="display: inline-block; font-size: 36px; font-weight: bold; letter-spacing: 6px; color: #8b6b43; background: #ffffff; padding: 16px 32px; border-radius: 8px; border: 2px dashed #d4ba7b; white-space: nowrap;">
+                        ${otp}
+                    </div>
                 </div>
-                <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
+                <p style="color: #8b6b43; font-size: 13px; margin-top: 24px;">صالح لمدة 10 دقائق فقط. برجاء عدم مشاركته مع أحد.</p>
+                <hr style="border: none; border-top: 1px solid #eaddbc; margin: 24px 0;" />
+                <p style="color: #a89476; font-size: 11px;">هذه رسالة تلقائية، يرجى عدم الرد عليها.</p>
             </div>
         `;
 
