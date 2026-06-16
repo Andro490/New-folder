@@ -247,7 +247,7 @@ export default function Community() {
       <div className="relative z-10 w-full max-w-sm mx-auto lg:max-w-none">
 
         <div className="flex flex-col items-center mb-10">
-          <h2 className="text-3xl font-bold text-[#594228]" style={{ fontFamily: "'Aref Ruqaa', serif" }}>
+          <h2 className="text-3xl font-bold" style={{ fontFamily: "'Aref Ruqaa', serif", color: 'var(--text-primary)' }}>
             {t('community.filterMenu')}
           </h2>
           <div className="w-16 h-0.5 bg-[#8b6b43]/50 mt-2"></div>
@@ -255,8 +255,8 @@ export default function Community() {
         
         {/* Categories */}
         <div className="mb-10">
-          <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
-            <LayoutGrid className="w-5 h-5 text-[#8b6b43]" />
+          <h3 className="flex items-center gap-2 font-bold text-lg mb-4 border-b pb-2" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+            <LayoutGrid className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
             <span>{t('community.categories')}</span>
           </h3>
           <div className="space-y-1">
@@ -267,7 +267,12 @@ export default function Community() {
               <button 
                 key={cat.key}
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedCategory === cat.key ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold`}
+                style={{ 
+                  backgroundColor: selectedCategory === cat.key ? 'var(--accent-glow)' : 'transparent',
+                  color: selectedCategory === cat.key ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  borderRight: selectedCategory === cat.key ? '3px solid var(--accent-primary)' : 'none'
+                }}
               >
                 {cat.label}
               </button>
@@ -283,14 +288,19 @@ export default function Community() {
 
         {/* Featured Artists */}
         <div>
-          <h3 className="flex items-center gap-2 text-[#594228] font-bold text-lg mb-4 border-b border-[#8b6b43]/20 pb-2">
-            <Star className="w-5 h-5 text-[#8b6b43]" />
+          <h3 className="flex items-center gap-2 font-bold text-lg mb-4 border-b pb-2" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+            <Star className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
             <span>{t('community.featuredArtists')}</span>
           </h3>
           <div className="space-y-1">
             <button 
               onClick={() => setSelectedArtist('all')}
-              className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold ${selectedArtist === 'all' ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+              className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold`}
+              style={{ 
+                backgroundColor: selectedArtist === 'all' ? 'var(--accent-glow)' : 'transparent',
+                color: selectedArtist === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderRight: selectedArtist === 'all' ? '3px solid var(--accent-primary)' : 'none'
+              }}
             >
               {t('community.allArtists')}
             </button>
@@ -298,7 +308,12 @@ export default function Community() {
               <button 
                 key={artist}
                 onClick={() => setSelectedArtist(artist as string)}
-                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold truncate ${selectedArtist === artist ? 'bg-[#8b6b43]/10 text-[#594228] border-r-[3px] border-[#8b6b43]' : 'text-[#8b6b43] hover:text-[#594228] hover:bg-[#8b6b43]/5'} `}
+                className={`w-full ${dir === 'rtl' ? 'text-right' : 'text-left'} px-4 py-2 rounded-md transition-all text-sm font-bold truncate`}
+                style={{ 
+                  backgroundColor: selectedArtist === artist ? 'var(--accent-glow)' : 'transparent',
+                  color: selectedArtist === artist ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  borderRight: selectedArtist === artist ? '3px solid var(--accent-primary)' : 'none'
+                }}
               >
                 {artist}
               </button>
@@ -343,15 +358,15 @@ export default function Community() {
               className="w-12 h-10 flex items-center justify-center border-[2px] border-[#8b6b43] mb-3 rounded-sm shadow-sm"
               style={{ backgroundColor: 'var(--bg-card)' }}
             >
-              <span className="font-serif text-lg font-bold text-[#594228]">PS</span>
+              <span className="font-serif text-lg font-bold" style={{ color: 'var(--text-primary)' }}>PS</span>
             </div>
             <h1
-              className="text-4xl md:text-5xl font-bold text-[#1a0e06] mb-2 drop-shadow-sm text-center"
-              style={{ fontFamily: "'Aref Ruqaa', serif" }}
+              className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-sm text-center"
+              style={{ fontFamily: "'Aref Ruqaa', serif", color: 'var(--text-primary)' }}
             >
               {t('community.title')}
             </h1>
-            <p className="text-[#4a3b2c] text-sm md:text-base font-semibold text-center">
+            <p className="text-sm md:text-base font-semibold text-center" style={{ color: 'var(--text-secondary)' }}>
               {t('community.subtitle')}
             </p>
           </div>
@@ -367,7 +382,7 @@ export default function Community() {
               <div className="w-10 h-10 border-4 border-[#8b6b43] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filteredDesigns.length === 0 ? (
-            <div className="text-center py-20 text-[#8b6b43] font-bold text-lg">
+            <div className="text-center py-20 font-bold text-lg" style={{ color: 'var(--text-secondary)' }}>
               {t('community.noDesigns')}
             </div>
           ) : (

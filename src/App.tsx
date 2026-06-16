@@ -334,22 +334,22 @@ function ProductStep() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-5">
             {/* T-SHIRT (Active) */}
             <div className="flex flex-col items-center">
-              <h2 className="text-3xl font-black mb-4 text-[#3d3329] uppercase">
+              <h2 className="text-3xl font-black mb-4 uppercase" style={{ color: 'var(--text-primary)' }}>
                 {language === 'ar' ? appConfig.products.tshirt.nameAr : appConfig.products.tshirt.nameEn}
               </h2>
               <div 
                 className="w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center p-4 transition-transform hover:-translate-y-2 cursor-pointer group"
                 onClick={() => navigate('/fit')}
                 style={{ 
-                  background: 'linear-gradient(145deg, #e6ded0, #f5f0e6)',
+                  background: 'var(--bg-card)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.2)',
-                  border: '2px solid #fff'
+                  border: '2px solid var(--border-color)'
                 }}
               >
                 <img src={whiteMockupFront} alt="T-Shirt" className="w-[90%] h-auto object-contain flex-1 filter drop-shadow-xl transition-transform group-hover:scale-105" />
                 
                 <div className="w-full mt-4 flex flex-col items-center gap-3">
-                  <span className="font-bold text-sm text-[#3d3329] uppercase">
+                  <span className="font-bold text-sm uppercase" style={{ color: 'var(--text-primary)' }}>
                     {language === 'ar' ? appConfig.products.tshirt.nameAr : appConfig.products.tshirt.nameEn}
                   </span>
                   <div
@@ -368,16 +368,16 @@ function ProductStep() {
 
             {/* SWEATSHIRT */}
             <div className="flex flex-col items-center">
-              <h2 className={`text-3xl font-black mb-4 text-[#3d3329] uppercase ${!appConfig.products.sweatshirt.enabled && 'opacity-0'}`}>
+              <h2 className={`text-3xl font-black mb-4 uppercase ${!appConfig.products.sweatshirt.enabled && 'opacity-0'}`} style={{ color: 'var(--text-primary)' }}>
                 {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
               </h2>
               <div 
                 className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center p-4 ${appConfig.products.sweatshirt.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
-                style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+                style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatshirt.enabled && navigate('/fit')}
               >
                 <img src={hodyImg} alt="Sweatshirt" className="w-[85%] h-auto object-contain transition-transform group-hover:scale-105" />
-                <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                <span className="font-bold text-sm mt-4 uppercase" style={{ color: 'var(--text-primary)' }}>
                   {language === 'ar' ? appConfig.products.sweatshirt.nameAr : appConfig.products.sweatshirt.nameEn}
                 </span>
 
@@ -391,16 +391,16 @@ function ProductStep() {
 
             {/* SWEATPANTS */}
             <div className="flex flex-col items-center">
-              <h2 className={`text-3xl font-black mb-4 text-[#3d3329] uppercase ${!appConfig.products.sweatpants.enabled && 'opacity-0'}`}>
+              <h2 className={`text-3xl font-black mb-4 uppercase ${!appConfig.products.sweatpants.enabled && 'opacity-0'}`} style={{ color: 'var(--text-primary)' }}>
                 {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
               </h2>
               <div 
                 className={`w-full aspect-[4/5] rounded-xl relative overflow-hidden flex flex-col items-center justify-center p-4 ${appConfig.products.sweatpants.enabled ? 'cursor-pointer group transition-transform hover:-translate-y-2' : ''}`}
-                style={{ backgroundColor: '#d5d1cc', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
+                style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', boxShadow: '0 8px 25px rgba(0,0,0,0.1)' }}
                 onClick={() => appConfig.products.sweatpants.enabled && navigate('/fit')}
               >
                 <img src={pantImg} alt="Sweatpants" className="w-[85%] h-auto object-contain transition-transform group-hover:scale-105" />
-                <span className="font-bold text-sm text-[#3d3329] mt-4 uppercase">
+                <span className="font-bold text-sm mt-4 uppercase" style={{ color: 'var(--text-primary)' }}>
                   {language === 'ar' ? appConfig.products.sweatpants.nameAr : appConfig.products.sweatpants.nameEn}
                 </span>
 
@@ -428,7 +428,7 @@ function FitStep() {
       <div className="flex-1 flex flex-col items-center justify-start px-4 py-12 relative">
         <div className="w-full max-w-5xl md:px-10 flex flex-col items-center text-center">
           
-          <h2 className="text-4xl md:text-5xl font-black mb-2 text-[#3d3329]" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
+          <h2 className="text-4xl md:text-5xl font-black mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('home.designTshirt')}</h2>
           <h1 className="text-3xl md:text-5xl font-black uppercase tracking-wide mb-3 text-center" style={{ color: 'var(--text-primary)' }}>{t('home.whichFit')}</h1>
           <p className="text-md italic mb-10 text-center" style={{ color: 'var(--text-muted)' }}>.{t('home.defineSilhouette')}</p>
           
@@ -439,9 +439,9 @@ function FitStep() {
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
-                  background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
+                  background: 'var(--bg-card)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
-                  border: '1px solid rgba(255,255,255,0.5)'
+                  border: '1px solid var(--border-color)'
                 }}
               >
                 <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105" />
@@ -461,9 +461,9 @@ function FitStep() {
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
-                  background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
+                  background: 'var(--bg-card)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
-                  border: '1px solid rgba(255,255,255,0.5)'
+                  border: '1px solid var(--border-color)'
                 }}
               >
                 <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
@@ -483,9 +483,9 @@ function FitStep() {
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
-                  background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
+                  background: 'var(--bg-card)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
-                  border: '1px solid rgba(255,255,255,0.5)'
+                  border: '1px solid var(--border-color)'
                 }}
               >
                 <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
