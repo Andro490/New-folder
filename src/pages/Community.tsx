@@ -353,13 +353,13 @@ export default function Community() {
           </button>
 
           <div className="flex flex-col items-center mt-2 relative z-10">
-            {/* PS Logo */}
-            <div
-              className="w-12 h-10 flex items-center justify-center border-[2px] border-[#8b6b43] mb-3 rounded-sm shadow-sm"
-              style={{ backgroundColor: 'var(--bg-card)' }}
-            >
-              <span className="font-serif text-lg font-bold" style={{ color: 'var(--text-primary)' }}>PS</span>
-            </div>
+            {/* Brand Logo */}
+            <img
+              src="/favicon.png"
+              alt="PrintStudio Logo"
+              className="w-16 h-16 object-contain mb-3 rounded-xl"
+              style={{ filter: 'drop-shadow(0 4px 12px rgba(139,107,67,0.4))' }}
+            />
             <h1
               className="text-4xl md:text-5xl font-bold mb-2 drop-shadow-sm text-center"
               style={{ fontFamily: "'Aref Ruqaa', serif", color: 'var(--text-primary)' }}

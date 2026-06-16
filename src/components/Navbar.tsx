@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Zap, Settings, Globe, Moon, Sun } from 'lucide-react';
+import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Settings, Globe, Moon, Sun } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Navbar() {
@@ -65,15 +65,12 @@ export default function Navbar() {
           onClick={() => navigate('/')}
           className="flex items-center gap-2 shrink-0"
         >
-          <div
-            className="w-7 h-7 rounded flex items-center justify-center shrink-0"
-            style={{
-              background: 'linear-gradient(135deg, #b1894d, #6a4f2d)',
-              boxShadow: '0 0 10px rgba(139, 107, 67, 0.3)',
-            }}
-          >
-            <Zap size={13} color="#f3ebd2" fill="#f3ebd2" />
-          </div>
+          <img
+            src="/favicon.png"
+            alt="PrintStudio Logo"
+            className="w-8 h-8 rounded shrink-0 object-contain"
+            style={{ boxShadow: '0 0 10px rgba(139, 107, 67, 0.3)' }}
+          />
           <span className="font-black text-base tracking-tight hidden md:block" style={{ color: 'var(--text-primary)' }}>
             Print<span style={{ color: 'var(--accent-primary)' }}>Studio</span>
           </span>
