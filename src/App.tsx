@@ -448,16 +448,21 @@ function FitStep() {
             </div>
 
             {/* REGULAR FIT */}
-            <div className="flex flex-col items-center cursor-pointer group" onClick={() => navigate('/color')}>
+            <div className={`flex flex-col items-center ${appConfig.fits.regularFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.regularFit.enabled && navigate('/color')}>
               <div 
-                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
+                className={`w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2 ${!appConfig.fits.regularFit.enabled && 'opacity-80'}`}
                 style={{ 
                   background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
                   border: '1px solid rgba(255,255,255,0.5)'
                 }}
               >
-                <img src={regularFitImg} alt="Regular Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
+                <img src={regularFitImg} alt="Regular Fit" className={`w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105 ${!appConfig.fits.regularFit.enabled && 'opacity-70'}`} />
+                {!appConfig.fits.regularFit.enabled && (
+                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">
+                    <span className="font-bold text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 2px 4px rgba(255,255,255,0.6)' }}>{t('home.comingSoon')}</span>
+                  </div>
+                )}
                 <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
                   {language === 'ar' ? appConfig.fits.regularFit.nameAr : appConfig.fits.regularFit.nameEn}
                 </span>
@@ -465,16 +470,21 @@ function FitStep() {
             </div>
 
             {/* BOXY FIT */}
-            <div className="flex flex-col items-center cursor-pointer group" onClick={() => navigate('/color')}>
+            <div className={`flex flex-col items-center ${appConfig.fits.boxyFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.boxyFit.enabled && navigate('/color')}>
               <div 
-                className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
+                className={`w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2 ${!appConfig.fits.boxyFit.enabled && 'opacity-80'}`}
                 style={{ 
                   background: 'linear-gradient(145deg, #f5efe6, #eae2d3)',
                   boxShadow: '0 12px 30px rgba(139, 107, 67, 0.15)',
                   border: '1px solid rgba(255,255,255,0.5)'
                 }}
               >
-                <img src={boxyFitImg} alt="Boxy Fit" className="w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105" />
+                <img src={boxyFitImg} alt="Boxy Fit" className={`w-[85%] h-auto object-contain filter drop-shadow-xl transition-transform group-hover:scale-105 ${!appConfig.fits.boxyFit.enabled && 'opacity-70'}`} />
+                {!appConfig.fits.boxyFit.enabled && (
+                  <div className="absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">
+                    <span className="font-bold text-xl tracking-wider text-[#3d3329]" style={{ textShadow: '1px 2px 4px rgba(255,255,255,0.6)' }}>{t('home.comingSoon')}</span>
+                  </div>
+                )}
                 <span className="absolute bottom-6 font-bold text-lg text-[#3d3329] uppercase">
                   {language === 'ar' ? appConfig.fits.boxyFit.nameAr : appConfig.fits.boxyFit.nameEn}
                 </span>

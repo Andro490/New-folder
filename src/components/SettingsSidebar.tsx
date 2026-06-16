@@ -8,6 +8,7 @@ import blackMockupFront from '../assets/black-mockup.png';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupFront from '../assets/—Pngtree—white t shirt mockup realistic_13020297.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+import { appConfig } from '../config';
 
 // ── Mini T-shirt Preview Canvas ──────────────────────────────────
 function TshirtPreviewBox({ layers, tshirtColor, view, width = 220, height = 180 }: {
@@ -637,8 +638,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
 
   const colorLabel = tshirtColor === 'black' ? 'أسود' : tshirtColor === 'white' ? 'أبيض' : tshirtColor === 'navy' ? 'كحلي' : tshirtColor === 'red' ? 'أحمر' : 'رمادي';
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
-  const designPrice = 700;
-  const shippingCost = shipping === 'premium' ? 70 : 0;
+  const designPrice = appConfig.pricing.basePrice;
+  const shippingCost = shipping === 'premium' ? appConfig.shipping.premium.priceEGP : appConfig.shipping.standard.priceEGP;
   const total = designPrice + shippingCost;
 
   const inputStyle: React.CSSProperties = {
@@ -790,8 +791,8 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             {/* Shipping */}
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>شحن</p>
             {[
-              { id: 'free', label: 'اشحن مجانًا', sub: 'متوفر داخل 6 أكتوبر والشيخ زايد فقط', price: '0 جنيه مصري', icon: '🎁' },
-              { id: 'premium', label: 'خدمة الترحيل في مصر', sub: 'يتم التوصيل خلال 7 أيام عمل', price: '70 جنيهًا مصريًا', icon: '🚚' },
+              { id: 'free', label: 'اشحن مجانًا', sub: 'متوفر داخل 6 أكتوبر والشيخ زايد فقط', price: `${appConfig.shipping.standard.priceEGP} جنيه مصري`, icon: '🎁' },
+              { id: 'premium', label: 'خدمة الترحيل في مصر', sub: 'يتم التوصيل خلال 7 أيام عمل', price: `${appConfig.shipping.premium.priceEGP} جنيهًا مصريًا`, icon: '🚚' },
             ].map(opt => (
               <div
                 key={opt.id}
@@ -812,7 +813,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             {/* Payment */}
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16, marginTop: 28 }}>قسط</p>
             {[
-              { id: 'instapay', label: 'إنستاباي', sub: 'أرسل إلى: 01065383482', icon: '📱' },
+              { id: 'instapay', label: 'إنستاباي', sub: `أرسل إلى: ${appConfig.payment.instapay.phoneNumber}`, icon: '📱' },
               { id: 'cod', label: 'الدفع عند الاستلام', sub: 'سيُطلب دفع عربون بنسبة 20% من السعر الإجمالي', icon: '💵' },
             ].map(opt => (
               <div
@@ -991,7 +992,7 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
                     backImage: backImageUrl,
                     // إيصال إنستاباي
                     instapayProof: instapayProofUrl,
-                    totalPrice: String(designPrice + (shipping === 'premium' ? 70 : 0)) + ' جنيه',
+                    totalPrice: String(designPrice + shippingCost) + ' جنيه',
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
