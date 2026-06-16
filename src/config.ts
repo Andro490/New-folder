@@ -11,13 +11,13 @@ export const appConfig = {
     tagline: 'Design Your Own T-Shirt',
     taglineAr: 'صمّم تيشرتك بنفسك',
     logoText: 'PrintStudio',
-    supportEmail: 'support@printstudio.com',
-    whatsappNumber: '+201234567890', // Format: +20xxxxxxxxxx
+    supportEmail: 'emelnasr@gmail.com',
+    whatsappNumber: '+201144231586', // Format: +20xxxxxxxxxx
   },
 
   // ─── 💰 Pricing ─────────────────────────────────────────────
   pricing: {
-    basePrice: 250,        // Base design price in EGP
+    basePrice: 500,        // Base design price in EGP
     currencyEn: 'EGP',
     currencyAr: 'جنيه',
     affiliateReward: 50,   // EGP earned per referred purchase
@@ -50,7 +50,7 @@ export const appConfig = {
       enabled: true,
       labelEn: 'Instapay Transfer',
       labelAr: 'تحويل Instapay',
-      phoneNumber: '01234567890', // Your Instapay phone number
+      phoneNumber: '01000026470', // Your Instapay phone number
     },
   },
 
@@ -81,12 +81,12 @@ export const appConfig = {
       nameAr: 'قصة عادية',
     },
     boxyFit: {
-      enabled: true,
+      enabled: false,
       nameEn: 'Boxy Fit',
       nameAr: 'قصة صندوقية',
     },
     oversize: {
-      enabled: false,       // 🔒 false = shows "COMING SOON", true = opens color step
+      enabled: true,       // 🔒 false = shows "COMING SOON", true = opens color step
       nameEn: 'Oversize',
       nameAr: 'أوفر سايز',
     },
