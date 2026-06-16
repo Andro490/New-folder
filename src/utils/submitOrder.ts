@@ -167,7 +167,7 @@ function showSuccessModal(name: string): void {
   // Safe injection using textContent
   const titleEl = document.getElementById('success-name-title');
   if (titleEl) {
-    titleEl.textContent = \`تم استقبال طلبك يا \${name}!\`;
+    titleEl.textContent = `تم استقبال طلبك يا ${name}!`;
   }
   
   document.getElementById('close-success-modal')?.addEventListener('click', () => modal.remove());
