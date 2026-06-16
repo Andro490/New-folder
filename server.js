@@ -439,6 +439,47 @@ async function getPinterestImageUrl(pinUrl) {
 // ── Google Apps Script proxy — يتجنب CORS تماماً ─────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
 
+// ── Helper: إرسال إيميل إشعار برصيد جديد عبر GAS ───────────────────
+async function sendBalanceNotification({ to, userName, amount, reason, newBalance }) {
+  const gasUrl = process.env.GAS_EMAIL_URL;
+  if (!gasUrl) return; // GAS not configured, skip silently
+
+  const htmlBody = `
+    <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 480px; margin: auto; padding: 36px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b; text-align: center;">
+      <h2 style="color: #4a3b2c; margin-bottom: 4px;">PrintStudio 🎨</h2>
+      <p style="color: #8b6b43; font-size: 13px; margin-bottom: 24px;">إشعار رصيد</p>
+
+      <div style="background: #ffffff; border-radius: 10px; border: 1px solid #eaddbc; padding: 24px; margin-bottom: 24px;">
+        <p style="color: #4a3b2c; font-size: 15px; margin-bottom: 12px;">مرحباً <strong>${userName}</strong>،</p>
+        <p style="color: #6a543f; font-size: 14px; line-height: 1.7;">${reason}</p>
+        <div style="margin: 20px 0; font-size: 36px; font-weight: bold; color: #2e7d32;">+${amount} ج.م</div>
+        <p style="color: #888; font-size: 13px;">رصيدك الحالي: <strong style="color: #4a3b2c;">${newBalance} ج.م</strong></p>
+      </div>
+
+      <a href="https://new-folder-peach-rho.vercel.app/dashboard" style="display: inline-block; padding: 12px 28px; background: #8b6b43; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">عرض لوحة التحكم</a>
+
+      <hr style="border: none; border-top: 1px solid #eaddbc; margin: 24px 0;" />
+      <p style="color: #a89476; font-size: 11px;">هذه رسالة تلقائية من PrintStudio، يرجى عدم الرد عليها.</p>
+    </div>
+  `;
+
+  try {
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        to,
+        subject: '💰 تم إضافة رصيد جديد إلى حسابك - PrintStudio',
+        htmlBody
+      })
+    });
+    const data = await res.json();
+    if (!data.success) console.warn('GAS email warning:', data.error);
+    else console.log(`📧 تم إرسال إيميل الرصيد إلى ${to}`);
+  } catch (err) {
+    console.warn('⚠️ Failed to send balance email:', err.message);
+  }
+}
+
 app.get('/api/test-reward', async (req, res) => {
     try {
         const code = req.query.code;
@@ -465,7 +506,7 @@ app.post('/api/submit-order', async (req, res) => {
             try {
                 const affiliate = await prisma.user.findUnique({ where: { affiliateCode: orderData.affiliateCode } });
                 if (affiliate) {
-                    await prisma.user.update({
+                    const updated = await prisma.user.update({
                         where: { id: affiliate.id },
                         data: { 
                             discountBalance: { increment: 50 },
@@ -473,6 +514,15 @@ app.post('/api/submit-order', async (req, res) => {
                         }
                     });
                     console.log(`✅ تمت إضافة 50 جنيه لحساب الكود ${orderData.affiliateCode}`);
+
+                    // ── إرسال إيميل إشعار ──
+                    await sendBalanceNotification({
+                        to: affiliate.email,
+                        userName: affiliate.name,
+                        amount: 50,
+                        reason: 'تم تسجيل بيع جديد عبر رابط الإحالة الخاص بك! تمت إضافة عمولتك تلقائياً.',
+                        newBalance: updated.discountBalance
+                    });
                 }
             } catch (err) {
                 console.error("Error processing affiliate code", err);
@@ -484,7 +534,7 @@ app.post('/api/submit-order', async (req, res) => {
             try {
                 const design = await prisma.design.findUnique({ where: { id: parseInt(orderData.designId) }, include: { user: true } });
                 if (design) {
-                    await prisma.user.update({
+                    const updatedCreator = await prisma.user.update({
                         where: { id: design.userId },
                         data: {
                             discountBalance: { increment: 50 }
@@ -495,6 +545,15 @@ app.post('/api/submit-order', async (req, res) => {
                         data: { purchases: { increment: 1 } }
                     });
                     console.log(`✅ تمت إضافة 50 جنيه لمنشئ التصميم (ID: ${design.userId})`);
+
+                    // ── إرسال إيميل إشعار لمنشئ التصميم ──
+                    await sendBalanceNotification({
+                        to: design.user.email,
+                        userName: design.user.name,
+                        amount: 50,
+                        reason: `تهانينا! 🎉 تم شراء تصميمك "${design.name}" وتمت إضافة عمولتك إلى رصيدك.`,
+                        newBalance: updatedCreator.discountBalance
+                    });
                 }
             } catch (err) {
                 console.error("Error processing design reward", err);
