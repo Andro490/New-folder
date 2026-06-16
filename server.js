@@ -23,12 +23,15 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 // ── Email Transporter (Nodemailer) ──────────────────────────────────
 const emailTransporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER || '',
     pass: process.env.EMAIL_PASS || '',
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 // ── OTP In-Memory Store (email -> { code, expires, pendingData }) ──
