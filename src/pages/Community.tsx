@@ -83,13 +83,11 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       )}
 
       {/* Image Area */}
-      <div
-        className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden"
-      >
+      <div className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden">
+        
         {/* Front image */}
         <div
-          className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500"
-          style={{ opacity: hasBackDesign && (showBack) ? 0 : 1 }}
+          className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 ${hasBackDesign && showBack ? 'opacity-0' : 'opacity-100'} ${hasBackDesign ? 'lg:group-hover:opacity-0' : ''}`}
         >
           {design.imageUrl ? (
             <img
@@ -106,18 +104,9 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
         {hasBackDesign && (
           <div
             className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500"
-            style={{
-              // Desktop: use CSS group-hover; Mobile: use showBack state
-              opacity: undefined,
-            }}
           >
             <div
-              style={{ opacity: showBack ? 1 : undefined }}
-              className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
-              /* This handles BOTH: group-hover on desktop, and inline opacity on mobile via showBack */
-              ref={el => {
-                if (el) el.style.opacity = showBack ? '1' : '';
-              }}
+              className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 opacity-0 lg:group-hover:opacity-100 ${showBack ? '!opacity-100' : ''}`}
             >
               <div
                 className="relative flex items-center justify-center"
