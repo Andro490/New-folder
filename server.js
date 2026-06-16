@@ -157,30 +157,66 @@ app.post('/api/auth/send-otp', async (req, res) => {
         otpStore.set(email, { otp, expires, pendingData: { name, email, password, isLogin } });
 
         // Send email or fallback to console if no email configured
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        const gasUrl = process.env.GAS_EMAIL_URL;
+        const resendKey = process.env.RESEND_API_KEY;
+        const emailUser = process.env.EMAIL_USER;
+        const emailPass = process.env.EMAIL_PASS;
+
+        if (!gasUrl && !resendKey && (!emailUser || !emailPass)) {
             console.log(`\n\n[MOCK EMAIL] OTP for ${email} is: ${otp}\n\n`);
             return res.json({ success: true, message: 'تم إنشاء الكود (راجع سجلات السيرفر لأن الإيميل غير مفعّل)' });
         }
 
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
+                <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
+                <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
+                <div style="text-align: center; margin: 24px 0;">
+                    <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
+                </div>
+                <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
+            </div>
+        `;
+
         try {
-            await emailTransporter.sendMail({
-                from: `"PrintStudio" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: '🔐 كود التحقق - PrintStudio',
-                html: `
-                    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 32px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b;">
-                        <h2 style="color: #4a3b2c; text-align: center;">PrintStudio 🎨</h2>
-                        <p style="color: #6a543f; text-align: center;">مرحباً! هذا هو كود التحقق الخاص بك:</p>
-                        <div style="text-align: center; margin: 24px 0;">
-                            <span style="font-size: 42px; font-weight: 900; letter-spacing: 12px; color: #8b6b43; background: #fff; padding: 16px 24px; border-radius: 8px; border: 2px dashed #d4ba7b;">${otp}</span>
-                        </div>
-                        <p style="color: #8b6b43; text-align: center; font-size: 13px;">صالح لمدة 10 دقائق فقط. لا تشاركه مع أحد.</p>
-                    </div>
-                `,
-            });
+            if (gasUrl) {
+                // Use Google Apps Script (100% Free, bypasses Railway restrictions)
+                const gasRes = await fetch(gasUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        to: email,
+                        subject: '🔐 كود التحقق - PrintStudio',
+                        htmlBody: htmlContent
+                    })
+                });
+                const gasData = await gasRes.json();
+                if (!gasData.success) throw new Error(gasData.error || 'Google Script Error');
+            } else if (resendKey) {
+                // Use Resend API
+                const resendResponse = await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        from: 'onboarding@resend.dev',
+                        to: email,
+                        subject: '🔐 كود التحقق - PrintStudio',
+                        html: htmlContent
+                    })
+                });
+                if (!resendResponse.ok) throw new Error(await resendResponse.text());
+            } else {
+                // Nodemailer fallback
+                await emailTransporter.sendMail({
+                    from: `"PrintStudio" <${emailUser}>`,
+                    to: email,
+                    subject: '🔐 كود التحقق - PrintStudio',
+                    html: htmlContent
+                });
+            }
+
             res.json({ success: true, message: 'تم إرسال الكود على بريدك الإلكتروني' });
         } catch (mailError) {
-            console.error('Nodemailer Error:', mailError);
+            console.error('Email Sending Error:', mailError);
             res.status(500).json({ error: `تفاصيل خطأ الإيميل: ${mailError.message}` });
         }
     } catch (error) {
