@@ -87,44 +87,44 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
           <table className="w-full border-collapse text-center text-sm md:text-base whitespace-nowrap">
             <thead>
               <tr>
-                <th className="bg-[#111] text-white p-3 md:p-4 border border-[#333]">Size</th>
-                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">S</th>
-                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">M</th>
-                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">L</th>
-                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">XL</th>
-                <th className="bg-[#111] text-[#f5c842] p-3 md:p-4 border border-[#333]">XXL</th>
-                <th className="bg-[#111] text-white p-3 md:p-4 border border-[#333] text-xs md:text-sm leading-tight">
+                <th className="bg-[#111] text-white border border-[#333]" style={{ padding: '16px' }}>Size</th>
+                <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>S</th>
+                <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>M</th>
+                <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>L</th>
+                <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>XL</th>
+                <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>XXL</th>
+                <th className="bg-[#111] text-white border border-[#333] text-xs md:text-sm leading-tight" style={{ padding: '16px' }}>
                   المقاس المقترح<br/><span className="text-[10px] md:text-xs text-gray-400 font-normal">(بالسنتيمتر)</span>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="p-3 md:p-4 border border-gray-200 font-bold">عرض الكتفين</td>
-                <td className="p-3 md:p-4 border border-gray-200">16 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">18 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">20 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">23 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">26 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">44-46</td>
+                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>عرض الكتفين</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>16 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>18 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>20 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>23 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>26 سم</td>
+                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>44-46</td>
               </tr>
               <tr>
-                <td className="p-3 md:p-4 border border-gray-200 font-bold">محيط الصدر</td>
-                <td className="p-3 md:p-4 border border-gray-200">40 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">44 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">48 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">52 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">56 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">56-60</td>
+                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>محيط الصدر</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>40 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>44 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>48 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>52 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>56 سم</td>
+                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>56-60</td>
               </tr>
               <tr>
-                <td className="p-3 md:p-4 border border-gray-200 font-bold">طول التيشيرت</td>
-                <td className="p-3 md:p-4 border border-gray-200">64 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">66 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">70 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">72 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200">74 سم</td>
-                <td className="p-3 md:p-4 border border-gray-200 bg-gray-50 font-bold">69-72</td>
+                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>طول التيشيرت</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>64 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>66 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>70 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>72 سم</td>
+                <td className="border border-gray-200" style={{ padding: '16px' }}>74 سم</td>
+                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>69-72</td>
               </tr>
             </tbody>
           </table>

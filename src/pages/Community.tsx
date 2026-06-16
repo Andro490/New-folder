@@ -229,29 +229,41 @@ export default function Community() {
                       {/* Back image — revealed on hover */}
                       {hasBackDesign && (
                         <div className="absolute inset-0 flex items-center justify-center p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                          <div className="relative w-full h-full flex items-center justify-center">
+                          <div 
+                            className="relative flex items-center justify-center" 
+                            style={{ 
+                              width: '100%', 
+                              height: '100%', 
+                              aspectRatio: '500/600',
+                              maxWidth: '100%',
+                              maxHeight: '100%'
+                            }}
+                          >
                             <img
                               src={backMockup}
                               alt="Back"
-                              className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                              className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
                             />
-                            {backLayers.map((layer: any, idx: number) => (
-                              <img
-                                key={idx}
-                                src={layer.imageUrl}
-                                className="absolute z-10"
-                                style={{
-                                  left: `${(layer.x / 500) * 100}%`,
-                                  top: `${(layer.y / 600) * 100}%`,
-                                  width: `${(layer.width / 500) * 100}%`,
-                                  height: `${(layer.height / 600) * 100}%`,
-                                  transform: `rotate(${layer.rotation || 0}deg)`,
-                                  opacity: layer.opacity ?? 1,
-                                  pointerEvents: 'none',
-                                }}
-                                alt="layer"
-                              />
-                            ))}
+                            {/* Layer Container with same scale as image */}
+                            <div className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                              {backLayers.map((layer: any, idx: number) => (
+                                <img
+                                  key={idx}
+                                  src={layer.imageUrl}
+                                  className="absolute z-10"
+                                  style={{
+                                    left: `${(layer.x / 500) * 100}%`,
+                                    top: `${(layer.y / 600) * 100}%`,
+                                    width: `${(layer.width / 500) * 100}%`,
+                                    height: `${(layer.height / 600) * 100}%`,
+                                    transform: `rotate(${layer.rotation || 0}deg)`,
+                                    opacity: layer.opacity ?? 1,
+                                    pointerEvents: 'none',
+                                  }}
+                                  alt="layer"
+                                />
+                              ))}
+                            </div>
                           </div>
                         </div>
                       )}

@@ -216,8 +216,9 @@ function Editor() {
 
           <div className="absolute top-8 z-20 flex rounded-full overflow-hidden border-2" style={{ borderColor: 'var(--border-color)', boxShadow: '0 4px 15px rgba(139, 107, 67, 0.1)' }}>
             <button
-              className="text-sm px-10 py-2.5 font-bold tracking-[0.15em] transition-colors"
+              className="text-sm font-bold tracking-[0.15em] transition-colors"
               style={{
+                padding: '10px 40px',
                 backgroundColor: view === 'front' ? 'var(--accent-primary)' : 'var(--bg-card)',
                 color: view === 'front' ? '#f9f4e6' : 'var(--text-secondary)',
               }}
@@ -227,8 +228,9 @@ function Editor() {
             </button>
             <div style={{ width: 1, backgroundColor: 'var(--border-color)' }} />
             <button
-              className="text-sm px-10 py-2.5 font-bold tracking-[0.15em] transition-colors"
+              className="text-sm font-bold tracking-[0.15em] transition-colors"
               style={{
+                padding: '10px 40px',
                 backgroundColor: view === 'back' ? 'var(--accent-primary)' : 'var(--bg-card)',
                 color: view === 'back' ? '#f9f4e6' : 'var(--text-secondary)',
               }}
