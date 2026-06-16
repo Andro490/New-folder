@@ -22,10 +22,12 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 
 // ── Email Transporter (Nodemailer) ──────────────────────────────────
 const emailTransporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER || '',
-    pass: process.env.EMAIL_PASS || '', // Gmail App Password
+    pass: process.env.EMAIL_PASS || '',
   },
 });
 
@@ -176,7 +178,7 @@ app.post('/api/auth/send-otp', async (req, res) => {
             res.json({ success: true, message: 'تم إرسال الكود على بريدك الإلكتروني' });
         } catch (mailError) {
             console.error('Nodemailer Error:', mailError);
-            res.status(500).json({ error: 'تعذر إرسال الإيميل. تأكد من إعدادات EMAIL_PASS في Railway' });
+            res.status(500).json({ error: `تفاصيل خطأ الإيميل: ${mailError.message}` });
         }
     } catch (error) {
         console.error('OTP send error:', error);
