@@ -180,7 +180,7 @@ export default function Community() {
         {renderSidebar(true)}
 
         {/* Grid */}
-        <main className="flex-1 pb-12">
+        <main className="flex-1 pb-12 w-full max-w-7xl mx-auto" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="w-10 h-10 border-4 border-[#8b6b43] border-t-transparent rounded-full animate-spin" />
@@ -190,7 +190,7 @@ export default function Community() {
               {t('community.noDesigns')}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10 pt-8 pr-0 lg:pr-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-12 pt-8 w-full">
               {filteredDesigns.map(design => {
                 // Parse back design layers for hover reveal
                 let backLayers: any[] = [];
