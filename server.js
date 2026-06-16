@@ -22,26 +22,26 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 
 // ── Email Transporter (Nodemailer) ──────────────────────────────────
 const emailTransporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER || '',
-    pass: process.env.EMAIL_PASS || '',
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER || '',
+        pass: process.env.EMAIL_PASS || '',
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
 });
 
 // ── OTP In-Memory Store (email -> { code, expires, pendingData }) ──
 const otpStore = new Map();
 
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  optionsSuccessStatus: 200
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    optionsSuccessStatus: 200
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -53,67 +53,67 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
 
 // Step 1: Redirect user to Google login
 app.get('/api/auth/google', (req, res) => {
-  const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
-    response_type: 'code',
-    scope: 'openid email profile',
-    access_type: 'offline',
-    prompt: 'select_account',
-  });
-  res.redirect(`${GOOGLE_AUTH_URL}?${params}`);
+    const params = new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+        response_type: 'code',
+        scope: 'openid email profile',
+        access_type: 'offline',
+        prompt: 'select_account',
+    });
+    res.redirect(`${GOOGLE_AUTH_URL}?${params}`);
 });
 
 // Step 2: Google redirects back with a code
 app.get('/api/auth/google/callback', async (req, res) => {
-  const { code } = req.query;
-  if (!code) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
+    const { code } = req.query;
+    if (!code) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
 
-  try {
-    // Exchange code for access token
-    const tokenRes = await axios.post(GOOGLE_TOKEN_URL, {
-      code,
-      client_id: GOOGLE_CLIENT_ID,
-      client_secret: GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
-      grant_type: 'authorization_code',
-    });
+    try {
+        // Exchange code for access token
+        const tokenRes = await axios.post(GOOGLE_TOKEN_URL, {
+            code,
+            client_id: GOOGLE_CLIENT_ID,
+            client_secret: GOOGLE_CLIENT_SECRET,
+            redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+            grant_type: 'authorization_code',
+        });
 
-    const { access_token } = tokenRes.data;
+        const { access_token } = tokenRes.data;
 
-    // Get user profile from Google
-    const userInfoRes = await axios.get(GOOGLE_USERINFO_URL, {
-      headers: { Authorization: `Bearer ${access_token}` }
-    });
+        // Get user profile from Google
+        const userInfoRes = await axios.get(GOOGLE_USERINFO_URL, {
+            headers: { Authorization: `Bearer ${access_token}` }
+        });
 
-    const { sub: googleId, email, name, picture: avatarUrl } = userInfoRes.data;
-    if (!email) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
+        const { sub: googleId, email, name, picture: avatarUrl } = userInfoRes.data;
+        if (!email) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
 
-    // Find or create user in DB
-    let user = await prisma.user.findUnique({ where: { googleId } });
-    if (!user) {
-      user = await prisma.user.findUnique({ where: { email } });
-      if (user) {
-        user = await prisma.user.update({ where: { email }, data: { googleId, avatarUrl } });
-      } else {
-        const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        user = await prisma.user.create({ data: { name, email, googleId, avatarUrl, affiliateCode } });
-      }
+        // Find or create user in DB
+        let user = await prisma.user.findUnique({ where: { googleId } });
+        if (!user) {
+            user = await prisma.user.findUnique({ where: { email } });
+            if (user) {
+                user = await prisma.user.update({ where: { email }, data: { googleId, avatarUrl } });
+            } else {
+                const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                user = await prisma.user.create({ data: { name, email, googleId, avatarUrl, affiliateCode } });
+            }
+        }
+
+        // Return JWT to frontend via redirect
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+        const userData = encodeURIComponent(JSON.stringify({
+            id: user.id, name: user.name, email: user.email,
+            affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
+            referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
+        }));
+        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
+
+    } catch (err) {
+        console.error('Google OAuth error:', err.response?.data || err.message);
+        res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
     }
-
-    // Return JWT to frontend via redirect
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-    const userData = encodeURIComponent(JSON.stringify({
-      id: user.id, name: user.name, email: user.email,
-      affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
-      referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
-    }));
-    res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
-
-  } catch (err) {
-    console.error('Google OAuth error:', err.response?.data || err.message);
-    res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
-  }
 });
 
 
@@ -346,7 +346,7 @@ app.get('/api/designs', async (req, res) => {
 app.post('/api/designs/:id/purchase', async (req, res) => {
     try {
         const designId = parseInt(req.params.id);
-        
+
         // Increment purchase counter
         const design = await prisma.design.update({
             where: { id: designId },
@@ -422,7 +422,7 @@ async function getPinterestImageUrl(pinUrl) {
         }
 
         if (!imageUrl) {
-             throw new Error('Image not found in the page meta tags.');
+            throw new Error('Image not found in the page meta tags.');
         }
 
         // We will NOT force 'originals' because some pins don't have it and return 403.
@@ -441,10 +441,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_v
 
 // ── Helper: إرسال إيميل إشعار برصيد جديد عبر GAS ───────────────────
 async function sendBalanceNotification({ to, userName, amount, reason, newBalance }) {
-  const gasUrl = process.env.GAS_NOTIFY_URL;  // متغير منفصل عن OTP
-  if (!gasUrl) return; // GAS_NOTIFY_URL not configured, skip silently
+    const gasUrl = process.env.GAS_NOTIFY_URL;  // متغير منفصل عن OTP
+    if (!gasUrl) return; // GAS_NOTIFY_URL not configured, skip silently
 
-  const htmlBody = `
+    const htmlBody = `
     <div dir="rtl" style="font-family: Tahoma, Arial, sans-serif; max-width: 480px; margin: auto; padding: 36px; background: #fff8e8; border-radius: 12px; border: 1px solid #d4ba7b; text-align: center;">
       <h2 style="color: #4a3b2c; margin-bottom: 4px;">PrintStudio 🎨</h2>
       <p style="color: #8b6b43; font-size: 13px; margin-bottom: 24px;">إشعار رصيد</p>
@@ -463,21 +463,21 @@ async function sendBalanceNotification({ to, userName, amount, reason, newBalanc
     </div>
   `;
 
-  try {
-    const res = await fetch(gasUrl, {
-      method: 'POST',
-      body: JSON.stringify({
-        to,
-        subject: '💰 تم إضافة رصيد جديد إلى حسابك - PrintStudio',
-        htmlBody
-      })
-    });
-    const data = await res.json();
-    if (!data.success) console.warn('GAS email warning:', data.error);
-    else console.log(`📧 تم إرسال إيميل الرصيد إلى ${to}`);
-  } catch (err) {
-    console.warn('⚠️ Failed to send balance email:', err.message);
-  }
+    try {
+        const res = await fetch(gasUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                to,
+                subject: '💰 تم إضافة رصيد جديد إلى حسابك - PrintStudio',
+                htmlBody
+            })
+        });
+        const data = await res.json();
+        if (!data.success) console.warn('GAS email warning:', data.error);
+        else console.log(`📧 تم إرسال إيميل الرصيد إلى ${to}`);
+    } catch (err) {
+        console.warn('⚠️ Failed to send balance email:', err.message);
+    }
 }
 
 app.get('/api/test-reward', async (req, res) => {
@@ -508,7 +508,7 @@ app.post('/api/submit-order', async (req, res) => {
                 if (affiliate) {
                     const updated = await prisma.user.update({
                         where: { id: affiliate.id },
-                        data: { 
+                        data: {
                             discountBalance: { increment: 50 },
                             referredUsers: { increment: 1 }
                         }
@@ -528,7 +528,7 @@ app.post('/api/submit-order', async (req, res) => {
                 console.error("Error processing affiliate code", err);
             }
         }
-        
+
         // Handle Design Creator Reward
         if (orderData.designId) {
             try {
@@ -594,7 +594,7 @@ app.post('/api/pinterest-image', async (req, res) => {
 app.get('/api/proxy-image', async (req, res) => {
     const { url } = req.query;
     if (!url) return res.status(400).send('No url provided');
-    
+
     try {
         const response = await axios.get(url, { responseType: 'stream' });
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -660,7 +660,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Catch-all route to serve the React app for any other request (client-side routing)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
@@ -677,6 +677,6 @@ app.get('/api/make-andro-admin', async (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
 
