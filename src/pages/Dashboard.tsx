@@ -74,8 +74,8 @@ export default function Dashboard() {
         <div className="max-w-7xl w-full mx-auto flex flex-col gap-6 z-10">
           
           {/* Top Title & Subtitle */}
-          <div className="text-center mb-4 mt-4">
-            <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: '#4a3b2c' }}>
+          <div className="text-center" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+            <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: '#4a3b2c', marginBottom: '1rem' }}>
                {t('dashboard.welcome')}، <span style={{ color: '#b1894d' }}>{user.name} !</span>
             </h1>
             <p className="text-sm md:text-base font-medium" style={{ color: '#6a543f' }}>
@@ -85,10 +85,10 @@ export default function Dashboard() {
 
           {/* Affiliate Link Bar */}
           <div 
-            className="w-full rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md" 
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: '1px solid rgba(177, 137, 77, 0.3)', backdropFilter: 'blur(10px)' }}
+            className="w-full rounded-2xl flex flex-col md:flex-row items-center justify-between shadow-md" 
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: '1px solid rgba(177, 137, 77, 0.3)', backdropFilter: 'blur(10px)', padding: '24px', marginBottom: '24px', gap: '16px' }}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center" style={{ gap: '12px' }}>
               <Layers size={20} style={{ color: '#b1894d' }} />
               <h2 className="text-base font-bold text-[#4a3b2c]">{t('dashboard.affiliateLink')}</h2>
               <p className={`text-xs text-[#6a543f] hidden lg:block ${dir === 'rtl' ? 'mr-2' : 'ml-2'}`}>
@@ -96,18 +96,19 @@ export default function Dashboard() {
               </p>
             </div>
             
-            <div className="flex items-center rounded-xl p-1 gap-2 w-full md:w-[450px]" style={{ backgroundColor: '#f2ece4', border: '1px solid rgba(177, 137, 77, 0.2)' }}>
+            <div className="flex items-center rounded-xl w-full md:w-[450px]" style={{ backgroundColor: '#f2ece4', border: '1px solid rgba(177, 137, 77, 0.2)', padding: '6px', gap: '8px' }}>
               <input
                 type="text"
                 readOnly
                 value={affiliateLink}
-                className="bg-transparent flex-1 outline-none text-xs md:text-sm px-3 font-mono text-[#4a3b2c]"
+                className="bg-transparent flex-1 outline-none text-xs md:text-sm font-mono text-[#4a3b2c]"
+                style={{ padding: '8px 16px' }}
                 dir="ltr"
               />
               <button
                 onClick={handleCopy}
-                className="font-bold px-6 py-2 text-sm rounded-lg transition-all text-white shadow-sm"
-                style={{ backgroundColor: '#a68048' }}
+                className="font-bold text-sm rounded-lg transition-all text-white shadow-sm"
+                style={{ backgroundColor: '#a68048', padding: '10px 24px' }}
               >
                 {copied ? t('dashboard.copied') : t('dashboard.copy')}
               </button>
@@ -115,35 +116,35 @@ export default function Dashboard() {
           </div>
 
           {/* Small Arabic Stats Row */}
-          <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+          <div className="w-full grid grid-cols-2 lg:grid-cols-4" style={{ gap: '20px', marginBottom: '16px' }}>
             
-            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
               <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.balance')}</p>
-              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.discountBalance}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.currency')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
               <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.referred')}</p>
-              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.referredUsers}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.person')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
               <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.totalSales')}</p>
-              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{totalSales}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.order')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)' }}>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
               <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.designs')}</p>
-              <div className={`flex items-end justify-center gap-1 mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
                 <span className="text-3xl font-black text-[#3d2b1f] leading-none">{designCount}</span>
                 <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.design')}</span>
               </div>
@@ -151,12 +152,12 @@ export default function Dashboard() {
 
           </div>
 
-          <p className="text-[10px] text-center mt-2 text-[#8b6b43]">
+          <p className="text-[10px] text-center text-[#8b6b43]" style={{ marginTop: '16px', marginBottom: '24px' }}>
             * سيتم خصم رصيدك تلقائياً عند طلب شراء كشرط خصم منك من المتجر
           </p>
 
           {/* Large English Stats Row */}
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '24px', marginTop: '16px' }}>
             
             <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
               <Paintbrush size={32} className="text-[#8b6b43] mb-4" />
