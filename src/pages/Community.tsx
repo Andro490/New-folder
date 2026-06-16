@@ -6,6 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { OrderModal } from '../components/SettingsSidebar';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+import logoImg from '../assets/favicon.png';
 
 interface Design {
   id: number;
@@ -355,7 +356,7 @@ export default function Community() {
           <div className="flex flex-col items-center mt-2 relative z-10">
             {/* Brand Logo */}
             <img
-              src="/favicon.png"
+              src={logoImg}
               alt="PrintStudio Logo"
               className="w-16 h-16 object-contain mb-3 rounded-xl"
               style={{ filter: 'drop-shadow(0 4px 12px rgba(139,107,67,0.4))' }}
