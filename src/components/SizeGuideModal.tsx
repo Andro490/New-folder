@@ -37,45 +37,47 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white text-black rounded-2xl w-full max-w-[900px] md:max-w-[1100px] max-h-[90vh] overflow-y-auto relative font-inter p-6 pb-8 md:p-12 md:pb-14"
+        className="rounded-2xl w-full max-w-[900px] md:max-w-[1100px] max-h-[90vh] overflow-y-auto relative font-inter p-6 pb-8 md:p-12 md:pb-14"
+        style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
       >
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 md:top-5 md:left-5 bg-gray-100 border-none rounded-full w-10 h-10 text-2xl cursor-pointer flex items-center justify-center hover:bg-gray-200 transition-colors"
+          className="absolute top-4 left-4 md:top-5 md:left-5 border-none rounded-full w-10 h-10 text-2xl cursor-pointer flex items-center justify-center transition-colors"
+          style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
         >
           ×
         </button>
 
         {/* Header */}
         <div className="text-center mb-10 md:mb-14">
-          <p className="text-gray-500 text-sm md:text-base mb-3">على القيش شينشين:</p>
-          <h2 className="text-2xl md:text-4xl font-black m-0">دليل المقاسات الذكية لـ PrintStudio</h2>
+          <p className="text-sm md:text-base mb-3" style={{ color: 'var(--text-secondary)' }}>على القيش شينشين:</p>
+          <h2 className="text-2xl md:text-4xl font-black m-0" style={{ color: 'var(--text-primary)' }}>دليل المقاسات الذكية لـ PrintStudio</h2>
         </div>
 
         {/* Illustrations Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 mb-10 md:mb-14">
-          <div className="text-center md:border-l border-gray-200 md:pl-12">
+          <div className="text-center md:border-l md:pl-12" style={{ borderColor: 'var(--border-color)' }}>
             {/* Boxy Fit Illustration placeholder */}
-            <div className="w-full h-44 md:h-52 bg-gray-50 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
+            <div className="w-full h-44 md:h-52 rounded-lg flex items-center justify-center mb-6 overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <img src={fitIllustration} alt="Regular Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">مقاس عادي</h3>
-            <p className="text-gray-500 text-xs md:text-sm mb-2">قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
-            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>مقاس عادي</h3>
+            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
+            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full text-xs md:text-sm font-bold" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
               <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
           </div>
           
           <div className="text-center md:pr-12">
-            <div className="w-full h-44 md:h-52 bg-gray-50 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
+            <div className="w-full h-44 md:h-52 rounded-lg flex items-center justify-center mb-6 overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <img src={fitIllustration} alt="Boxy Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4">قصة مربعة</h3>
-            <p className="text-gray-500 text-xs md:text-sm mb-2">قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
-            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-gray-100 rounded-full text-xs md:text-sm font-bold">
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>قصة مربعة</h3>
+            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
+            <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full text-xs md:text-sm font-bold" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
               <Ruler size={16} className="text-[#d4af37]" />
               كيفية القياس
             </div>
@@ -100,31 +102,31 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
             </thead>
             <tbody>
               <tr>
-                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>عرض الكتفين</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>16 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>18 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>20 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>23 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>26 سم</td>
-                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>44-46</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>عرض الكتفين</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>16 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>18 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>20 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>23 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>26 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>44-46</td>
               </tr>
               <tr>
-                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>محيط الصدر</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>40 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>44 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>48 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>52 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>56 سم</td>
-                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>56-60</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>محيط الصدر</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>40 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>44 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>48 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>52 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>56 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>56-60</td>
               </tr>
               <tr>
-                <td className="border border-gray-200 font-bold" style={{ padding: '16px' }}>طول التيشيرت</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>64 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>66 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>70 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>72 سم</td>
-                <td className="border border-gray-200" style={{ padding: '16px' }}>74 سم</td>
-                <td className="border border-gray-200 bg-gray-50 font-bold" style={{ padding: '16px' }}>69-72</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>طول التيشيرت</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>64 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>66 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>70 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>72 سم</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>74 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>69-72</td>
               </tr>
             </tbody>
           </table>
@@ -134,53 +136,56 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         <div className="flex flex-col gap-6 md:gap-8">
 
           {/* Inputs Card — always on top */}
-          <div className="w-full border-2 border-[#111] rounded-xl overflow-hidden">
-            <div className="bg-[#111] text-white p-3 md:p-4 flex items-center gap-3">
+          <div className="w-full border-2 rounded-xl overflow-hidden" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="p-3 md:p-4 flex items-center gap-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <Ruler className="text-[#f5c842]" />
-              <h3 className="m-0 text-base md:text-lg font-bold">حساب مقاسي الذكي</h3>
+              <h3 className="m-0 text-base md:text-lg font-bold" style={{ color: 'var(--text-primary)' }}>حساب مقاسي الذكي</h3>
             </div>
             <div className="p-5 md:p-8">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-7">
                 {/* Shoulder */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base">عرض الكتف</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>عرض الكتف</span>
+                  <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={shoulder}
                       onChange={e => setShoulder(e.target.value)}
                       placeholder="مثال: 18"
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                      style={{ color: 'var(--text-primary)' }}
                     />
-                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
+                    <span className="text-xs md:text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>cm</span>
                   </div>
                 </div>
                 {/* Chest */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base">محيط الصدر</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>محيط الصدر</span>
+                  <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={chest}
                       onChange={e => setChest(e.target.value)}
                       placeholder="مثال: 44"
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                      style={{ color: 'var(--text-primary)' }}
                     />
-                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
+                    <span className="text-xs md:text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>cm</span>
                   </div>
                 </div>
                 {/* Length */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base">طول التيشيرت</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg px-4 py-3">
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>طول التيشيرت</span>
+                  <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={length}
                       onChange={e => setLength(e.target.value)}
                       placeholder="مثال: 66"
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
+                      style={{ color: 'var(--text-primary)' }}
                     />
-                    <span className="text-gray-400 text-xs md:text-sm ml-1">cm</span>
+                    <span className="text-xs md:text-sm ml-1" style={{ color: 'var(--text-secondary)' }}>cm</span>
                   </div>
                 </div>
               </div>
