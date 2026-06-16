@@ -742,7 +742,35 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>رقم الهاتف</label>
-              <input style={inputStyle} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="01xxxxxxxxx" />
+              <input
+                style={{
+                  ...inputStyle,
+                  border: form.phone && (form.phone.length !== 11 || !form.phone.startsWith('01'))
+                    ? '1px solid #e74c3c'
+                    : form.phone.length === 11 && form.phone.startsWith('01')
+                    ? '1px solid #2ecc71'
+                    : '1px solid #2a2a2a',
+                }}
+                value={form.phone}
+                maxLength={11}
+                inputMode="numeric"
+                placeholder="01xxxxxxxxx"
+                onChange={e => {
+                  const val = e.target.value.replace(/[^0-9]/g, ''); // أرقام فقط
+                  setForm(f => ({ ...f, phone: val }));
+                }}
+              />
+              {form.phone && !form.phone.startsWith('01') && (
+                <p style={{ fontSize: 11, color: '#e74c3c', marginTop: 4 }}>⚠ يجب أن يبدأ الرقم بـ 01</p>
+              )}
+              {form.phone && form.phone.startsWith('01') && form.phone.length !== 11 && (
+                <p style={{ fontSize: 11, color: '#e7a000', marginTop: 4 }}>
+                  {11 - form.phone.length} أرقام متبقية
+                </p>
+              )}
+              {form.phone.length === 11 && form.phone.startsWith('01') && (
+                <p style={{ fontSize: 11, color: '#2ecc71', marginTop: 4 }}>✓ رقم صحيح</p>
+              )}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
@@ -887,6 +915,10 @@ function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalP
               onClick={async () => {
                 if (!form.firstName || !form.phone || !form.address) {
                   alert('يرجى ملء الاسم ورقم الهاتف والعنوان');
+                  return;
+                }
+                if (!form.phone.startsWith('01') || form.phone.length !== 11) {
+                  alert('رقم الهاتف يجب أن يكون 11 رقم ويبدأ بـ 01');
                   return;
                 }
                 if (payMethod === 'instapay' && !paymentProof) {
