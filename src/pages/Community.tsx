@@ -156,15 +156,17 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       </div>
 
       {/* Info */}
-      <div className="px-5 pt-2 pb-4 flex flex-col items-end">
-        <h3
-          className="font-bold text-base truncate text-center w-full mb-1"
-          style={{ fontFamily: "'Cairo', sans-serif", color: 'var(--text-primary)' }}
-        >
-          {design.name}
-        </h3>
-        <p className="text-xs text-right font-semibold truncate w-full" style={{ color: 'var(--text-secondary)' }}>
-          من تصميم: <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{design.user.name || 'فنان مجهول'}</span>
+      <div className="px-5 pt-4 pb-3 flex flex-col items-center flex-1 w-full min-h-[90px]">
+        <div className="flex-1 flex items-center justify-center w-full">
+          <h3
+            className="font-black text-2xl truncate text-center w-full"
+            style={{ color: 'var(--text-primary)', letterSpacing: '0.02em' }}
+          >
+            {design.name}
+          </h3>
+        </div>
+        <p className="text-sm text-center font-bold truncate w-full mt-2" style={{ color: 'var(--text-secondary)' }}>
+          من تصميم: <span className="font-extrabold" style={{ color: 'var(--text-primary)' }}>{design.user.name || 'فنان مجهول'}</span>
         </p>
       </div>
 

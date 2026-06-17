@@ -316,7 +316,7 @@ function ProductStep() {
       
       {/* Banner */}
       <div 
-        className="w-full py-5 flex flex-col items-center justify-center relative overflow-hidden mt-2"
+        className="w-full py-2 flex flex-col items-center justify-center relative overflow-hidden mt-4"
         style={{ 
           background: 'linear-gradient(rgba(70, 50, 30, 0.9), rgba(50, 35, 20, 0.9))',
           boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
