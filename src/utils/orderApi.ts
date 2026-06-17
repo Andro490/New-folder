@@ -21,15 +21,24 @@ function sanitizeOrder(data: Record<string, string>): Record<string, string> {
   return safe;
 }
 
+export interface OrderResult {
+  balanceUsed: number;
+  newUserBalance: number;
+}
+
 export async function sendOrderToSheet(
   orderData: Record<string, string>
-): Promise<void> {
+): Promise<OrderResult> {
   const safe = sanitizeOrder(orderData);
   console.log('📦 إرسال الطلب:', safe);
 
+  const token = localStorage.getItem('wearurway_token');
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const res = await fetch(`${getApiBase()}/api/submit-order`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(safe),
   });
 
@@ -38,5 +47,9 @@ export async function sendOrderToSheet(
     throw new Error(result.error || 'فشل إرسال الطلب');
   }
 
-  console.log('✅ تم إرسال الطلب بنجاح');
+  console.log('✅ تم إرسال الطلب بنجاح. الرصيد المخصوم:', result.balanceUsed || 0);
+  return {
+    balanceUsed: result.balanceUsed || 0,
+    newUserBalance: result.newUserBalance ?? 0,
+  };
 }

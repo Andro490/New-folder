@@ -171,6 +171,42 @@ app.post('/api/submit-order', async (req, res) => {
         
         console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
 
+        // ── خصم رصيد المستخدم المسجل دخوله ──────────────────────────
+        let balanceUsed = 0;
+        let newUserBalance = 0;
+
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                const userId = decoded.id;
+
+                const user = await prisma.user.findUnique({ where: { id: userId } });
+                if (user && user.discountBalance > 0) {
+                    const orderTotal = parseFloat(orderData.totalPrice) || 0;
+                    // الخصم لا يتجاوز الرصيد المتاح أو سعر الطلب
+                    balanceUsed = Math.min(user.discountBalance, orderTotal);
+                    newUserBalance = user.discountBalance - balanceUsed;
+
+                    await prisma.user.update({
+                        where: { id: userId },
+                        data: { discountBalance: newUserBalance }
+                    });
+
+                    // تعديل السعر في بيانات الطلب
+                    orderData.balanceUsed = String(balanceUsed);
+                    orderData.totalPrice = String(orderTotal - balanceUsed);
+
+                    console.log(`✅ تم خصم ${balanceUsed} جنيه من رصيد المستخدم ${userId}. الرصيد الجديد: ${newUserBalance}`);
+                }
+            } catch (jwtErr) {
+                // التوكن غير صالح أو منتهي - نكمل بدون خصم
+                console.log('ℹ️ لا يوجد مستخدم مسجل دخول أو التوكن منتهي، الطلب بدون خصم رصيد');
+            }
+        }
+
         // Handle Affiliate system or Design Purchase
         if (orderData.affiliateCode) {
             try {
@@ -221,7 +257,7 @@ app.post('/api/submit-order', async (req, res) => {
         if (response.data && response.data.status === 'error') {
             return res.status(500).json({ success: false, error: response.data.message });
         }
-        res.json({ success: true, data: response.data });
+        res.json({ success: true, data: response.data, balanceUsed, newUserBalance });
     } catch (error) {
         console.error('❌ خطأ Google Script:', error.response?.data || error.message);
         res.status(500).json({ success: false, error: error.message });

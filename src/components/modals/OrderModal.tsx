@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Info } from 'lucide-react';
+import { Info, Wallet } from 'lucide-react';
 import { DesignLayer, TShirtColor, TShirtView } from '../../types';
 import { appConfig } from '../../config';
 import { generateTshirtImage } from '../../utils/tshirtCanvas';
@@ -38,6 +38,11 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [finalTotal, setFinalTotal] = useState<number | null>(null);
+  const [usedBalance, setUsedBalance] = useState(0);
+
+  // ── رصيد المحفظة ────────────────────────────────────────────────
+  const storedUser = (() => { try { return JSON.parse(localStorage.getItem('wearurway_user') || '{}'); } catch { return {}; } })();
+  const userBalance: number = Number(storedUser.discountBalance) || 0;
 
   const colorLabel = tshirtColor === 'black' ? 'أسود' : tshirtColor === 'white' ? 'أبيض' : tshirtColor === 'navy' ? 'كحلي' : tshirtColor === 'red' ? 'أحمر' : 'رمادي';
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
@@ -50,7 +55,10 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
   const designPrice = baseDesignPrice - discountAmount;
   
   const shippingCost = shipping === 'premium' ? appConfig.shipping.premium.priceEGP : appConfig.shipping.standard.priceEGP;
-  const total = designPrice + shippingCost;
+  const subtotal = designPrice + shippingCost;
+  // خصم الرصيد لا يتجاوز الإجمالي
+  const balanceDiscount = Math.min(userBalance, subtotal);
+  const total = subtotal - balanceDiscount;
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
@@ -81,6 +89,12 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
           </p>
 
           {/* Order summary pill */}
+          {usedBalance > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 16, padding: '10px 20px', backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', borderRadius: 8 }}>
+              <Wallet size={16} style={{ color: '#4ade80' }} />
+              <span style={{ fontSize: 13, color: '#4ade80', fontWeight: 700 }}>تم خصم {usedBalance} {appConfig.pricing.currencyAr} من رصيدك 🎉</span>
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
             {[
               { label: t('orderModal.size'), value: selectedSize ?? '-' },
@@ -315,6 +329,14 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{row.value as any}</span>
               </div>
             ))}
+            {balanceDiscount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border-color)' }}>
+                <span style={{ fontSize: 12, color: '#4ade80', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Wallet size={13} /> خصم الرصيد
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#4ade80' }}>- {balanceDiscount} {appConfig.pricing.currencyAr}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 4 }}>
               <span style={{ fontSize: 12, color: '#555' }}>{t('orderModal.total')}</span>
               <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-primary)' }}>{total} {appConfig.pricing.currencyAr}</span>
@@ -382,7 +404,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
-                  await sendOrderToSheet({
+                  const result = await sendOrderToSheet({
                     firstName: form.firstName,
                     lastName: form.lastName,
                     phone: form.phone,
@@ -398,11 +420,20 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     frontImage: frontImageUrl,
                     backImage: backImageUrl,
                     instapayProof: instapayProofUrl,
-                    totalPrice: String(designPrice + shippingCost),
+                    totalPrice: String(total), // الإجمالي بعد خصم الرصيد
+                    balanceUsed: String(balanceDiscount),
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
                   });
+
+                  // ── تحديث الرصيد في localStorage ──
+                  if (result.balanceUsed > 0) {
+                    setUsedBalance(result.balanceUsed);
+                    const updatedUser = { ...storedUser, discountBalance: result.newUserBalance };
+                    localStorage.setItem('wearurway_user', JSON.stringify(updatedUser));
+                  }
+
                   setFinalTotal(total);
                   setStep('thanks');
                   localStorage.removeItem('wearurway_ref');
@@ -481,11 +512,19 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               </div>
             ))}
 
+            {balanceDiscount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', backgroundColor: 'rgba(74,222,128,0.05)', paddingInline: 8 }}>
+                <span style={{ fontSize: 11, color: '#4ade80', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Wallet size={12} /> خصم الرصيد
+                </span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#4ade80' }}>- {balanceDiscount} {appConfig.pricing.currencyAr}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 8 }}>
               <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.total')}</span>
               <span style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent-primary)' }}>
                 {isEligibleForDiscount && <span style={{ textDecoration: 'line-through', color: '#888', margin: '0 8px', fontSize: 16 }}>{baseDesignPrice}</span>}
-                {designPrice} <span style={{ fontSize: 13, color: '#888' }}>{appConfig.pricing.currencyAr}</span>
+                {total} <span style={{ fontSize: 13, color: '#888' }}>{appConfig.pricing.currencyAr}</span>
               </span>
             </div>
 
