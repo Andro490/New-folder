@@ -7,8 +7,10 @@ import { PRINT_AREA } from '../utils/tshirtSvg';
 // Modals
 import OrderModal from './modals/OrderModal';
 import PinterestModal from './modals/PinterestModal';
+import PinterestModal from './modals/PinterestModal';
 import TextModal from './modals/TextModal';
 import PublishModal from './modals/PublishModal';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SettingsSidebarProps {
   view: TShirtView;
@@ -41,6 +43,7 @@ export default function SettingsSidebar({
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [publishToast, setPublishToast] = useState<string | null>(null);
   const [designUrl, setDesignUrl] = useState('');
+  const { t, dir } = useLanguage();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,35 +93,35 @@ export default function SettingsSidebar({
       <aside
         className="flex flex-col shrink-0 overflow-y-auto w-full lg:w-[288px] lg:min-w-[288px] h-auto lg:h-full border-t lg:border-t-0"
         style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', borderLeft: '1px solid var(--border-color)' }}
-        dir="rtl"
+        dir={dir}
       >
         {/* ─── Section 1: إعدادات ─── */}
         <div style={{ padding: '24px', borderBottom: '1px solid var(--border-color)' }}>
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20, textAlign: 'right' }}>
-            إعدادات
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20, textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+            {t('editor.settings')}
           </p>
 
           {/* Row: منتج */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 13, color: '#555' }}>منتج</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>تي شيرت</span>
+            <span style={{ fontSize: 13, color: '#555' }}>{t('editor.product')}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{t('editor.tshirt')}</span>
           </div>
 
           {/* Row: ملائم */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 13, color: '#555' }}>ملائم</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>مقاس عادي</span>
+            <span style={{ fontSize: 13, color: '#555' }}>{t('editor.fit')}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{t('editor.regularFit')}</span>
           </div>
 
           {/* Row: لون */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, color: '#555' }}>لون</span>
+            <span style={{ fontSize: 13, color: '#555' }}>{t('editor.color')}</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                {tshirtColor === 'black' ? 'أسود'
-                  : tshirtColor === 'white' ? 'أبيض'
-                    : tshirtColor === 'navy' ? 'كحلي'
-                      : tshirtColor === 'red' ? 'أحمر' : 'رمادي'}
+                {tshirtColor === 'black' ? t('editor.black')
+                  : tshirtColor === 'white' ? t('editor.white')
+                    : tshirtColor === 'navy' ? t('editor.navy')
+                      : tshirtColor === 'red' ? t('editor.red') : t('editor.gray')}
               </span>
               <div style={{
                 width: 14, height: 14,
@@ -155,14 +158,14 @@ export default function SettingsSidebar({
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(245, 200, 66, 0.2)'; }}
           >
             <CheckCircle size={18} />
-            إتمام الطلب
+            {t('editor.completeOrder')}
           </button>
         </div>
 
         {/* ─── Section 3: أدوات ─── */}
         <div style={{ padding: '24px', borderBottom: '1px solid #1a1a1a' }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#aaa', marginBottom: 20, textAlign: 'right', display: 'flex', alignItems: 'center', gap: 8 }}>
-            أدوات التصميم
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#aaa', marginBottom: 20, textAlign: dir === 'rtl' ? 'right' : 'left', display: 'flex', alignItems: 'center', gap: 8 }}>
+            {t('editor.designTools')}
           </p>
 
           <div style={{ display: 'grid', gap: 12, marginBottom: 24 }}>
@@ -181,7 +184,7 @@ export default function SettingsSidebar({
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              <span>رفع صورة من الجهاز</span>
+              <span>{t('editor.uploadImage')}</span>
               <ImageIcon size={18} color="var(--accent-primary)" />
             </button>
 
@@ -200,7 +203,7 @@ export default function SettingsSidebar({
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              <span>إضافة من Pinterest</span>
+              <span>{t('editor.addPinterest')}</span>
               <LinkIcon size={18} color="#e60023" />
             </button>
 
@@ -219,7 +222,7 @@ export default function SettingsSidebar({
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
             >
-              <span>إضافة نص (عربي/إنجليزي)</span>
+              <span>{t('editor.addText')}</span>
               <Type size={18} color="#4ade80" />
             </button>
           </div>
@@ -227,7 +230,7 @@ export default function SettingsSidebar({
           {/* حجم النموذج الأولي */}
           <div style={{ backgroundColor: 'var(--bg-secondary)', padding: 16, borderRadius: 12, border: '1px solid var(--border-color)', marginBottom: 20 }}>
             <p style={{ fontSize: 12, color: '#888', marginBottom: 12, textAlign: 'center' }}>
-              معاينة حجم التصميم
+              {t('editor.designPreview')}
             </p>
             <div style={{ display: 'flex', gap: 10 }}>
               <button
@@ -242,7 +245,7 @@ export default function SettingsSidebar({
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--bg-card)')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)')}
               >
-                <ZoomOut size={16} color="#aaa" /> تصغير
+                <ZoomOut size={16} color="#aaa" /> {t('editor.zoomOut')}
               </button>
               <button
                 onClick={() => setMockupScale(s => Math.min(2, s + 0.1))}
@@ -256,7 +259,7 @@ export default function SettingsSidebar({
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#222')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#161616')}
               >
-                <ZoomIn size={16} color="#aaa" /> تكبير
+                <ZoomIn size={16} color="#aaa" /> {t('editor.zoomIn')}
               </button>
             </div>
           </div>
@@ -278,14 +281,14 @@ export default function SettingsSidebar({
             onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
           >
             <Save size={16} />
-            حفظ التعديلات للعودة لاحقاً
+            {t('editor.saveChanges')}
           </button>
           
           <button
             onClick={() => {
               const token = localStorage.getItem('wearurway_token');
               if (!token) {
-                showToast('⚠️ يرجى تسجيل الدخول أولاً');
+                showToast(t('editor.loginFirst'));
                 return;
               }
               setShowPublishModal(true);
@@ -301,7 +304,7 @@ export default function SettingsSidebar({
               cursor: 'pointer', transition: 'all 0.2s',
             }}
           >
-            نشر التصميم للبيع 💸
+            {t('editor.publishSale')}
           </button>
         </div>
 

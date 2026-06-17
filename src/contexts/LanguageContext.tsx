@@ -157,6 +157,30 @@ export const translations = {
       refundPolicyText: 'Unfortunately, we do not offer return or exchange services because this t-shirt is custom designed for you. However, you can refuse to receive the order if the design is not as you designed or requested, or if you are not satisfied with the material.',
       gotIt: 'Got It',
       sendTo: 'Send to: '
+    },
+    editor: {
+      settings: 'Settings',
+      product: 'Product',
+      tshirt: 'T-Shirt',
+      fit: 'Fit',
+      regularFit: 'Regular Fit',
+      color: 'Color',
+      black: 'Black',
+      white: 'White',
+      navy: 'Navy',
+      red: 'Red',
+      gray: 'Gray',
+      completeOrder: 'Complete Order',
+      designTools: 'Design Tools',
+      uploadImage: 'Upload image from device',
+      addPinterest: 'Add from Pinterest',
+      addText: 'Add Text',
+      designPreview: 'Design Size Preview',
+      zoomOut: 'Zoom Out',
+      zoomIn: 'Zoom In',
+      saveChanges: 'Save changes for later',
+      loginFirst: '⚠️ Please login first',
+      publishSale: 'Publish Design for Sale 💸'
     }
   },
   ar: {
@@ -313,6 +337,30 @@ export const translations = {
       refundPolicyText: 'للأسف، لا نقدم خدمة الإرجاع أو الاستبدال لأن هذا التيشيرت مصمم خصيصاً لك. مع ذلك، يمكنك رفض استلام الطلب إذا لم يكن التصميم كما صممته أو طلبته، أو إذا لم تكن راضياً عن الخامة.',
       gotIt: 'فهمتها',
       sendTo: 'أرسل إلى: '
+    },
+    editor: {
+      settings: 'إعدادات',
+      product: 'منتج',
+      tshirt: 'تي شيرت',
+      fit: 'ملائم',
+      regularFit: 'مقاس عادي',
+      color: 'لون',
+      black: 'أسود',
+      white: 'أبيض',
+      navy: 'كحلي',
+      red: 'أحمر',
+      gray: 'رمادي',
+      completeOrder: 'إتمام الطلب',
+      designTools: 'أدوات التصميم',
+      uploadImage: 'رفع صورة من الجهاز',
+      addPinterest: 'إضافة من Pinterest',
+      addText: 'إضافة نص (عربي/إنجليزي)',
+      designPreview: 'معاينة حجم التصميم',
+      zoomOut: 'تصغير',
+      zoomIn: 'تكبير',
+      saveChanges: 'حفظ التعديلات للعودة لاحقاً',
+      loginFirst: '⚠️ يرجى تسجيل الدخول أولاً',
+      publishSale: 'نشر التصميم للبيع 💸'
     }
   }
 };
