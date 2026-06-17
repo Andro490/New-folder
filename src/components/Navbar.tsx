@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, Palette, LogOut, LayoutDashboard, ChevronDown, Settings, Globe, Moon, Sun } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import logoImg from '../assets/favicon.png';
+import darkLogoImg from '../assets/darkk.png';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export default function Navbar() {
           className="flex items-center gap-2 shrink-0"
         >
           <img
-            src={logoImg}
+            src={isDarkMode ? darkLogoImg : logoImg}
             alt="PrintStudio Logo"
             className="w-8 h-8 rounded shrink-0 object-contain"
             style={{ boxShadow: '0 0 10px rgba(139, 107, 67, 0.3)' }}

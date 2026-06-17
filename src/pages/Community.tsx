@@ -7,6 +7,7 @@ import { OrderModal } from '../components/SettingsSidebar';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 import logoImg from '../assets/favicon.png';
+import darkLogoImg from '../assets/darkk.png';
 
 interface Design {
   id: number;
@@ -206,6 +207,10 @@ export default function Community() {
   const navigate = useNavigate();
   const { t, dir } = useLanguage();
 
+  const [isDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
+  });
+
   useEffect(() => {
     const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
 
@@ -356,7 +361,7 @@ export default function Community() {
           <div className="flex flex-col items-center mt-2 relative z-10">
             {/* Brand Logo */}
             <img
-              src={logoImg}
+              src={isDarkMode ? darkLogoImg : logoImg}
               alt="PrintStudio Logo"
               className="w-16 h-16 object-contain mb-3 rounded-xl"
               style={{ filter: 'drop-shadow(0 4px 12px rgba(139,107,67,0.4))' }}
