@@ -75,10 +75,10 @@ export default function Dashboard() {
           
           {/* Top Title & Subtitle */}
           <div className="text-center" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-            <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: '#4a3b2c', marginBottom: '1rem' }}>
-               {t('dashboard.welcome')}، <span style={{ color: '#b1894d' }}>{user.name} !</span>
+            <h1 className="text-4xl md:text-5xl font-black mb-3" style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>
+               {t('dashboard.welcome')}، <span style={{ color: 'var(--accent-primary)' }}>{user.name} !</span>
             </h1>
-            <p className="text-sm md:text-base font-medium" style={{ color: '#6a543f' }}>
+            <p className="text-sm md:text-base font-medium" style={{ color: 'var(--text-secondary)' }}>
               {t('dashboard.subtitle')}
             </p>
           </div>
@@ -86,23 +86,23 @@ export default function Dashboard() {
           {/* Affiliate Link Bar */}
           <div 
             className="w-full rounded-2xl flex flex-col md:flex-row items-center justify-between shadow-md" 
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', border: '1px solid rgba(177, 137, 77, 0.3)', backdropFilter: 'blur(10px)', padding: '24px', marginBottom: '24px', gap: '16px' }}
+            style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', backdropFilter: 'blur(10px)', padding: '24px', marginBottom: '24px', gap: '16px' }}
           >
             <div className="flex items-center" style={{ gap: '12px' }}>
-              <Layers size={20} style={{ color: '#b1894d' }} />
-              <h2 className="text-base font-bold text-[#4a3b2c]">{t('dashboard.affiliateLink')}</h2>
-              <p className={`text-xs text-[#6a543f] hidden lg:block ${dir === 'rtl' ? 'mr-2' : 'ml-2'}`}>
+              <Layers size={20} style={{ color: 'var(--accent-primary)' }} />
+              <h2 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>{t('dashboard.affiliateLink')}</h2>
+              <p className={`text-xs hidden lg:block ${dir === 'rtl' ? 'mr-2' : 'ml-2'}`} style={{ color: 'var(--text-secondary)' }}>
                 {t('dashboard.affiliateDesc')}
               </p>
             </div>
             
-            <div className="flex items-center rounded-xl w-full md:w-[450px]" style={{ backgroundColor: '#f2ece4', border: '1px solid rgba(177, 137, 77, 0.2)', padding: '6px', gap: '8px' }}>
+            <div className="flex items-center rounded-xl w-full md:w-[450px]" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '6px', gap: '8px' }}>
               <input
                 type="text"
                 readOnly
                 value={affiliateLink}
-                className="bg-transparent flex-1 outline-none text-xs md:text-sm font-mono text-[#4a3b2c]"
-                style={{ padding: '8px 16px' }}
+                className="bg-transparent flex-1 outline-none text-xs md:text-sm font-mono"
+                style={{ padding: '8px 16px', color: 'var(--text-primary)' }}
                 dir="ltr"
               />
               <button
@@ -118,35 +118,35 @@ export default function Dashboard() {
           {/* Small Arabic Stats Row */}
           <div className="w-full grid grid-cols-2 lg:grid-cols-4" style={{ gap: '20px', marginBottom: '16px' }}>
             
-            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.balance')}</p>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '24px' }}>
+              <p className="text-xs font-bold text-center" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.balance')}</p>
               <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
-                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.discountBalance}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.currency')}</span>
+                <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{user.discountBalance}</span>
+                <span className="text-xs font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{t('dashboard.currency')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.referred')}</p>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '24px' }}>
+              <p className="text-xs font-bold text-center" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.referred')}</p>
               <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
-                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{user.referredUsers}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.person')}</span>
+                <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{user.referredUsers}</span>
+                <span className="text-xs font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{t('dashboard.person')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.totalSales')}</p>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '24px' }}>
+              <p className="text-xs font-bold text-center" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.totalSales')}</p>
               <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
-                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{totalSales}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.order')}</span>
+                <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{totalSales}</span>
+                <span className="text-xs font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{t('dashboard.order')}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #e6d3a8, #d4ba7b)', border: '1px solid rgba(255,255,255,0.4)', padding: '24px' }}>
-              <p className="text-xs font-bold text-[#4a3b2c] text-center">{t('dashboard.designs')}</p>
+            <div className="rounded-2xl flex flex-col items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '24px' }}>
+              <p className="text-xs font-bold text-center" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.designs')}</p>
               <div className={`flex items-end justify-center mt-2 ${dir === 'rtl' ? 'flex-row-reverse' : ''}`} style={{ gap: '6px' }}>
-                <span className="text-3xl font-black text-[#3d2b1f] leading-none">{designCount}</span>
-                <span className="text-xs font-bold text-[#3d2b1f] mb-1">{t('dashboard.design')}</span>
+                <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{designCount}</span>
+                <span className="text-xs font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{t('dashboard.design')}</span>
               </div>
             </div>
 
@@ -159,31 +159,31 @@ export default function Dashboard() {
           {/* Large English Stats Row */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '24px', marginTop: '16px' }}>
             
-            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
-              <Paintbrush size={32} className="text-[#8b6b43] mb-4" />
-              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Designs Submitted</p>
-              <span className="text-4xl font-black text-[#2a1e15]">{designCount}</span>
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+              <Paintbrush size={32} className="text-[var(--accent-primary)] mb-4" />
+              <p className="text-sm mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Designs Submitted</p>
+              <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{designCount}</span>
             </div>
 
-            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
-              <ShoppingCart size={32} className="text-[#8b6b43] mb-4" />
-              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Total Sales</p>
-              <span className="text-4xl font-black text-[#2a1e15]">{totalSales}</span>
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+              <ShoppingCart size={32} className="text-[var(--accent-primary)] mb-4" />
+              <p className="text-sm mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Total Sales</p>
+              <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{totalSales}</span>
             </div>
 
-            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
-              <Wallet size={32} className="text-[#8b6b43] mb-4" />
-              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Total Commissions</p>
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+              <Wallet size={32} className="text-[var(--accent-primary)] mb-4" />
+              <p className="text-sm mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Total Commissions</p>
               <div className="flex items-baseline gap-1" dir="ltr">
-                <span className="text-4xl font-black text-[#2a1e15]">{user.discountBalance}</span>
-                <span className="text-xl font-bold text-[#2a1e15]">.ع ج</span>
+                <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{user.discountBalance}</span>
+                <span className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>.ع ج</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ background: 'linear-gradient(145deg, #ffffff 40%, #dec48b)', border: '1px solid rgba(255,255,255,0.6)' }}>
-              <Users size={32} className="text-[#8b6b43] mb-4" />
-              <p className="text-sm text-[#4a3b2c] mb-2 font-semibold">Referrals</p>
-              <span className="text-4xl font-black text-[#2a1e15]">{user.referredUsers}</span>
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden h-48" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+              <Users size={32} className="text-[var(--accent-primary)] mb-4" />
+              <p className="text-sm mb-2 font-semibold" style={{ color: 'var(--text-secondary)' }}>Referrals</p>
+              <span className="text-4xl font-black" style={{ color: 'var(--text-primary)' }}>{user.referredUsers}</span>
             </div>
 
           </div>
