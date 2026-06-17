@@ -390,7 +390,12 @@ export default function LayerSidebar({
       });
       
       const newUrl = URL.createObjectURL(blob);
-      onUpdate(layerId, { imageUrl: newUrl, pinterestUrl: 'جاري الرفع...' });
+      const layer = layers.find(l => l.id === layerId);
+      onUpdate(layerId, { 
+        imageUrl: newUrl, 
+        originalImageUrl: layer?.originalImageUrl || imageUrl,
+        pinterestUrl: 'جاري الرفع...' 
+      });
 
       // 3. نرفع الصورة المعزولة على ImgBB في الخلفية عشان تتبعت في تليجرام
       const fileToUpload = new File([blob], 'removed_bg.png', { type: 'image/png' });
@@ -447,7 +452,11 @@ export default function LayerSidebar({
       }
       
       ctx.putImageData(imageData, 0, 0);
-      onUpdate(layerId, { imageUrl: canvas.toDataURL('image/png') });
+      const layer = layers.find(l => l.id === layerId);
+      onUpdate(layerId, { 
+        imageUrl: canvas.toDataURL('image/png'),
+        originalImageUrl: layer?.originalImageUrl || imageUrl 
+      });
     } catch (error) {
       console.error("Failed to remove color:", error);
       alert("تعذر تفريغ اللون، حاول مرة أخرى.");
