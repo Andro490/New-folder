@@ -97,6 +97,8 @@ const verifyCsrfToken = (req, res, next) => {
     if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) return next();
     // Skip exempt auth paths
     if (CSRF_EXEMPT_PATHS.includes(req.path)) return next();
+    // Admin and user endpoints using Bearer token auth do not use cookies, so they are immune to CSRF
+    if (req.path.startsWith('/api/admin/') || req.path.startsWith('/api/user/')) return next();
 
     const token = req.headers['x-csrf-token'];
     if (!token) return res.status(403).json({ error: 'Invalid CSRF token' });
