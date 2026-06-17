@@ -795,25 +795,44 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         }
 
         // ── Resolve Pinterest/pin.it URLs in designImages before forwarding ──
-        // Telegram rejects webpage/redirect URLs — it needs a direct image URL.
+        // Telegram needs a DIRECT image URL. Pinterest has two cases:
+        //   • Single Pin  (/pin/123456/) → we CAN extract a direct image
+        //   • Board / Profile            → og:image is a useless mosaic collage
+        // Strategy: resolve shortlink first, then decide based on the final URL shape.
         if (orderData.designImages && typeof orderData.designImages === 'string') {
             const rawUrl = orderData.designImages.trim();
-            const isPinterest = rawUrl.includes('pin.it') || rawUrl.includes('pinterest.com/pin/');
+            const isPinterest = rawUrl.includes('pin.it') || rawUrl.includes('pinterest.com');
             if (isPinterest) {
                 try {
+                    // Step 1: resolve pin.it shortlink to full Pinterest URL
                     let resolvedUrl = rawUrl;
                     if (rawUrl.includes('pin.it')) {
                         resolvedUrl = await resolvePinItUrl(rawUrl);
                         console.log('[Order] Resolved pin.it shortlink →', resolvedUrl);
                     }
-                    const directImageUrl = await getPinterestImageUrl(resolvedUrl);
-                    console.log('[Order] Resolved Pinterest image →', directImageUrl);
-                    orderData.designImages = directImageUrl;
+
+                    // Step 2: detect if it's a SINGLE PIN or a BOARD/PROFILE
+                    // Single pin URLs contain /pin/ followed by digits
+                    const isSinglePin = /pinterest\.com\/pin\/\d+/i.test(resolvedUrl);
+
+                    if (isSinglePin) {
+                        // ✅ Extract the real image from the pin page
+                        const directImageUrl = await getPinterestImageUrl(resolvedUrl);
+                        console.log('[Order] Single pin image resolved →', directImageUrl);
+                        orderData.designImages = directImageUrl;
+                    } else {
+                        // ⚠️ It's a Board or Profile — og:image would be a mosaic collage.
+                        // Send as a text link instead so it's still accessible in Telegram.
+                        console.log('[Order] Pinterest Board/Profile detected — sending as text link:', resolvedUrl);
+                        // Mark it so GAS knows to treat it as a text field, not a photo
+                        orderData.designImages = null;           // no image to attach
+                        orderData.designImagesLink = resolvedUrl; // plain-text link for caption
+                    }
                 } catch (pinterestErr) {
-                    // Non-fatal: if resolution fails, clear the field so GAS/Telegram
-                    // receives a text note instead of a broken URL.
-                    console.warn('[Order] Could not resolve Pinterest image, clearing field:', pinterestErr.message);
-                    orderData.designImages = `رابط بنترست (لم يتم الحل): ${rawUrl}`;
+                    // Non-fatal fallback: pass original URL as text
+                    console.warn('[Order] Could not resolve Pinterest URL:', pinterestErr.message);
+                    orderData.designImages = null;
+                    orderData.designImagesLink = rawUrl;
                 }
             }
         }
