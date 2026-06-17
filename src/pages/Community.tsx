@@ -25,7 +25,7 @@ interface Design {
 
 // ── DesignCard with swipe (mobile) + hover (desktop) ──────────────
 function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => void }) {
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const [showBack, setShowBack] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
@@ -166,7 +166,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
             {design.name}
           </h3>
         </div>
-        <p className="text-xs text-right font-medium truncate w-full mt-2" style={{ color: 'var(--text-secondary)' }}>
+        <p className={`text-xs ${dir === 'rtl' ? 'text-right' : 'text-left'} font-medium truncate w-full mt-2`} style={{ color: 'var(--text-secondary)' }}>
           {t('community.designedBy')} <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{design.user.name || t('community.unknownArtist')}</span>
         </p>
       </div>
@@ -174,7 +174,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Buy Button */}
       <button
         onClick={() => onBuy(design)}
-        className="w-full py-3 px-4 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 rounded-b-2xl"
+        className={`w-full py-3 px-4 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 rounded-b-2xl ${dir === 'ltr' ? 'flex-row' : 'flex-row-reverse'}`}
         style={{
           backgroundColor: 'var(--bg-primary)',
           color: 'var(--text-primary)',
@@ -190,7 +190,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
         }}
       >
         <ShoppingCart className="w-4 h-4" />
-        <span>شراء التصميم</span>
+        <span>{t('community.buyDesign')}</span>
       </button>
     </div>
   );
