@@ -171,7 +171,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Buy Button */}
       <button
         onClick={() => onBuy(design)}
-        className="w-full p-3.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-1"
+        className="w-full p-2 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-1"
         style={{
           backgroundColor: 'var(--bg-primary)',
           color: 'var(--text-primary)',
