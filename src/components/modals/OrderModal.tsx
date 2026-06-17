@@ -464,7 +464,12 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             </button>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 16 }}>
-              <button style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>{t('orderModal.contactUs')}</button>
+              <a
+                href={`https://wa.me/${appConfig.site.whatsappNumber.replace('+', '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer', textDecoration: 'none' }}
+              >{t('orderModal.contactUs')}</a>
               <span style={{ color: '#333' }}>|</span>
               <button onClick={() => setShowRefundPolicy(true)} style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>{t('orderModal.refundPolicy')}</button>
             </div>
