@@ -794,6 +794,30 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
             }
         }
 
+        // ── Resolve Pinterest/pin.it URLs in designImages before forwarding ──
+        // Telegram rejects webpage/redirect URLs — it needs a direct image URL.
+        if (orderData.designImages && typeof orderData.designImages === 'string') {
+            const rawUrl = orderData.designImages.trim();
+            const isPinterest = rawUrl.includes('pin.it') || rawUrl.includes('pinterest.com/pin/');
+            if (isPinterest) {
+                try {
+                    let resolvedUrl = rawUrl;
+                    if (rawUrl.includes('pin.it')) {
+                        resolvedUrl = await resolvePinItUrl(rawUrl);
+                        console.log('[Order] Resolved pin.it shortlink →', resolvedUrl);
+                    }
+                    const directImageUrl = await getPinterestImageUrl(resolvedUrl);
+                    console.log('[Order] Resolved Pinterest image →', directImageUrl);
+                    orderData.designImages = directImageUrl;
+                } catch (pinterestErr) {
+                    // Non-fatal: if resolution fails, clear the field so GAS/Telegram
+                    // receives a text note instead of a broken URL.
+                    console.warn('[Order] Could not resolve Pinterest image, clearing field:', pinterestErr.message);
+                    orderData.designImages = `رابط بنترست (لم يتم الحل): ${rawUrl}`;
+                }
+            }
+        }
+
         const response = await axios.post(APPS_SCRIPT_URL, orderData, {
             headers: { 'Content-Type': 'application/json' },
             timeout: 15000,
