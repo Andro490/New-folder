@@ -685,6 +685,82 @@ async function getPinterestImageUrl(pinUrl) {
     }
 }
 
+// ── Extract the first real image from a Pinterest Board page ─────────
+// Boards show a mosaic as og:image — we need to dig into individual pins.
+async function getFirstImageFromPinterestBoard(boardUrl) {
+    const agents = [
+        'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+        'Twitterbot/1.0',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+    ];
+
+    for (const agent of agents) {
+        try {
+            const response = await axios.get(boardUrl, {
+                maxRedirects: 10,
+                timeout: 12000,
+                headers: {
+                    'User-Agent': agent,
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Cache-Control': 'no-cache',
+                }
+            });
+
+            const html = response.data;
+            if (typeof html !== 'string' || html.length < 100) continue;
+
+            // Strategy A: Extract pin IDs from HTML using regex patterns
+            const pinPatterns = [
+                /pinterest\.com\/pin\/(\d+)/gi,
+                /\/pin\/(\d{10,})/gi,
+                /"id":"(\d{10,})"/g,
+            ];
+
+            const pinIds = new Set();
+            for (const pattern of pinPatterns) {
+                let match;
+                while ((match = pattern.exec(html)) !== null) {
+                    if (match[1] && match[1].length >= 10) {
+                        pinIds.add(match[1]);
+                    }
+                    if (pinIds.size >= 5) break;
+                }
+                if (pinIds.size >= 5) break;
+            }
+
+            // Strategy B: Look for pinimg.com direct image URLs in the board HTML
+            const imgMatch = html.match(/https:\/\/i\.pinimg\.com\/[^\s"'\\]+\.(?:jpg|jpeg|png|webp)/i);
+            if (imgMatch) {
+                // Upgrade to largest size (564x or 736x)
+                const imgUrl = imgMatch[0]
+                    .replace(/\/\d+x\//, '/736x/')
+                    .replace(/\/60x60\//, '/736x/')
+                    .replace(/\/150x\//, '/736x/');
+                console.log('[Pinterest Board] Found direct pinimg.com image:', imgUrl);
+                return imgUrl;
+            }
+
+            // Strategy C: Try each extracted pin ID to get its image
+            for (const pinId of pinIds) {
+                try {
+                    const pinUrl = `https://www.pinterest.com/pin/${pinId}/`;
+                    const imgUrl = await getPinterestImageUrl(pinUrl);
+                    if (imgUrl) {
+                        console.log(`[Pinterest Board] Got image from pin ${pinId}:`, imgUrl);
+                        return imgUrl;
+                    }
+                } catch { /* try next pin */ }
+            }
+
+        } catch (e) {
+            console.log(`[Pinterest Board] Agent failed: ${e.message}`);
+        }
+    }
+
+    throw new Error('Could not extract any image from Pinterest board.');
+}
+
 // ── Google Apps Script proxy — يتجنب CORS تماماً ─────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_veLsvF_4saG27Z1og--XqKkH6I5Q3dG4l2sFIPnJty-d3MGsBDX34/exec';
 
@@ -821,11 +897,17 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
                         console.log('[Order] Single pin image resolved →', directImageUrl);
                         orderData.designImages = directImageUrl;
                     } else {
-                        // ⚠️ It's a Board or Profile — og:image would be a mosaic collage.
-                        // Keep the URL as readable text in designImages so GAS includes it
-                        // in the Telegram message text instead of trying to send it as a photo.
-                        console.log('[Order] Pinterest Board/Profile detected — sending as text:', resolvedUrl);
-                        orderData.designImages = `🔗 رابط ألبوم التصميم:\n${resolvedUrl}`;
+                        // ⚠️ It's a Board/Profile — extract the first real pin image from it
+                        console.log('[Order] Pinterest Board detected — extracting first pin image from:', resolvedUrl);
+                        try {
+                            const boardImageUrl = await getFirstImageFromPinterestBoard(resolvedUrl);
+                            console.log('[Order] Board first-pin image resolved →', boardImageUrl);
+                            orderData.designImages = boardImageUrl;
+                        } catch (boardErr) {
+                            // If board extraction fails, fallback to text link
+                            console.warn('[Order] Board image extraction failed:', boardErr.message);
+                            orderData.designImages = `🔗 رابط ألبوم التصميم:\n${resolvedUrl}`;
+                        }
                     }
                 } catch (pinterestErr) {
                     // Non-fatal fallback: keep URL as plain text
