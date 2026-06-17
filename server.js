@@ -80,7 +80,7 @@ const CSRF_EXEMPT_PATHS = [
     '/api/auth/google',
     '/api/auth/google/callback',
     '/api/pinterest-image',
-    '/api/orders',
+    '/api/submit-order',
 ];
 
 app.get('/api/csrf-token', (req, res) => {
