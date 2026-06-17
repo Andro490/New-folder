@@ -31,7 +31,7 @@ export default function Auth() {
 
   useEffect(() => {
     const oauthError = searchParams.get('error');
-    if (oauthError === 'google_failed') setError('فشل تسجيل الدخول بحساب جوجل. حاول مرة أخرى.');
+    if (oauthError === 'google_failed') setError(t('auth.loginErrorGoogle'));
   }, [searchParams]);
 
   // Countdown timer for resend
@@ -113,7 +113,7 @@ export default function Auth() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const otp = otpDigits.join('');
-    if (otp.length !== 6) { setError('أدخل الكود كاملاً (6 أرقام)'); return; }
+    if (otp.length !== 6) { setError(t('auth.enterFullOtp')); return; }
     setError('');
     setIsLoading(true);
 
@@ -162,17 +162,17 @@ export default function Auth() {
             style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem', fontSize: '1.75rem' }}
           >
             {step === 'credentials'
-              ? (isLogin ? 'تسجيل الدخول' : 'إنشاء حساب')
-              : '📨 تحقق من بريدك'}
+              ? (isLogin ? t('auth.loginTitle') : t('auth.registerTitle'))
+              : t('auth.checkEmail')}
           </h2>
           {step === 'otp' && (
             <p className="text-center text-sm" style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-              أرسلنا كود التحقق إلى <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
+              {t('auth.otpSentTo')} <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
             </p>
           )}
           {step === 'credentials' && (
             <p className="text-center text-xs" style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-              {isLogin ? 'أدخل بياناتك لتسجيل الدخول مباشرة' : 'سنرسل كود تحقق على بريدك لتأكيد التسجيل'}
+              {isLogin ? t('auth.loginSubtitle') : t('auth.registerSubtitle')}
             </p>
           )}
 
@@ -196,7 +196,7 @@ export default function Auth() {
               {!isLogin && (
                 <input
                   type="text"
-                  placeholder="الاسم الكامل"
+                  placeholder={t('auth.fullName')}
                   style={inputStyle}
                   value={name}
                   onChange={e => setName(e.target.value)}
@@ -207,7 +207,7 @@ export default function Auth() {
               )}
               <input
                 type="email"
-                placeholder="البريد الإلكتروني"
+                placeholder={t('auth.email')}
                 style={inputStyle}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -218,7 +218,7 @@ export default function Auth() {
               />
               <input
                 type="password"
-                placeholder="كلمة المرور"
+                placeholder={t('auth.password')}
                 style={inputStyle}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -243,7 +243,7 @@ export default function Auth() {
                   marginBottom: '12px',
                 }}
               >
-                {isLoading ? (isLogin ? 'جاري تسجيل الدخول...' : 'جاري الإرسال...') : (isLogin ? 'تسجيل الدخول' : '📩 إرسال كود التحقق')}
+                {isLoading ? (isLogin ? t('auth.loggingIn') : t('auth.sending')) : (isLogin ? t('auth.loginBtn') : t('auth.sendOtpBtn'))}
               </button>
             </form>
           )}
@@ -299,7 +299,7 @@ export default function Auth() {
                   marginBottom: '16px',
                 }}
               >
-                {isLoading ? 'جاري التحقق...' : '✅ تأكيد الكود'}
+                {isLoading ? t('auth.verifying') : t('auth.verifyBtn')}
               </button>
 
               {/* Resend + Back */}
@@ -317,14 +317,14 @@ export default function Auth() {
                     fontWeight: 600,
                   }}
                 >
-                  {resendCountdown > 0 ? `إعادة الإرسال بعد ${resendCountdown}ث` : '🔄 إعادة إرسال الكود'}
+                  {resendCountdown > 0 ? `${t('auth.resendAfter')} ${resendCountdown}${t('auth.sec')}` : t('auth.resendOtpBtn')}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setStep('credentials'); setError(''); setSuccess(''); setOtpDigits(['','','','','','']); }}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '12px' }}
                 >
-                  ← تغيير البريد الإلكتروني
+                  {t('auth.changeEmail')}
                 </button>
               </div>
             </form>
@@ -335,17 +335,17 @@ export default function Auth() {
             <>
               <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0 16px' }}>
                 <div style={{ flex: 1, height: 1, backgroundColor: 'var(--border-color)' }} />
-                <span style={{ margin: '0 12px', color: 'var(--text-muted)', fontSize: '12px' }}>أو</span>
+                <span style={{ margin: '0 12px', color: 'var(--text-muted)', fontSize: '12px' }}>{t('auth.or')}</span>
                 <div style={{ flex: 1, height: 1, backgroundColor: 'var(--border-color)' }} />
               </div>
-              <GoogleButton apiBase={API_BASE} />
+              <GoogleButton apiBase={API_BASE} label={t('auth.googleContinue')} />
               <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
-                {isLogin ? 'مش عندك حساب؟' : 'عندك حساب؟'}
+                {isLogin ? t('auth.noAccount') : t('auth.haveAccount')}
                 <button
                   onClick={() => { setIsLogin(!isLogin); setError(''); setSuccess(''); }}
                   style={{ color: 'var(--accent-primary)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', marginRight: '4px' }}
                 >
-                  {isLogin ? 'سجّل الآن' : 'سجّل دخول'}
+                  {isLogin ? t('auth.registerNow') : t('auth.loginNow')}
                 </button>
               </p>
             </>
@@ -357,7 +357,7 @@ export default function Auth() {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-function GoogleButton({ apiBase }: { apiBase: string }) {
+function GoogleButton({ apiBase, label }: { apiBase: string, label: string }) {
   return (
     <button
       type="button"
@@ -393,7 +393,7 @@ function GoogleButton({ apiBase }: { apiBase: string }) {
         <path d="M10.896 28.726A14.4 14.4 0 0 1 10.4 24c0-1.654.286-3.26.496-4.726V12.916H2.654A24.01 24.01 0 0 0 0 24c0 3.876.928 7.548 2.654 10.726l8.242-6z" fill="#FBBC05"/>
         <path d="M24 9.628c3.436 0 6.518 1.182 8.944 3.498l6.708-6.708C35.908 2.412 30.478 0 24 0 14.756 0 6.606 5.108 2.654 13.274l8.242 6.002C12.742 13.744 17.904 9.628 24 9.628z" fill="#EA4335"/>
       </svg>
-      متابعة بحساب جوجل
+      {label}
     </button>
   );
 }
