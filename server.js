@@ -204,15 +204,10 @@ app.get('/api/auth/google/callback', async (req, res) => {
             }
         }
 
-        // Return JWT to frontend via secure cookie instead of URL
+        // Return JWT to frontend via URL query param
+        // (HttpOnly cookie won't transfer cross-domain Railway→Vercel with SameSite=strict)
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        res.cookie('auth_token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
-        res.redirect(`${CLIENT_URL}/auth/google/success`);
+        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}`);
 
     } catch (err) {
         console.error('Google OAuth error:', err.response?.data || err.message);
