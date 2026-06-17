@@ -14,7 +14,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const prisma = new PrismaClient();
+
+// ── Prisma Client with Query Logging ─────────────────────────────────
+const prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'production' 
+        ? ['error', 'warn'] 
+        : ['info', 'warn', 'error', 'query']
+});
+
+// Log all database queries in development
+if (process.env.NODE_ENV !== 'production') {
+    prisma.$on('query', (e) => {
+        console.log('🔍 [Prisma Query]', e.query);
+        if (e.duration > 1000) {
+            console.warn('⚠️  Slow Query:', e.duration + 'ms');
+        }
+    });
+}
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     console.error("❌ FATAL: JWT_SECRET is not set in environment!");
@@ -77,6 +93,17 @@ const verifyCsrfToken = (req, res, next) => {
 
 app.use(verifyCsrfToken);
 
+// ── Request Logging Middleware ──────────────────────────────────────
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        const level = res.statusCode >= 400 ? '⚠️' : '✅';
+        console.log(`${level} [${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+    });
+    next();
+});
+
 // ── Security Headers & HTTPS Enforcement ────────────────────────────
 app.use((req, res, next) => {
     // HTTPS Enforcement in production
@@ -89,6 +116,9 @@ app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     // Content Security Policy (basic)
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data: blob:; connect-src *;");
     
@@ -192,6 +222,33 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 
 // ── Rate Limiter ──────────────────────────────────────────────────
 const rateLimitStore = new Map();
+
+// Generic rate limiting function with customizable window and max attempts
+const createRateLimiter = (windowMs = 15 * 60 * 1000, max = 5) => {
+    return (req, res, next) => {
+        const key = `${req.ip}:${req.path}`;
+        const now = Date.now();
+        const record = rateLimitStore.get(key) || { count: 0, resetTime: now + windowMs };
+        
+        if (now > record.resetTime) {
+            record.count = 1;
+            record.resetTime = now + windowMs;
+        } else {
+            record.count++;
+        }
+        rateLimitStore.set(key, record);
+        
+        if (record.count > max) {
+            return res.status(429).json({ 
+                error: 'Too many requests. Please try again later.',
+                retryAfter: Math.ceil((record.resetTime - now) / 1000)
+            });
+        }
+        next();
+    };
+};
+
+// Legacy support
 const checkRateLimit = (ip) => {
     const now = Date.now();
     const windowMs = 15 * 60 * 1000;
@@ -400,7 +457,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 });
 
 // ── Community Designs ──────────────────────────────────────────────
-app.post('/api/designs', authenticateToken, async (req, res) => {
+app.post('/api/designs', authenticateToken, createRateLimiter(60 * 60 * 1000, 20), async (req, res) => {
     try {
         const { name, frontDesign, backDesign, tshirtColor, imageUrl } = req.body;
         
@@ -425,7 +482,10 @@ app.post('/api/designs', authenticateToken, async (req, res) => {
         res.json({ success: true, design });
     } catch (error) {
         console.error('Error creating design:', error);
-        res.status(500).json({ error: 'حدث خطأ أثناء نشر التصميم' });
+        const errorMsg = process.env.NODE_ENV === 'production' 
+            ? 'حدث خطأ أثناء نشر التصميم' 
+            : error.message;
+        res.status(500).json({ error: errorMsg });
     }
 });
 
@@ -598,7 +658,7 @@ async function sendBalanceNotification({ to, userName, amount, reason, newBalanc
 }
 
 
-app.post('/api/submit-order', async (req, res) => {
+app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req, res) => {
     try {
         const orderData = req.body;
         console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
@@ -674,7 +734,10 @@ app.post('/api/submit-order', async (req, res) => {
         res.json({ success: true, data: response.data });
     } catch (error) {
         console.error('❌ خطأ Google Script:', error.response?.data || error.message);
-        res.status(500).json({ success: false, error: error.message });
+        const errorMsg = process.env.NODE_ENV === 'production' 
+            ? 'حدث خطأ أثناء معالجة الطلب' 
+            : error.message;
+        res.status(500).json({ success: false, error: errorMsg });
     }
 });
 
@@ -713,8 +776,15 @@ app.get('/api/proxy-image', async (req, res) => {
         }
         
         const response = await axios.get(url, { responseType: 'stream', timeout: 5000 });
+        
+        // ✅ Image Type Validation: Only allow image MIME types
+        const contentType = response.headers['content-type'] || 'image/jpeg';
+        if (!contentType.startsWith('image/')) {
+            return res.status(403).json({ error: 'Only image files allowed' });
+        }
+        
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
+        res.setHeader('Content-Type', contentType);
         response.data.pipe(res);
     } catch (error) {
         res.status(500).send('Error proxying image');
@@ -795,7 +865,7 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
 });
 
 // ── Make Admin Route ───────────────────────────────────────────────
-app.post("/api/make-admin", authenticateToken, async (req, res) => {
+app.post("/api/make-admin", authenticateToken, createRateLimiter(60 * 60 * 1000, 5), async (req, res) => {
     try {
         const requester = await prisma.user.findUnique({
             where: { id: req.user.id },
@@ -814,9 +884,78 @@ app.post("/api/make-admin", authenticateToken, async (req, res) => {
         await logSecurityEvent('ADMIN_PROMOTE_USER', req, { targetUserId: userId });
         res.json({ success: true, message: "User promoted to Admin" });
     } catch (err) {
-        res.status(500).json({ error: "Internal Server Error" });
+        const errorMsg = process.env.NODE_ENV === 'production' 
+            ? "Internal Server Error" 
+            : err.message;
+        res.status(500).json({ error: errorMsg });
     }
 });
+
+// ── API Documentation Endpoint ────────────────────────────────────
+app.get('/api-docs', (req, res) => {
+    const docs = {
+        title: 'PrintStudio API Documentation',
+        version: '1.0.0',
+        baseUrl: SERVER_URL,
+        endpoints: {
+            auth: [
+                { method: 'POST', path: '/api/auth/send-otp', auth: 'none', rateLimit: '5/15min', description: 'Send OTP for login/register' },
+                { method: 'POST', path: '/api/auth/verify-otp', auth: 'none', rateLimit: '5/15min', description: 'Verify OTP and get token' },
+                { method: 'GET', path: '/api/auth/me', auth: 'required', description: 'Get current user profile' },
+                { method: 'GET', path: '/api/auth/google', auth: 'none', description: 'Google OAuth login' },
+                { method: 'GET', path: '/api/csrf-token', auth: 'none', description: 'Get CSRF token' }
+            ],
+            designs: [
+                { method: 'GET', path: '/api/designs?page=1&limit=20', auth: 'none', rateLimit: 'unlimited', description: 'Get all designs (paginated)' },
+                { method: 'POST', path: '/api/designs', auth: 'required', rateLimit: '20/1hr', description: 'Create new design' },
+                { method: 'GET', path: '/api/user/designs', auth: 'required', description: 'Get user designs' },
+                { method: 'POST', path: '/api/designs/:id/purchase', auth: 'none', description: 'Track design purchase' }
+            ],
+            orders: [
+                { method: 'POST', path: '/api/submit-order', auth: 'none', rateLimit: '10/1hr', description: 'Submit order to Google Apps Script' }
+            ],
+            admin: [
+                { method: 'GET', path: '/api/admin/users?page=1&limit=20', auth: 'admin', description: 'List all users (paginated)' },
+                { method: 'DELETE', path: '/api/admin/users/:id', auth: 'admin', description: 'Delete user' },
+                { method: 'DELETE', path: '/api/admin/designs/:id', auth: 'admin', description: 'Delete design' },
+                { method: 'POST', path: '/api/make-admin', auth: 'admin', rateLimit: '5/1hr', description: 'Promote user to admin' }
+            ]
+        },
+        headers: {
+            required: 'Authorization: Bearer <token>, X-CSRF-Token: <token>',
+            optional: 'Content-Type: application/json'
+        },
+        security: {
+            jwt: 'Required for authenticated endpoints',
+            csrf: 'Required for POST/PUT/DELETE/PATCH requests',
+            rateLimit: 'Enabled on sensitive endpoints',
+            ssrf: 'SSRF protection on proxy endpoints'
+        }
+    };
+    res.json(docs);
+});
+
+// ── Health Check Endpoint ───────────────────────────────────────────
+app.get('/api/health', async (req, res) => {
+    try {
+        // Check database connection
+        await prisma.user.findFirst({ take: 1 });
+        res.status(200).json({ 
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            database: 'connected',
+            uptime: process.uptime()
+        });
+    } catch (error) {
+        res.status(503).json({ 
+            status: 'unhealthy',
+            timestamp: new Date().toISOString(),
+            database: 'disconnected',
+            error: 'Database connection failed'
+        });
+    }
+});
+
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -824,6 +963,30 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
+
+// ── Cleanup Expired OTP (Cron Job) ──────────────────────────────────
+const cleanupExpiredOTP = async () => {
+    try {
+        const result = await prisma.oTP.deleteMany({
+            where: {
+                expiresAt: {
+                    lt: new Date() // Delete expired OTPs
+                }
+            }
+        });
+        if (result.count > 0) {
+            console.log(`🗑️  Cleaned up ${result.count} expired OTP(s)`);
+        }
+    } catch (error) {
+        console.error('❌ OTP Cleanup failed:', error.message);
+    }
+};
+
+// Run cleanup every 30 minutes
+setInterval(cleanupExpiredOTP, 30 * 60 * 1000);
+
+// Run cleanup on startup
+cleanupExpiredOTP();
 
 // ── Start Server ───────────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;

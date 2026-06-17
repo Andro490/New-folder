@@ -22,6 +22,17 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// ── Request Logging Middleware ────────────────────────────────────────────
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        const level = res.statusCode >= 400 ? '⚠️' : '✅';
+        console.log(`${level} [${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+    });
+    next();
+});
+
 // ── Auth Middleware ────────────────────────────────────────────────
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -392,6 +403,53 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
         res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
     } catch (error) {
         res.status(500).json({ error: 'فشل مسح المستخدم' });
+    }
+});
+
+// ── API Documentation ─────────────────────────────────────────────
+app.get('/api-docs', (req, res) => {
+    const docs = {
+        title: 'PrintStudio API Documentation',
+        version: '1.0.0',
+        endpoints: {
+            auth: [
+                { method: 'POST', path: '/api/auth/register', description: 'Register new user' },
+                { method: 'POST', path: '/api/auth/login', description: 'Login user' },
+                { method: 'GET', path: '/api/auth/me', auth: 'required', description: 'Get user profile' }
+            ],
+            designs: [
+                { method: 'GET', path: '/api/designs?page=1&limit=20', description: 'Get all designs' },
+                { method: 'POST', path: '/api/designs', auth: 'required', description: 'Create design' }
+            ],
+            admin: [
+                { method: 'GET', path: '/api/admin/users?page=1&limit=20', auth: 'admin', description: 'List users' },
+                { method: 'DELETE', path: '/api/admin/users/:id', auth: 'admin', description: 'Delete user' },
+                { method: 'DELETE', path: '/api/admin/designs/:id', auth: 'admin', description: 'Delete design' }
+            ]
+        },
+        security: 'JWT token required for protected endpoints'
+    };
+    res.json(docs);
+});
+
+// ── Health Check Endpoint ─────────────────────────────────────────────
+app.get('/api/health', async (req, res) => {
+    try {
+        // Check database connection
+        await prisma.user.findFirst({ take: 1 });
+        res.status(200).json({ 
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            database: 'connected',
+            uptime: process.uptime()
+        });
+    } catch (error) {
+        res.status(503).json({ 
+            status: 'unhealthy',
+            timestamp: new Date().toISOString(),
+            database: 'disconnected',
+            error: 'Database connection failed'
+        });
     }
 });
 
