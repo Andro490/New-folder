@@ -106,6 +106,9 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
   // ── CHECKOUT FORM ───────────────────────────────────────────────
   if (step === 'checkout') {
+    const fitParam = new URLSearchParams(window.location.search).get('fit') || 'regularFit';
+    const fitName = fitParam === 'oversize' ? 'أوفر سايز' : (fitParam === 'boxyFit' ? 'بوكسي' : 'مقاس عادي');
+
     return (
       <div className="fixed inset-0 z-[200] overflow-y-auto font-['Inter'] m-0 lg:m-[30px] lg:rounded-2xl lg:border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }} dir="rtl">
 
@@ -300,7 +303,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>ملخص الطلب</p>
             {[
               { label: 'منتج', value: 'تي شيرت' },
-              { label: 'ملائم', value: 'مقاس عادي' },
+              { label: 'ملائم', value: fitName },
               { label: 'لون', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel}</span> },
               { label: 'مقاس', value: selectedSize },
               { label: 'تصميم', value: isEligibleForDiscount ? <span><span style={{ textDecoration: 'line-through', color: '#888', marginLeft: '8px' }}>{baseDesignPrice}</span> <span style={{ color: '#4ade80' }}>جنيه مصري {designPrice} (خصم 10%)</span></span> : `جنيه مصري ${designPrice}` },
@@ -386,7 +389,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     city: form.city,
                     governorate: form.governorate,
                     address: form.address,
-                    size: selectedSize ?? '-',
+                    size: `${selectedSize ?? '-'} (${fitName})`,
                     color: tshirtColor,
                     shippingType: shipping,
                     paymentMethod: payMethod,
@@ -437,6 +440,9 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
   // ── REVIEW ──────────────────────────────────────────────────────
   if (step === 'review') {
+    const fitParam = new URLSearchParams(window.location.search).get('fit') || 'regularFit';
+    const fitLabelEn = fitParam === 'oversize' ? 'OVERSIZE' : (fitParam === 'boxyFit' ? 'BOXY FIT' : 'REGULAR FIT');
+    
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
         <div style={{ width: '100%', maxWidth: 560, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
@@ -466,7 +472,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>CONFIGURATION</p>
             {[
               { label: 'PRODUCT', value: 'T-SHIRT' },
-              { label: 'FIT', value: 'REGULAR FIT' },
+              { label: 'FIT', value: fitLabelEn },
               { label: 'COLOR', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel.toUpperCase()}</span> },
               { label: 'SIZE', value: selectedSize },
             ].map(row => (
