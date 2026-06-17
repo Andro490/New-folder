@@ -6,6 +6,7 @@ import { generateTshirtImage } from '../../utils/tshirtCanvas';
 import { uploadToImgBB } from '../../utils/imgbb';
 import { sendOrderToSheet } from '../../utils/orderApi';
 import TshirtPreviewBox from '../editor/TshirtPreviewBox';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { SizeGuideModal } from '../SizeGuideModal';
 
 const SIZES = [
@@ -24,6 +25,7 @@ interface OrderModalProps {
 }
 
 export default function OrderModal({ onClose, tshirtColor, allLayers, designLink }: OrderModalProps) {
+  const { t, dir } = useLanguage();
   type Step = 'size' | 'review' | 'checkout' | 'thanks';
   const [step, setStep] = useState<Step>('size');
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -73,19 +75,17 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
           </div>
 
           <p style={{ fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--accent-primary)', marginBottom: 12 }}>ORDER CONFIRMED</p>
-          <h2 style={{ fontSize: 28, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 16 }}>شكراً لك! 🎉</h2>
+          <h2 style={{ fontSize: 28, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 16 }}>{t('orderModal.thanksTitle')}</h2>
           <p style={{ fontSize: 14, color: '#666', lineHeight: 1.8, marginBottom: 36 }}>
-            تم استلام طلبك بنجاح.<br />
-            سيتواصل معك فريقنا خلال <strong style={{ color: 'var(--text-primary)' }}>24 ساعة</strong> لتأكيد التصميم.<br />
-            ترقّب تيشيرتك المخصص! 🔥
+            {t('orderModal.orderConfirmedMsg')}<strong style={{ color: 'var(--text-primary)' }}>{t('orderModal.orderConfirmedMsg2')}</strong>{t('orderModal.orderConfirmedMsg3')}
           </p>
 
           {/* Order summary pill */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
             {[
-              { label: 'المقاس', value: selectedSize ?? '-' },
-              { label: 'اللون', value: colorLabel },
-              { label: 'الإجمالي', value: `${finalTotal ?? total} جنيه` },
+              { label: t('orderModal.size'), value: selectedSize ?? '-' },
+              { label: t('orderModal.color'), value: colorLabel },
+              { label: t('orderModal.total'), value: `${finalTotal ?? total} ${appConfig.pricing.currencyAr}` },
             ].map(item => (
               <div key={item.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '10px 20px', minWidth: 110 }}>
                 <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{item.label}</p>
@@ -98,7 +98,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             onClick={onClose}
             style={{ width: '100%', padding: '14px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
           >
-            العودة للتصميم
+            {t('orderModal.backToDesign')}
           </button>
         </div>
       </div>
@@ -116,14 +116,14 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
         {/* Refund Policy Modal */}
         {showRefundPolicy && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowRefundPolicy(false)}>
-            <div style={{ width: 480, maxWidth: '90%', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: 40, fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()} dir="rtl">
-              <p style={{ fontSize: 11, color: '#555', marginBottom: 12 }}>سياسة</p>
-              <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 24 }}>سياسة الاسترداد</h2>
+            <div style={{ width: 480, maxWidth: '90%', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: 40, fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()} dir={dir}>
+              <p style={{ fontSize: 11, color: '#555', marginBottom: 12 }}>{t('orderModal.refundPolicy')}</p>
+              <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.05em', marginBottom: 24 }}>{t('orderModal.refundPolicyTitle')}</h2>
               <p style={{ fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: 36 }}>
-                للأسف، لا نقدم خدمة الإرجاع أو الاستبدال لأن هذا التيشيرت مصمم خصيصاً لك. مع ذلك، يمكنك رفض استلام الطلب إذا لم يكن التصميم كما صممته أو طلبته، أو إذا لم تكن راضياً عن الخامة.
+                {t('orderModal.refundPolicyText')}
               </p>
               <button onClick={() => setShowRefundPolicy(false)} style={{ width: '100%', padding: '16px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 900 }}>
-                فهمتها
+                {t('orderModal.gotIt')}
               </button>
             </div>
           </div>
@@ -131,29 +131,29 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
         {/* Top bar */}
         <div style={{ borderBottom: '1px solid var(--border-color)', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>الخطوة الثانية من أجل خطوتك</p>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.1em' }}>{t('orderModal.step2of2')}</p>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 py-10 min-h-[calc(100vh-60px)] flex flex-col lg:flex-row justify-center items-start gap-10 lg:gap-16">
           {/* RIGHT/TOP: Form */}
           <div className="w-full lg:w-[650px]">
-            <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 32 }}>الدفع</h1>
+            <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 32 }}>{t('orderModal.checkoutTitle')}</h1>
 
             {/* Delivery info */}
-            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>معلومات التوصيل</p>
+            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>{t('orderModal.deliveryInfo')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>الاسم الأول</label>
+                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.firstName')}</label>
                 <input style={inputStyle} value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} />
               </div>
               <div>
-                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>اسم العائلة</label>
+                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.lastName')}</label>
                 <input style={inputStyle} value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} />
               </div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>رقم الهاتف</label>
+              <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.phone')}</label>
               <input
                 style={{
                   ...inputStyle,
@@ -168,42 +168,42 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                 inputMode="numeric"
                 placeholder="01xxxxxxxxx"
                 onChange={e => {
-                  const val = e.target.value.replace(/[^0-9]/g, ''); // أرقام فقط
+                  const val = e.target.value.replace(/[^0-9]/g, '');
                   setForm(f => ({ ...f, phone: val }));
                 }}
               />
               {form.phone && !form.phone.startsWith('01') && (
-                <p style={{ fontSize: 11, color: '#e74c3c', marginTop: 4 }}>⚠ يجب أن يبدأ الرقم بـ 01</p>
+                <p style={{ fontSize: 11, color: '#e74c3c', marginTop: 4 }}>{t('orderModal.phoneError')}</p>
               )}
               {form.phone && form.phone.startsWith('01') && form.phone.length !== 11 && (
                 <p style={{ fontSize: 11, color: '#e7a000', marginTop: 4 }}>
-                  {11 - form.phone.length} أرقام متبقية
+                  {11 - form.phone.length}{t('orderModal.phoneRemaining')}
                 </p>
               )}
               {form.phone.length === 11 && form.phone.startsWith('01') && (
-                <p style={{ fontSize: 11, color: '#2ecc71', marginTop: 4 }}>✓ رقم صحيح</p>
+                <p style={{ fontSize: 11, color: '#2ecc71', marginTop: 4 }}>{t('orderModal.phoneValid')}</p>
               )}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <div>
-                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>مدينة</label>
+                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.city')}</label>
                 <input style={inputStyle} value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
               </div>
               <div>
-                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>محافظة</label>
+                <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.governorate')}</label>
                 <input style={inputStyle} value={form.governorate} onChange={e => setForm(f => ({ ...f, governorate: e.target.value }))} />
               </div>
             </div>
             <div style={{ marginBottom: 32 }}>
-              <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>عنوان</label>
+              <label style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.address')}</label>
               <input style={inputStyle} value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
             </div>
 
             {/* Shipping */}
-            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>شحن</p>
+            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>{t('orderModal.shipping')}</p>
             {[
-              { id: 'free', label: 'اشحن مجانًا', sub: 'متوفر داخل 6 أكتوبر والشيخ زايد فقط', price: `${appConfig.shipping.standard.priceEGP} جنيه مصري`, icon: '🎁' },
-              { id: 'premium', label: 'خدمة الترحيل في مصر', sub: 'يتم التوصيل خلال 7 أيام عمل', price: `${appConfig.shipping.premium.priceEGP} جنيهًا مصريًا`, icon: '🚚' },
+              { id: 'free', label: t('orderModal.freeShipping'), sub: t('orderModal.freeShippingSub'), price: `${appConfig.shipping.standard.priceEGP} ${appConfig.pricing.currencyAr}`, icon: '🎁' },
+              { id: 'premium', label: t('orderModal.premiumShipping'), sub: t('orderModal.premiumShippingSub'), price: `${appConfig.shipping.premium.priceEGP} ${appConfig.pricing.currencyAr}`, icon: '🚚' },
             ].map(opt => (
               <div
                 key={opt.id}
@@ -222,10 +222,10 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             ))}
 
             {/* Payment */}
-            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16, marginTop: 28 }}>قسط</p>
+            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16, marginTop: 28 }}>{t('orderModal.payment')}</p>
             {[
-              { id: 'instapay', label: 'إنستاباي', sub: `أرسل إلى: ${appConfig.payment.instapay.phoneNumber}`, icon: '📱' },
-              { id: 'cod', label: 'الدفع عند الاستلام', sub: 'سيُطلب دفع عربون بنسبة 20% من السعر الإجمالي', icon: '💵' },
+              { id: 'instapay', label: t('orderModal.instapay'), sub: `${t('orderModal.sendTo')}${appConfig.payment.instapay.phoneNumber}`, icon: '📱' },
+              { id: 'cod', label: t('orderModal.cod'), sub: t('orderModal.codSub'), icon: '💵' },
             ].map(opt => (
               <div
                 key={opt.id}
@@ -245,7 +245,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             {/* InstaPay Upload Section */}
             {payMethod === 'instapay' && (
               <div style={{ marginTop: 16, border: '1px dashed var(--accent-primary)', padding: '20px', backgroundColor: 'rgba(245,200,66,0.03)' }}>
-                <p style={{ fontSize: 11, color: 'var(--accent-primary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>📎 إرفاق إيصال التحويل</p>
+                <p style={{ fontSize: 11, color: 'var(--accent-primary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>{t('orderModal.attachProof')}</p>
                 <label
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -255,7 +255,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   }}
                 >
                   <span style={{ fontSize: 18 }}>📷</span>
-                  {paymentProof ? paymentProof.name : '+ اختر صورة التحويل'}
+                  {paymentProof ? paymentProof.name : t('orderModal.chooseProof')}
                   <input
                     type="file"
                     accept="image/*"
@@ -273,14 +273,14 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   <div style={{ marginTop: 12, position: 'relative' }}>
                     <img
                       src={paymentProofPreview}
-                      alt="إيصال الدفع"
+                      alt={t('orderModal.attachProof')}
                       style={{ width: '100%', maxHeight: 200, objectFit: 'cover', border: '1px solid #2a2a2a' }}
                     />
                     <button
                       onClick={() => { setPaymentProof(null); setPaymentProofPreview(null); }}
                       style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(0,0,0,0.8)', border: 'none', color: 'var(--text-primary)', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', fontSize: 14 }}
                     >×</button>
-                    <p style={{ fontSize: 11, color: '#4ade80', marginTop: 8 }}>✓ تم رفع الإيصال بنجاح</p>
+                    <p style={{ fontSize: 11, color: '#4ade80', marginTop: 8 }}>{t('orderModal.proofSuccess')}</p>
                   </div>
                 )}
               </div>
@@ -289,9 +289,9 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
           {/* LEFT/BOTTOM: Order summary */}
           <div className="w-full lg:w-[450px] shrink-0 h-fit">
-            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>تصميمك</p>
+            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>{t('orderModal.yourDesign')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
-              {[{ id: 'front', label: 'أمام' }, { id: 'back', label: 'خلف' }].map(side => (
+              {[{ id: 'front', label: t('orderModal.front') }, { id: 'back', label: t('orderModal.back') }].map(side => (
                 <div key={side.id} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: 12 }}>
                   <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8, overflow: 'hidden' }}>
                     <TshirtPreviewBox layers={allLayers} tshirtColor={tshirtColor} view={side.id as TShirtView} width={150} height={160} />
@@ -301,15 +301,14 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               ))}
             </div>
 
-            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>ملخص الطلب</p>
+            <p style={{ fontSize: 12, color: '#555', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>{t('orderModal.orderSummary')}</p>
             {[
-              { label: 'منتج', value: 'تي شيرت' },
-              { label: 'ملائم', value: fitName },
-              { label: 'لون', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel}</span> },
-              { label: 'مقاس', value: selectedSize },
-              { label: 'تصميم', value: isEligibleForDiscount ? <span><span style={{ textDecoration: 'line-through', color: '#888', marginLeft: '8px' }}>{baseDesignPrice}</span> <span style={{ color: '#4ade80' }}>جنيه مصري {designPrice} (خصم 10%)</span></span> : `جنيه مصري ${designPrice}` },
-              { label: 'رابط التصميم', value: (allLayers.find(l => l.pinterestUrl)?.pinterestUrl || 'لا يوجد رابط') },
-              { label: 'شحن', value: shippingCost === 0 ? <span style={{ color: '#4ade80' }}>حر</span> : `${shippingCost} جنيه` },
+              { label: t('orderModal.product'), value: t('orderModal.tshirt') },
+              { label: t('orderModal.fit'), value: fitName },
+              { label: t('orderModal.color'), value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel}</span> },
+              { label: t('orderModal.size'), value: selectedSize },
+              { label: t('orderModal.designLink'), value: (allLayers.find(l => l.pinterestUrl)?.pinterestUrl || t('orderModal.noLink')) },
+              { label: t('orderModal.shipping'), value: shippingCost === 0 ? <span style={{ color: '#4ade80' }}>{t('orderModal.freeShipping')}</span> : `${shippingCost} ${appConfig.pricing.currencyAr}` },
             ].map(row => (
               <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border-color)' }}>
                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{row.label}</span>
@@ -317,8 +316,8 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 4 }}>
-              <span style={{ fontSize: 12, color: '#555' }}>المجموع</span>
-              <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-primary)' }}>جنيه مصري {total}</span>
+              <span style={{ fontSize: 12, color: '#555' }}>{t('orderModal.total')}</span>
+              <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-primary)' }}>{total} {appConfig.pricing.currencyAr}</span>
             </div>
 
             <button
@@ -326,15 +325,15 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               disabled={isSubmitting}
               onClick={async () => {
                 if (!form.firstName || !form.phone || !form.address) {
-                  alert('يرجى ملء الاسم ورقم الهاتف والعنوان');
+                  alert(t('orderModal.fillRequired'));
                   return;
                 }
                 if (!form.phone.startsWith('01') || form.phone.length !== 11) {
-                  alert('رقم الهاتف يجب أن يكون 11 رقم ويبدأ بـ 01');
+                  alert(t('orderModal.phoneMustBe11'));
                   return;
                 }
                 if (payMethod === 'instapay' && !paymentProof) {
-                  alert('يرجى رفع صورة إيصال التحويل عبر إنستاباي');
+                  alert(t('orderModal.instapayProofReq'));
                   return;
                 }
                 setIsSubmitting(true);
@@ -394,16 +393,12 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     color: tshirtColor,
                     shippingType: shipping,
                     paymentMethod: payMethod,
-                    // كل روابط صور التصاميم اللي أضافها العميل
                     designImages: uniqueImageUrls.join('\n') || 'لا توجد صور',
-                    // النصوص اللي أضافها العميل
                     textLayers: textSummary,
-                    // صور التيشيرت النهائية
                     frontImage: frontImageUrl,
                     backImage: backImageUrl,
-                    // إيصال إنستاباي
                     instapayProof: instapayProofUrl,
-                    totalPrice: String(designPrice + shippingCost) + ' جنيه',
+                    totalPrice: String(designPrice + shippingCost),
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
@@ -413,7 +408,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   localStorage.removeItem('wearurway_ref');
                   localStorage.removeItem('wearurway_community_design_id');
                 } catch (err: any) {
-                  alert('❌ حدث خطأ أثناء إرسال الطلب:\n' + err.message);
+                  alert('❌ Error: \n' + err.message);
                 } finally {
                   setIsSubmitting(false);
                 }
@@ -428,13 +423,13 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                 transition: 'background-color 0.2s',
               }}
             >
-              {isSubmitting ? '⏳ جاري إرسال الطلب...' : 'إتمام الطلب ✓'}
+              {isSubmitting ? t('orderModal.submitting') : t('orderModal.submitOrder')}
             </button>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 16 }}>
-              <button style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>اتصل بنا</button>
+              <button style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>{t('orderModal.contactUs')}</button>
               <span style={{ color: '#333' }}>|</span>
-              <button onClick={() => setShowRefundPolicy(true)} style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>سياسة الاسترداد</button>
+              <button onClick={() => setShowRefundPolicy(true)} style={{ background: 'none', border: 'none', fontSize: 12, color: '#444', cursor: 'pointer' }}>{t('orderModal.refundPolicy')}</button>
             </div>
           </div>
         </div>
@@ -452,18 +447,18 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
         <div style={{ width: '100%', maxWidth: 560, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 2 OF 2</p>
-              <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>REVIEW ORDER</h2>
+              <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>{t('orderModal.step2of2')}</p>
+              <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('orderModal.reviewOrder')}</h2>
             </div>
             <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
           </div>
 
-          <div style={{ padding: '24px', overflowY: 'auto', maxHeight: '70vh' }}>
-            <button onClick={() => setStep('size')} style={{ background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', marginBottom: 20, letterSpacing: '0.05em' }}>← CHANGE SIZE</button>
+          <div style={{ padding: '24px', overflowY: 'auto', maxHeight: '70vh' }} dir={dir}>
+            <button onClick={() => setStep('size')} style={{ background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', marginBottom: 20, letterSpacing: '0.05em' }}>{t('orderModal.changeSize')}</button>
 
-            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>DESIGN PREVIEW</p>
+            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>{t('orderModal.designPreview')}</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 24 }}>
-              {[{ id: 'front', label: 'FRONT' }, { id: 'back', label: 'BACK' }].map(side => (
+              {[{ id: 'front', label: t('orderModal.front') }, { id: 'back', label: t('orderModal.back') }].map(side => (
                 <div key={side.id} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
                   <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     <TshirtPreviewBox layers={allLayers} tshirtColor={tshirtColor} view={side.id as TShirtView} width={200} height={200} />
@@ -473,12 +468,12 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               ))}
             </div>
 
-            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>CONFIGURATION</p>
+            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>{t('orderModal.configuration')}</p>
             {[
-              { label: 'PRODUCT', value: 'T-SHIRT' },
-              { label: 'FIT', value: fitLabelEn },
-              { label: 'COLOR', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel.toUpperCase()}</span> },
-              { label: 'SIZE', value: selectedSize },
+              { label: t('orderModal.product'), value: t('orderModal.tshirt') },
+              { label: t('orderModal.fit'), value: fitLabelEn },
+              { label: t('orderModal.color'), value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel.toUpperCase()}</span> },
+              { label: t('orderModal.size'), value: selectedSize },
             ].map(row => (
               <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', marginBottom: 1 }}>
                 <span style={{ fontSize: 11, color: '#444', letterSpacing: '0.1em' }}>{row.label}</span>
@@ -487,10 +482,10 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             ))}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 8 }}>
-              <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>TOTAL</span>
+              <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>{t('orderModal.total')}</span>
               <span style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent-primary)' }}>
-                {isEligibleForDiscount && <span style={{ textDecoration: 'line-through', color: '#888', marginRight: '8px', fontSize: 16 }}>{baseDesignPrice}</span>}
-                {designPrice} <span style={{ fontSize: 13, color: '#888' }}>EGP</span>
+                {isEligibleForDiscount && <span style={{ textDecoration: 'line-through', color: '#888', margin: '0 8px', fontSize: 16 }}>{baseDesignPrice}</span>}
+                {designPrice} <span style={{ fontSize: 13, color: '#888' }}>{appConfig.pricing.currencyAr}</span>
               </span>
             </div>
 
@@ -498,7 +493,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               onClick={() => setStep('checkout')}
               style={{ width: '100%', padding: '16px', backgroundColor: 'var(--accent-primary)', color: '#000', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}
             >
-              CONFIRM ORDER
+              {t('orderModal.confirmOrder')}
             </button>
           </div>
         </div>
@@ -511,17 +506,17 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
       <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} dir={dir}>
           <div>
-            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 1 OF 2</p>
-            <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>SELECT SIZE</h2>
+            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>{t('orderModal.step1of2')}</p>
+            <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('orderModal.selectSize')}</h2>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#444', fontSize: 20, cursor: 'pointer' }}>×</button>
         </div>
 
-        <div style={{ overflowY: 'auto', padding: '24px' }}>
+        <div style={{ overflowY: 'auto', padding: '24px' }} dir={dir}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', margin: 0 }}>PERFECT YOUR FIT</p>
+            <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', margin: 0 }}>{t('orderModal.perfectFit')}</p>
             <button
               onClick={() => setShowSizeGuide(true)}
               style={{
@@ -535,7 +530,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(245, 200, 66, 0.1)'}
             >
               <Info size={14} />
-              اعرف مقاسك
+              {t('orderModal.knowYourSize')}
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
