@@ -158,7 +158,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Info */}
       <div className="px-5 pt-2 pb-4 flex flex-col items-end">
         <h3
-          className="font-bold text-base truncate text-right w-full mb-1"
+          className="font-bold text-base truncate text-center w-full mb-1"
           style={{ fontFamily: "'Cairo', sans-serif", color: 'var(--text-primary)' }}
         >
           {design.name}
@@ -171,7 +171,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Buy Button */}
       <button
         onClick={() => onBuy(design)}
-        className="w-full py-3.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-auto"
+        className="w-full py-3.5 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-1"
         style={{
           backgroundColor: 'var(--bg-primary)',
           color: 'var(--text-primary)',
