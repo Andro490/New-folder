@@ -62,7 +62,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
 
   return (
     <div
-      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 border border-[#d4ba7b]/40"
+      className="group relative flex flex-col rounded-2xl transition-all duration-300 border border-[#d4ba7b]/40"
       style={{
         backgroundColor: 'var(--bg-card)',
         boxShadow: '0 8px 30px rgba(139,107,67,0.08)',
@@ -91,7 +91,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       )}
 
       {/* Image Area */}
-      <div className="relative w-full aspect-[4/5] flex items-center justify-center bg-transparent overflow-hidden">
+      <div className="relative w-full aspect-[4/5] flex items-center justify-center bg-transparent overflow-hidden rounded-t-2xl">
         
         {/* Front image */}
         <div
@@ -171,7 +171,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       {/* Buy Button */}
       <button
         onClick={() => onBuy(design)}
-        className="w-full p-2 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 mt-1"
+        className="w-full py-3 px-4 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-200 rounded-b-2xl"
         style={{
           backgroundColor: 'var(--bg-primary)',
           color: 'var(--text-primary)',
