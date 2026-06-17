@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,7 +50,6 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // ── CSRF Token Middleware ─────────────────────────────────────────
-const crypto = require('crypto');
 const csrfTokens = new Map(); // In production, use Redis
 
 app.get('/api/csrf-token', (req, res) => {
