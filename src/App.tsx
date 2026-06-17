@@ -435,7 +435,7 @@ function FitStep() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-2">
             
             {/* OVERSIZE */}
-            <div className={`flex flex-col items-center ${appConfig.fits.oversize.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.oversize.enabled && navigate('/color')}>
+            <div className={`flex flex-col items-center ${appConfig.fits.oversize.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.oversize.enabled && navigate('/color?fit=oversize')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
@@ -447,7 +447,7 @@ function FitStep() {
                 <img src={oversizeImg} alt="Oversize" className="w-[85%] h-auto object-contain filter drop-shadow-2xl transition-transform group-hover:scale-105" />
                 <span className="absolute bottom-6 font-bold text-lg text-[var(--text-primary)] uppercase">
                   {language === 'ar' ? appConfig.fits.oversize.nameAr : appConfig.fits.oversize.nameEn}
-                </span>
+</span>
                 {!appConfig.fits.oversize.enabled && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-[6px] bg-[#f5efe6]/40">
                     <span className="font-black text-2xl tracking-wider" style={{ color: 'var(--text-primary)' }}>{t('home.comingSoon')}</span>
@@ -457,7 +457,7 @@ function FitStep() {
             </div>
 
             {/* REGULAR FIT */}
-            <div className={`flex flex-col items-center ${appConfig.fits.regularFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.regularFit.enabled && navigate('/color')}>
+            <div className={`flex flex-col items-center ${appConfig.fits.regularFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.regularFit.enabled && navigate('/color?fit=regularFit')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
@@ -479,7 +479,7 @@ function FitStep() {
             </div>
 
             {/* BOXY FIT */}
-            <div className={`flex flex-col items-center ${appConfig.fits.boxyFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.boxyFit.enabled && navigate('/color')}>
+            <div className={`flex flex-col items-center ${appConfig.fits.boxyFit.enabled ? 'cursor-pointer group' : 'relative'}`} onClick={() => appConfig.fits.boxyFit.enabled && navigate('/color?fit=boxyFit')}>
               <div 
                 className="w-full aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center justify-center transition-transform hover:-translate-y-2"
                 style={{ 
@@ -510,6 +510,9 @@ function FitStep() {
 function ColorStep() {
   const navigate = useNavigate();
   const { t, dir } = useLanguage();
+  const location = useLocation();
+  const fit = new URLSearchParams(location.search).get('fit') || 'regularFit';
+
   return (
     <div className="flex-1 min-h-screen flex flex-col font-['Inter']" style={{ color: 'var(--text-primary)' }} dir={dir}>
       <Navbar />
@@ -534,7 +537,7 @@ function ColorStep() {
               
               {/* White Swatch */}
               <button
-                onClick={() => navigate('/editor?color=white')}
+                onClick={() => navigate(`/editor?fit=${fit}&color=white`)}
                 className="flex flex-col items-center group transition-transform hover:-translate-y-2"
               >
                 <div 
@@ -553,7 +556,7 @@ function ColorStep() {
 
               {/* Black Swatch */}
               <button
-                onClick={() => navigate('/editor?color=black')}
+                onClick={() => navigate(`/editor?fit=${fit}&color=black`)}
                 className="flex flex-col items-center group transition-transform hover:-translate-y-2"
               >
                 <div 

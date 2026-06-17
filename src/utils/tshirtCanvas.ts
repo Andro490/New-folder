@@ -9,6 +9,10 @@ import blackMockupFront from '../assets/black-mockup.png';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupFront from '../assets/—Pngtree—white t shirt mockup realistic_13020297.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+import oversizeWhiteMockupFront from '../assets/size.png';
+import oversizeWhiteMockupBack from '../assets/bak.png';
+import oversizeBlackMockupFront from '../assets/blackk.png';
+import oversizeBlackMockupBack from '../assets/backkk.png';
 
 /** Fetch any URL/src as a local blob URL to avoid canvas CORS taint. */
 export async function fetchAsBlobUrl(src: string): Promise<string> {
@@ -23,8 +27,18 @@ export async function fetchAsBlobUrl(src: string): Promise<string> {
 
 /** Returns the shirt mockup image source for a given color & view. */
 export function getShirtSrc(color: TShirtColor, view: TShirtView): string {
-  if (color === 'black') return view === 'front' ? blackMockupFront : blackMockupBack;
-  if (color === 'white') return view === 'front' ? whiteMockupFront : whiteMockupBack;
+  const fit = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('fit') : null;
+  
+  if (color === 'black') {
+    return view === 'front' 
+      ? (fit === 'oversize' ? oversizeBlackMockupFront : blackMockupFront) 
+      : (fit === 'oversize' ? oversizeBlackMockupBack : blackMockupBack);
+  }
+  if (color === 'white') {
+    return view === 'front' 
+      ? (fit === 'oversize' ? oversizeWhiteMockupFront : whiteMockupFront) 
+      : (fit === 'oversize' ? oversizeWhiteMockupBack : whiteMockupBack);
+  }
   // Colored shirts → generate SVG
   const svgStr = getTshirtSVG(color, view);
   const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });

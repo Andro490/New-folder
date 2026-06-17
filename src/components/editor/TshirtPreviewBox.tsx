@@ -8,6 +8,11 @@ import blackMockupFront from '../../assets/black-mockup.png';
 import blackMockupBack from '../../assets/black-mockup-back.png';
 import whiteMockupFront from '../../assets/—Pngtree—white t shirt mockup realistic_13020297.png';
 import whiteMockupBack from '../../assets/—Pngtree—back white t shirt_13029479.png';
+import { useLocation } from 'react-router-dom';
+import oversizeWhiteMockupFront from '../../assets/size.png';
+import oversizeWhiteMockupBack from '../../assets/bak.png';
+import oversizeBlackMockupFront from '../../assets/blackk.png';
+import oversizeBlackMockupBack from '../../assets/backkk.png';
 
 interface Props {
   layers: DesignLayer[];
@@ -25,6 +30,8 @@ export default function TshirtPreviewBox({
   height = 180,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const location = useLocation();
+  const fit = new URLSearchParams(location.search).get('fit');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -46,9 +53,9 @@ export default function TshirtPreviewBox({
     let imgSrc = '';
     let isSvg = false;
     if (tshirtColor === 'black') {
-      imgSrc = view === 'front' ? blackMockupFront : blackMockupBack;
+      imgSrc = view === 'front' ? (fit === 'oversize' ? oversizeBlackMockupFront : blackMockupFront) : (fit === 'oversize' ? oversizeBlackMockupBack : blackMockupBack);
     } else if (tshirtColor === 'white') {
-      imgSrc = view === 'front' ? whiteMockupFront : whiteMockupBack;
+      imgSrc = view === 'front' ? (fit === 'oversize' ? oversizeWhiteMockupFront : whiteMockupFront) : (fit === 'oversize' ? oversizeWhiteMockupBack : whiteMockupBack);
     } else {
       isSvg = true;
       const svgStr = getTshirtSVG(tshirtColor, view);

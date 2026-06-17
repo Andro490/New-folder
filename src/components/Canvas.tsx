@@ -1,12 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Stage, Layer, Image as KonvaImage, Transformer, Rect } from 'react-konva';
 import Konva from 'konva';
+import { useLocation } from 'react-router-dom';
 import { DesignLayer, TShirtColor, TShirtView } from '../types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, PRINT_AREA, getTshirtSVG } from '../utils/tshirtSvg';
 import blackMockupFront from '../assets/black-mockup.png';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupFront from '../assets/—Pngtree—white t shirt mockup realistic_13020297.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+import oversizeWhiteMockupFront from '../assets/size.png';
+import oversizeWhiteMockupBack from '../assets/bak.png';
+import oversizeBlackMockupFront from '../assets/blackk.png';
+import oversizeBlackMockupBack from '../assets/backkk.png';
 
 interface CanvasProps {
   layers: DesignLayer[];
@@ -38,22 +43,24 @@ function useImage(src: string): [HTMLImageElement | null, string] {
 // T-Shirt background image component
 function TshirtBackground({ color, view }: { color: TShirtColor; view: TShirtView }) {
   const [url, setUrl] = useState<string>('');
+  const location = useLocation();
+  const fit = new URLSearchParams(location.search).get('fit');
 
   useEffect(() => {
     if (color === 'black') {
       if (view === 'front') {
-        setUrl(blackMockupFront);
+        setUrl(fit === 'oversize' ? oversizeBlackMockupFront : blackMockupFront);
         return;
       } else if (view === 'back') {
-        setUrl(blackMockupBack);
+        setUrl(fit === 'oversize' ? oversizeBlackMockupBack : blackMockupBack);
         return;
       }
     } else if (color === 'white') {
       if (view === 'front') {
-        setUrl(whiteMockupFront);
+        setUrl(fit === 'oversize' ? oversizeWhiteMockupFront : whiteMockupFront);
         return;
       } else if (view === 'back') {
-        setUrl(whiteMockupBack);
+        setUrl(fit === 'oversize' ? oversizeWhiteMockupBack : whiteMockupBack);
         return;
       }
     }
