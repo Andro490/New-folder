@@ -48,6 +48,35 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// ── CSRF Token Middleware ─────────────────────────────────────────
+const crypto = require('crypto');
+const csrfTokens = new Map(); // In production, use Redis
+
+app.get('/api/csrf-token', (req, res) => {
+    const token = crypto.randomBytes(32).toString('hex');
+    const clientIp = req.ip;
+    csrfTokens.set(token, { ip: clientIp, expires: Date.now() + 60 * 60 * 1000 });
+    res.json({ csrfToken: token });
+});
+
+const verifyCsrfToken = (req, res, next) => {
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        const token = req.headers['x-csrf-token'];
+        if (!token || !csrfTokens.has(token)) {
+            return res.status(403).json({ error: 'Invalid CSRF token' });
+        }
+        const tokenData = csrfTokens.get(token);
+        if (Date.now() > tokenData.expires) {
+            csrfTokens.delete(token);
+            return res.status(403).json({ error: 'CSRF token expired' });
+        }
+        csrfTokens.delete(token); // One-time use
+    }
+    next();
+};
+
+app.use(verifyCsrfToken);
+
 // ── Security Headers & HTTPS Enforcement ────────────────────────────
 app.use((req, res, next) => {
     // HTTPS Enforcement in production
@@ -121,9 +150,15 @@ app.get('/api/auth/google/callback', async (req, res) => {
             }
         }
 
-        // Return JWT to frontend via redirect
+        // Return JWT to frontend via secure cookie instead of URL
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}`);
+        res.cookie('auth_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+        res.redirect(`${CLIENT_URL}/auth/google/success`);
 
     } catch (err) {
         console.error('Google OAuth error:', err.response?.data || err.message);
@@ -396,8 +431,8 @@ app.post('/api/designs', authenticateToken, async (req, res) => {
 
 app.get('/api/designs', async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20)); // Cap at 100
         const skip = (page - 1) * limit;
 
         const designs = await prisma.design.findMany({
@@ -408,7 +443,16 @@ app.get('/api/designs', async (req, res) => {
         });
         const total = await prisma.design.count();
         
-        res.json({ success: true, designs, total, pages: Math.ceil(total / limit) });
+        res.json({ 
+            success: true, 
+            designs, 
+            pagination: {
+                total,
+                page,
+                limit,
+                pages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         console.error('Error fetching designs:', error);
         res.status(500).json({ error: 'حدث خطأ أثناء جلب التصميمات' });

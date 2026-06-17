@@ -111,11 +111,28 @@ app.post('/api/designs', authenticateToken, async (req, res) => {
 
 app.get('/api/designs', async (req, res) => {
     try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+        const skip = (page - 1) * limit;
+
         const designs = await prisma.design.findMany({
+            skip,
+            take: limit,
             include: { user: { select: { name: true, affiliateCode: true } } },
             orderBy: { createdAt: 'desc' }
         });
-        res.json({ success: true, designs });
+        const total = await prisma.design.count();
+        
+        res.json({ 
+            success: true, 
+            designs,
+            pagination: {
+                total,
+                page,
+                limit,
+                pages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         console.error('Error fetching designs:', error);
         res.status(500).json({ error: 'حدث خطأ أثناء جلب التصميمات' });
@@ -129,6 +146,18 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5TDMGWf45Uq_v
 app.post('/api/submit-order', async (req, res) => {
     try {
         const orderData = req.body;
+        
+        // Input validation
+        if (!orderData.email || !orderData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json({ error: 'Invalid email address' });
+        }
+        if (orderData.designId && !Number.isInteger(parseInt(orderData.designId))) {
+            return res.status(400).json({ error: 'Invalid design ID' });
+        }
+        if (orderData.affiliateCode && typeof orderData.affiliateCode !== 'string') {
+            return res.status(400).json({ error: 'Invalid affiliate code' });
+        }
+        
         console.log('📦 إرسال الطلب لـ Google Apps Script:', orderData);
 
         // Handle Affiliate system or Design Purchase
@@ -253,7 +282,20 @@ app.get('/api/proxy-image', async (req, res) => {
     if (!url) return res.status(400).send('No url provided');
     
     try {
-        const response = await axios.get(url, { responseType: 'stream' });
+        // SSRF Protection: Block private/internal IPs
+        const parsedUrl = new URL(url);
+        const hostname = parsedUrl.hostname;
+        
+        // Block localhost and private IPs
+        if (hostname === 'localhost' || 
+            hostname === '127.0.0.1' || 
+            hostname === '0.0.0.0' ||
+            !hostname.includes('.') ||
+            hostname.match(/^192\.168\.|^10\.|^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[01]\.|^169\.254\./)) {
+            return res.status(403).json({ error: 'Access denied. Private IPs not allowed.' });
+        }
+
+        const response = await axios.get(url, { responseType: 'stream', timeout: 5000 });
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
         response.data.pipe(res);
@@ -264,26 +306,51 @@ app.get('/api/proxy-image', async (req, res) => {
 
 // ── Admin Routes ───────────────────────────────────────────────────
 
-// Middleware to check if admin
-const authenticateAdmin = async (req, res, next) => {
+// Security Audit Logger
+const logSecurityEvent = async (event, req, details = {}) => {
     try {
-        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-        if (user && user.isAdmin) {
-            next();
-        } else {
-            res.status(403).json({ error: 'Access denied. Admins only.' });
-        }
+        await prisma.securityLog.create({
+            data: {
+                event,
+                userId: req.user?.id,
+                userEmail: req.user?.email,
+                details: JSON.stringify(details),
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            }
+        });
     } catch (e) {
-        res.status(500).json({ error: 'Server error' });
+        console.error("Audit log failed", e);
     }
 };
 
 app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, res) => {
     try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+        const skip = (page - 1) * limit;
+
         const users = await prisma.user.findMany({
-            select: { id: true, name: true, email: true, discountBalance: true, referredUsers: true, isAdmin: true, createdAt: true }
+            skip,
+            take: limit,
+            select: { id: true, name: true, email: true, discountBalance: true, referredUsers: true, isAdmin: true, createdAt: true },
+            orderBy: { createdAt: 'desc' }
         });
-        res.json({ success: true, users });
+        const total = await prisma.user.count();
+
+        // Log admin action
+        await logSecurityEvent('admin_fetch_users', req, { page, limit, total });
+        
+        res.json({ 
+            success: true, 
+            users,
+            pagination: {
+                total,
+                page,
+                limit,
+                pages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch users' });
     }
@@ -292,7 +359,14 @@ app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, re
 app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async (req, res) => {
     try {
         const designId = parseInt(req.params.id);
+        const design = await prisma.design.findUnique({ where: { id: designId } });
+        if (!design) return res.status(404).json({ error: 'Design not found' });
+        
         await prisma.design.delete({ where: { id: designId } });
+        
+        // Log admin action
+        await logSecurityEvent('admin_delete_design', req, { designId, designName: design.name });
+        
         res.json({ success: true, message: 'تم مسح التصميم بنجاح' });
     } catch (error) {
         res.status(500).json({ error: 'فشل مسح التصميم' });
@@ -302,8 +376,19 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
 app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        
+        // Prevent deleting self
+        if (user.id === req.user.id) return res.status(400).json({ error: 'Cannot delete your own account' });
+        
+        // Delete designs first to avoid foreign key constraints
         await prisma.design.deleteMany({ where: { userId } });
         await prisma.user.delete({ where: { id: userId } });
+        
+        // Log admin action
+        await logSecurityEvent('admin_delete_user', req, { userId, userEmail: user.email });
+        
         res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
     } catch (error) {
         res.status(500).json({ error: 'فشل مسح المستخدم' });
