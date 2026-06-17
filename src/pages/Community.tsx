@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
-import { OrderModal } from '../components/SettingsSidebar';
+import OrderModal from '../components/modals/OrderModal';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 import logoImg from '../assets/favicon.png';
