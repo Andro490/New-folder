@@ -121,7 +121,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
             )}
 
             {/* Back Mockup & Layers */}
-            <div className="absolute inset-0 flex items-center justify-center p-6">
+            <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className="relative flex items-center justify-center"
                 style={{ width: '100%', height: '100%', aspectRatio: '500/600', maxWidth: '100%', maxHeight: '100%' }}
