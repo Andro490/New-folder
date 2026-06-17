@@ -822,17 +822,15 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
                         orderData.designImages = directImageUrl;
                     } else {
                         // ⚠️ It's a Board or Profile — og:image would be a mosaic collage.
-                        // Send as a text link instead so it's still accessible in Telegram.
-                        console.log('[Order] Pinterest Board/Profile detected — sending as text link:', resolvedUrl);
-                        // Mark it so GAS knows to treat it as a text field, not a photo
-                        orderData.designImages = null;           // no image to attach
-                        orderData.designImagesLink = resolvedUrl; // plain-text link for caption
+                        // Keep the URL as readable text in designImages so GAS includes it
+                        // in the Telegram message text instead of trying to send it as a photo.
+                        console.log('[Order] Pinterest Board/Profile detected — sending as text:', resolvedUrl);
+                        orderData.designImages = `🔗 رابط ألبوم التصميم:\n${resolvedUrl}`;
                     }
                 } catch (pinterestErr) {
-                    // Non-fatal fallback: pass original URL as text
+                    // Non-fatal fallback: keep URL as plain text
                     console.warn('[Order] Could not resolve Pinterest URL:', pinterestErr.message);
-                    orderData.designImages = null;
-                    orderData.designImagesLink = rawUrl;
+                    orderData.designImages = `🔗 رابط التصميم (تعذّر معالجته):\n${rawUrl}`;
                 }
             }
         }
