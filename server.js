@@ -846,7 +846,14 @@ app.get('/api/proxy-image', async (req, res) => {
             return res.status(403).send('❌ مسار غير مسموح');
         }
         
-        const response = await axios.get(url, { responseType: 'stream', timeout: 5000 });
+        const response = await axios.get(url, { 
+            responseType: 'stream', 
+            timeout: 10000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8'
+            }
+        });
         
         // ✅ Image Type Validation: Only allow image MIME types
         const contentType = response.headers['content-type'] || 'image/jpeg';
@@ -858,6 +865,7 @@ app.get('/api/proxy-image', async (req, res) => {
         res.setHeader('Content-Type', contentType);
         response.data.pipe(res);
     } catch (error) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(500).send('Error proxying image');
     }
 });

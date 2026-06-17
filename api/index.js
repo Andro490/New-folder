@@ -377,11 +377,19 @@ app.get('/api/proxy-image', async (req, res) => {
             return res.status(403).json({ error: 'Access denied. Private IPs not allowed.' });
         }
 
-        const response = await axios.get(url, { responseType: 'stream', timeout: 5000 });
+        const response = await axios.get(url, { 
+            responseType: 'stream', 
+            timeout: 10000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8'
+            }
+        });
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
         response.data.pipe(res);
     } catch (error) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(500).send('Error proxying image');
     }
 });
