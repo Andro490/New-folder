@@ -408,6 +408,8 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
                   });
                   setStep('thanks');
+                  localStorage.removeItem('wearurway_ref');
+                  localStorage.removeItem('wearurway_community_design_id');
                 } catch (err: any) {
                   alert('❌ حدث خطأ أثناء إرسال الطلب:\n' + err.message);
                 } finally {
