@@ -20,7 +20,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
 }));
-app.options('*', cors()); // handle preflight for all routes
+app.options('/(.*)', cors()); // handle preflight for all routes
 app.use(express.json());
 
 // ── Request Logging Middleware ────────────────────────────────────────────
