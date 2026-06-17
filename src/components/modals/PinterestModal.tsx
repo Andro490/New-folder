@@ -35,8 +35,8 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
       const isDirectPinterestImage = trimmed.includes('pinimg.com');
 
       if (isPinterest && !isDirectPinterestImage) {
-        // Always same-origin — no CORS issue on Vercel
-        const response = await fetch('/api/pinterest-image', {
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        const response = await fetch(`${API_BASE}/api/pinterest-image`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: trimmed }),
@@ -44,9 +44,10 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
         });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.error || 'فشل في جلب الصورة');
-        imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
       } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
-        imageUrl = `/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
 
       const printArea = PRINT_AREA[view];

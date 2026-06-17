@@ -74,15 +74,12 @@ function PinterestModal({
 
       const isDirectPinterestImage = trimmed.includes('pinimg.com');
 
-      // ⚡ Pinterest & proxy endpoints: always use same-origin (Vercel serverless).
-      // This avoids CORS issues entirely — no cross-domain calls needed.
-      // VITE_API_URL (Railway) is for auth/order endpoints only.
-      const PINTEREST_API = ''; // always same-origin on Vercel
+      const API_BASE = (import.meta.env.VITE_API_URL as string) || '';
 
       if (isPinterest && !isDirectPinterestImage) {
         let response: Response;
         try {
-          response = await fetch(`/api/pinterest-image`, {
+          response = await fetch(`${API_BASE}/api/pinterest-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: trimmed }),
@@ -113,11 +110,11 @@ function PinterestModal({
           return;
         }
 
-        imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
 
       } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
         // Direct external image URL — proxy via same-origin to bypass CORS
-        imageUrl = `/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
 
 
