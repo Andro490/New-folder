@@ -77,6 +77,7 @@ const CSRF_EXEMPT_PATHS = [
     '/api/auth/verify-otp',
     '/api/auth/google',
     '/api/auth/google/callback',
+    '/api/pinterest-image',
 ];
 
 app.get('/api/csrf-token', (req, res) => {

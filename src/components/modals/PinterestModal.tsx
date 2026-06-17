@@ -32,15 +32,21 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
         trimmed.includes('pin.it') ||
         trimmed.includes('pinterest.');
 
-      if (isPinterest) {
-        const response = await fetch('/api/pinterest-image', {
+      const isDirectPinterestImage = trimmed.includes('pinimg.com');
+
+      if (isPinterest && !isDirectPinterestImage) {
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        const response = await fetch(`${API_BASE}/api/pinterest-image`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: trimmed }),
         });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.error || 'فشل في جلب الصورة');
-        imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+      } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
 
       const printArea = PRINT_AREA[view];

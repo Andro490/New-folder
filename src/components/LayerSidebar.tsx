@@ -72,8 +72,11 @@ function PinterestModal({
         trimmed.includes('pin.it') ||
         trimmed.includes('pinterest.');
 
-      if (isPinterest) {
-        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
+      const isDirectPinterestImage = trimmed.includes('pinimg.com');
+
+      if (isPinterest && !isDirectPinterestImage) {
+        // Use global API_BASE from env (Railway) instead of Vercel serverless
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
         
         let response: Response;
         try {
@@ -106,6 +109,10 @@ function PinterestModal({
         }
 
         imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+      } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
+        // Direct image link (Pinterest or other external). We must proxy it to avoid CORS issues.
+        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
 
       // Verify image loads
