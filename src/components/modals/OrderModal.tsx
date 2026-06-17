@@ -35,6 +35,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
   const [showRefundPolicy, setShowRefundPolicy] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [finalTotal, setFinalTotal] = useState<number | null>(null);
 
   const colorLabel = tshirtColor === 'black' ? 'أسود' : tshirtColor === 'white' ? 'أبيض' : tshirtColor === 'navy' ? 'كحلي' : tshirtColor === 'red' ? 'أحمر' : 'رمادي';
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
@@ -84,7 +85,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
             {[
               { label: 'المقاس', value: selectedSize ?? '-' },
               { label: 'اللون', value: colorLabel },
-              { label: 'الإجمالي', value: `${total} جنيه` },
+              { label: 'الإجمالي', value: `${finalTotal ?? total} جنيه` },
             ].map(item => (
               <div key={item.label} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '10px 20px', minWidth: 110 }}>
                 <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>{item.label}</p>
@@ -407,6 +408,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
                   });
+                  setFinalTotal(total);
                   setStep('thanks');
                   localStorage.removeItem('wearurway_ref');
                   localStorage.removeItem('wearurway_community_design_id');

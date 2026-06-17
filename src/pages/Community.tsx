@@ -28,6 +28,11 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
   const [showBack, setShowBack] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
+  // Extract front image and background
+  const [frontImgUrl, bgVal] = (design.imageUrl || '').split('|BG|');
+  const isBgImage = bgVal && bgVal.startsWith('http');
+  const isBgColor = bgVal && bgVal.startsWith('#');
+
   let backLayers: any[] = [];
   let hasBackDesign = false;
   try {
@@ -86,17 +91,17 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
       )}
 
       {/* Image Area */}
-      <div className="relative w-full aspect-[4/5] flex items-center justify-center p-6 bg-transparent overflow-hidden">
+      <div className="relative w-full aspect-[4/5] flex items-center justify-center bg-transparent overflow-hidden">
         
         {/* Front image */}
         <div
-          className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 ${hasBackDesign && showBack ? 'opacity-0' : 'opacity-100'} ${hasBackDesign ? 'lg:group-hover:opacity-0' : ''}`}
+          className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${hasBackDesign && showBack ? 'opacity-0' : 'opacity-100'} ${hasBackDesign ? 'lg:group-hover:opacity-0' : ''}`}
         >
-          {design.imageUrl ? (
+          {frontImgUrl ? (
             <img
-              src={design.imageUrl}
+              src={frontImgUrl}
               alt={design.name}
-              className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <span className="text-[#8b6b43]/50 font-bold text-sm">لا توجد صورة</span>
@@ -106,11 +111,16 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
         {/* Back image — desktop: hover | mobile: swipe */}
         {hasBackDesign && (
           <div
-            className="absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500"
+            className={`absolute inset-0 transition-opacity duration-500 opacity-0 lg:group-hover:opacity-100 ${showBack ? '!opacity-100' : ''}`}
+            style={{ backgroundColor: isBgColor ? bgVal : 'transparent' }}
           >
-            <div
-              className={`absolute inset-0 flex items-center justify-center p-6 transition-opacity duration-500 opacity-0 lg:group-hover:opacity-100 ${showBack ? '!opacity-100' : ''}`}
-            >
+            {/* Background Image for Back View */}
+            {isBgImage && (
+              <img src={bgVal} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
+            )}
+
+            {/* Back Mockup & Layers */}
+            <div className="absolute inset-0 flex items-center justify-center p-6">
               <div
                 className="relative flex items-center justify-center"
                 style={{ width: '100%', height: '100%', aspectRatio: '500/600', maxWidth: '100%', maxHeight: '100%' }}

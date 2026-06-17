@@ -45,18 +45,32 @@ export default function PublishModal({
       const bgColorToUse = bgTab === 'color' ? bgColor : 'transparent';
       const bgImageToUse = bgTab === 'image' ? bgImage : undefined;
 
+      let bgUrlToSave = bgColorToUse !== 'transparent' ? bgColorToUse : '';
+      let uploadedBgImg = '';
+      if (bgImageToUse) {
+        try {
+          uploadedBgImg = await uploadToImgBB(bgImageToUse);
+          bgUrlToSave = uploadedBgImg;
+        } catch (_) {}
+      }
+
       const frontBase64 = await generateTshirtImage({
         layers: allLayers,
         tshirtColor,
         view: 'front',
-        width: 400,
-        height: 400,
+        width: 500,
+        height: 625,
         bgColor: bgColorToUse,
         bgImageBase64: bgImageToUse,
       });
 
       let imageUrl = '';
       try { imageUrl = await uploadToImgBB(frontBase64); } catch (_) {}
+
+      // Append background info for Community.tsx to use on hover
+      if (bgUrlToSave && imageUrl) {
+        imageUrl += `|BG|${bgUrlToSave}`;
+      }
 
       const res = await fetch(`${API_BASE}/api/designs`, {
         method: 'POST',
