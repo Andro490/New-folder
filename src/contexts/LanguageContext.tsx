@@ -181,6 +181,43 @@ export const translations = {
       saveChanges: 'Save changes for later',
       loginFirst: '⚠️ Please login first',
       publishSale: 'Publish Design for Sale 💸'
+    },
+    sizeGuide: {
+      title: 'PrintStudio Smart Size Guide',
+      subtitle: 'Measure carefully:',
+      regularFitTitle: 'Regular Fit',
+      regularFitDesc: 'Regular cut, shoulders aligned, true to size.',
+      boxyFitTitle: 'Boxy Fit',
+      boxyFitDesc: 'Boxy cut, relaxed shoulders, fits true to your size.',
+      howToMeasure: 'How to measure',
+      suggestedSize: 'Suggested Size',
+      inCm: '(in cm)',
+      shoulderWidth: 'Shoulder Width',
+      shoulder: 'Shoulder',
+      chestWidth: 'Chest Circumference',
+      chest: 'Chest',
+      tshirtLength: 'T-Shirt Length',
+      smartCalcTitle: 'Smart Size Calculator',
+      example: 'Example:',
+      regularFitSuggested: 'Regular Fit suggested based on your measurements',
+      footerNote1: '* Measure correctly to get the right fit.',
+      footerNote2: '* Measurement variations are indicated for different models.'
+    },
+    publishModal: {
+      publishDesign: 'Publish Design',
+      designName: 'Design Name',
+      enterUniqueName: 'Enter a unique name for your design',
+      exampleName: 'Example: Spider Street T-Shirt',
+      bgCardOptional: 'Design Card Background (Optional)',
+      none: 'None',
+      color: '🎨 Color',
+      image: '🖼️ Image',
+      chooseColor: 'Choose Color',
+      uploadBgImage: '📷 Upload Background Image',
+      change: 'Change',
+      cancel: 'Cancel',
+      publishNow: 'Publish Now',
+      uploading: 'Uploading...'
     }
   },
   ar: {
@@ -361,6 +398,43 @@ export const translations = {
       saveChanges: 'حفظ التعديلات للعودة لاحقاً',
       loginFirst: '⚠️ يرجى تسجيل الدخول أولاً',
       publishSale: 'نشر التصميم للبيع 💸'
+    },
+    sizeGuide: {
+      title: 'دليل المقاسات الذكية لـ PrintStudio',
+      subtitle: 'على القيش شينشين:',
+      regularFitTitle: 'مقاس عادي',
+      regularFitDesc: 'قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.',
+      boxyFitTitle: 'قصة مربعة',
+      boxyFitDesc: 'قصة Boxy Fit، التوجيه على الرئيس، على قياسك.',
+      howToMeasure: 'كيفية القياس',
+      suggestedSize: 'المقاس المقترح',
+      inCm: '(بالسنتيمتر)',
+      shoulderWidth: 'عرض الكتفين',
+      shoulder: 'عرض الكتف',
+      chestWidth: 'محيط الصدر',
+      chest: 'محيط الصدر',
+      tshirtLength: 'طول التيشيرت',
+      smartCalcTitle: 'حساب مقاسي الذكي',
+      example: 'مثال:',
+      regularFitSuggested: 'قصة Regular Fit، بناءً على قياساتك',
+      footerNote1: '* كيفية القياس الصحيح لك للحصول على القياس المناسب.',
+      footerNote2: '* تتم الإشارة إلى تباين القياس لنماذج مختلفة.'
+    },
+    publishModal: {
+      publishDesign: 'نشر التصميم',
+      designName: 'اسم التصميم',
+      enterUniqueName: 'أدخل اسماً مميزاً لتصميمك',
+      exampleName: 'مثال: Spider Street تيشيرت',
+      bgCardOptional: 'خلفية بطاقة التصميم (اختياري)',
+      none: 'بدون',
+      color: '🎨 لون',
+      image: '🖼️ صورة',
+      chooseColor: 'اختر لون',
+      uploadBgImage: '📷 ارفع صورة خلفية',
+      change: 'تغيير',
+      cancel: 'إلغاء',
+      publishNow: 'نشر الآن',
+      uploading: 'جاري الرفع...'
     }
   }
 };

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Ruler, CheckCircle2 } from 'lucide-react';
 import fitIllustration from '../assets/Gemini_Generated_Image_ljxpfeljxpfeljxp.png';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function SizeGuideModal({ onClose }: { onClose: () => void }) {
+  const { t, dir } = useLanguage();
   const [shoulder, setShoulder] = useState('');
   const [chest, setChest] = useState('');
   const [length, setLength] = useState('');
@@ -26,14 +28,14 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
     } else {
       suggestedSize = 'XXL';
     }
-    suggestedFit = 'قصة Regular Fit، بناءً على قياساتك';
+    suggestedFit = t('sizeGuide.regularFitSuggested');
   }
 
   return (
     <div
       onClick={(e) => { e.stopPropagation(); onClose(); }}
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 md:p-5"
-      dir="rtl"
+      dir={dir}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -52,8 +54,8 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
 
         {/* Header */}
         <div className="text-center mb-10 md:mb-14">
-          <p className="text-sm md:text-base mb-3" style={{ color: 'var(--text-secondary)' }}>على القيش شينشين:</p>
-          <h2 className="text-2xl md:text-4xl font-black m-0" style={{ color: 'var(--text-primary)' }}>دليل المقاسات الذكية لـ PrintStudio</h2>
+          <p className="text-sm md:text-base mb-3" style={{ color: 'var(--text-secondary)' }}>{t('sizeGuide.subtitle')}</p>
+          <h2 className="text-2xl md:text-4xl font-black m-0" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.title')}</h2>
         </div>
 
         {/* Illustrations Section */}
@@ -63,11 +65,11 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
             <div className="w-full h-44 md:h-52 rounded-lg flex items-center justify-center mb-6 overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <img src={fitIllustration} alt="Regular Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>مقاس عادي</h3>
-            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>قصة منتظمة، التوجيه على الكتف، القيادة على قياساتك.</p>
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.regularFitTitle')}</h3>
+            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>{t('sizeGuide.regularFitDesc')}</p>
             <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full text-xs md:text-sm font-bold" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
               <Ruler size={16} className="text-[#d4af37]" />
-              كيفية القياس
+              {t('sizeGuide.howToMeasure')}
             </div>
           </div>
           
@@ -75,11 +77,11 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
             <div className="w-full h-44 md:h-52 rounded-lg flex items-center justify-center mb-6 overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <img src={fitIllustration} alt="Boxy Fit" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>قصة مربعة</h3>
-            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>قصة Boxy Fit، التوجيه على الرئيس، على قياسك.</p>
+            <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.boxyFitTitle')}</h3>
+            <p className="text-xs md:text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>{t('sizeGuide.boxyFitDesc')}</p>
             <div className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full text-xs md:text-sm font-bold" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
               <Ruler size={16} className="text-[#d4af37]" />
-              كيفية القياس
+              {t('sizeGuide.howToMeasure')}
             </div>
           </div>
         </div>
@@ -96,14 +98,14 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
                 <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>XL</th>
                 <th className="bg-[#111] text-[#f5c842] border border-[#333]" style={{ padding: '16px' }}>XXL</th>
                 <th className="bg-[#111] text-white border border-[#333] text-xs md:text-sm leading-tight" style={{ padding: '16px' }}>
-                  المقاس المقترح<br/><span className="text-[10px] md:text-xs text-gray-400 font-normal">(بالسنتيمتر)</span>
+                  {t('sizeGuide.suggestedSize')}<br/><span className="text-[10px] md:text-xs text-gray-400 font-normal">{t('sizeGuide.inCm')}</span>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>عرض الكتفين</td>
-                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>16 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>{t('sizeGuide.shoulderWidth')}</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>16 {dir === 'rtl' ? 'سم' : 'cm'}</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>18 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>20 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>23 سم</td>
@@ -111,8 +113,8 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
                 <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>44-46</td>
               </tr>
               <tr>
-                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>محيط الصدر</td>
-                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>40 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>{t('sizeGuide.chestWidth')}</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>40 {dir === 'rtl' ? 'سم' : 'cm'}</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>44 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>48 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>52 سم</td>
@@ -120,8 +122,8 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
                 <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>56-60</td>
               </tr>
               <tr>
-                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>طول التيشيرت</td>
-                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>64 سم</td>
+                <td className="border font-bold" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>{t('sizeGuide.tshirtLength')}</td>
+                <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>64 {dir === 'rtl' ? 'سم' : 'cm'}</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>66 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>70 سم</td>
                 <td className="border" style={{ padding: '16px', borderColor: 'var(--border-color)' }}>72 سم</td>
@@ -139,19 +141,19 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
           <div className="w-full border-2 rounded-xl overflow-hidden" style={{ borderColor: 'var(--border-color)' }}>
             <div className="p-3 md:p-4 flex items-center gap-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <Ruler className="text-[#f5c842]" />
-              <h3 className="m-0 text-base md:text-lg font-bold" style={{ color: 'var(--text-primary)' }}>حساب مقاسي الذكي</h3>
+              <h3 className="m-0 text-base md:text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.smartCalcTitle')}</h3>
             </div>
             <div className="p-5 md:p-8">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-7">
                 {/* Shoulder */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>عرض الكتف</span>
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.shoulder')}</span>
                   <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={shoulder}
                       onChange={e => setShoulder(e.target.value)}
-                      placeholder="مثال: 18"
+                      placeholder={`${t('sizeGuide.example')} 18`}
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
                       style={{ color: 'var(--text-primary)' }}
                     />
@@ -160,13 +162,13 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
                 </div>
                 {/* Chest */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>محيط الصدر</span>
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.chest')}</span>
                   <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={chest}
                       onChange={e => setChest(e.target.value)}
-                      placeholder="مثال: 44"
+                      placeholder={`${t('sizeGuide.example')} 44`}
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
                       style={{ color: 'var(--text-primary)' }}
                     />
@@ -175,13 +177,13 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
                 </div>
                 {/* Length */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>طول التيشيرت</span>
+                  <span className="font-bold text-sm md:text-base" style={{ color: 'var(--text-primary)' }}>{t('sizeGuide.tshirtLength')}</span>
                   <div className="flex items-center border rounded-lg px-4 py-3" style={{ borderColor: 'var(--border-color)' }}>
                     <input
                       type="number"
                       value={length}
                       onChange={e => setLength(e.target.value)}
-                      placeholder="مثال: 66"
+                      placeholder={`${t('sizeGuide.example')} 66`}
                       className="border-none outline-none w-full text-sm md:text-base bg-transparent"
                       style={{ color: 'var(--text-primary)' }}
                     />
@@ -206,8 +208,8 @@ export function SizeGuideModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <p className="mt-6 md:mt-8 text-center text-[10px] md:text-xs text-gray-400 leading-relaxed">
-          * كيفية القياس الصحيح لك للحصول على القياس المناسب.<br/>
-          * تتم الإشارة إلى تباين القياس لنماذج مختلفة.
+          {t('sizeGuide.footerNote1')}<br/>
+          {t('sizeGuide.footerNote2')}
         </p>
       </div>
     </div>

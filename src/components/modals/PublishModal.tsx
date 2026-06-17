@@ -7,6 +7,7 @@ import { X, Upload } from 'lucide-react';
 import { DesignLayer, TShirtColor } from '../../types';
 import { generateTshirtImage } from '../../utils/tshirtCanvas';
 import { uploadToImgBB } from '../../utils/imgbb';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const BG_PRESETS = ['#000000', '#111827', '#1a1a2e', '#0f3460', '#fff8e8', '#fafafa'];
 
@@ -31,6 +32,7 @@ export default function PublishModal({
   const [bgImage, setBgImage] = useState<string | undefined>(undefined);
   const [isPublishing, setIsPublishing] = useState(false);
   const bgFileRef = useRef<HTMLInputElement>(null);
+  const { t, dir } = useLanguage();
 
   const handlePublish = async () => {
     const token = localStorage.getItem('wearurway_token');
@@ -122,7 +124,7 @@ export default function PublishModal({
           boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
         }}
         onClick={e => e.stopPropagation()}
-        dir="rtl"
+        dir={dir}
       >
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -135,8 +137,8 @@ export default function PublishModal({
               <Upload size={18} color="#000" />
             </div>
             <div>
-              <p style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.12em', marginBottom: 2 }}>نشر التصميم</p>
-              <h2 style={{ fontSize: 16, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>اسم التصميم</h2>
+              <p style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.12em', marginBottom: 2 }}>{t('publishModal.publishDesign')}</p>
+              <h2 style={{ fontSize: 16, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>{t('publishModal.designName')}</h2>
             </div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}>
@@ -146,14 +148,14 @@ export default function PublishModal({
 
         {/* Name Input */}
         <label style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
-          أدخل اسماً مميزاً لتصميمك
+          {t('publishModal.enterUniqueName')}
         </label>
         <input
           autoFocus
           value={name}
           onChange={e => setName(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && name.trim()) handlePublish(); }}
-          placeholder="مثال: Spider Street تيشيرت"
+          placeholder={t('publishModal.exampleName')}
           style={{
             width: '100%', padding: '14px 16px',
             fontSize: 14, fontWeight: 600,
@@ -161,7 +163,7 @@ export default function PublishModal({
             border: '1.5px solid var(--border-color)',
             borderRadius: 10, color: 'var(--text-primary)',
             outline: 'none', marginBottom: 20,
-            boxSizing: 'border-box', textAlign: 'right', direction: 'rtl',
+            boxSizing: 'border-box', textAlign: dir === 'rtl' ? 'right' : 'left', direction: dir,
           }}
           onFocus={e => (e.target.style.borderColor = 'var(--accent-primary)')}
           onBlur={e => (e.target.style.borderColor = 'var(--border-color)')}
@@ -170,7 +172,7 @@ export default function PublishModal({
         {/* Background Section */}
         <div style={{ marginBottom: 20 }}>
           <p style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 10 }}>
-            خلفية بطاقة التصميم (اختياري)
+            {t('publishModal.bgCardOptional')}
           </p>
 
           {/* Tabs */}
@@ -188,7 +190,7 @@ export default function PublishModal({
                   transition: 'all 0.15s',
                 }}
               >
-                {tab === 'none' ? 'بدون' : tab === 'color' ? '🎨 لون' : '🖼️ صورة'}
+                {tab === 'none' ? t('publishModal.none') : tab === 'color' ? t('publishModal.color') : t('publishModal.image')}
               </button>
             ))}
           </div>
@@ -202,7 +204,7 @@ export default function PublishModal({
                 onChange={e => setBgColor(e.target.value)}
                 style={{ width: 44, height: 36, padding: 2, border: '1px solid var(--border-color)', borderRadius: 8, cursor: 'pointer', backgroundColor: 'transparent' }}
               />
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>اختر لون</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{t('publishModal.chooseColor')}</span>
               {BG_PRESETS.map(c => (
                 <div
                   key={c}
@@ -247,7 +249,7 @@ export default function PublishModal({
                   <button
                     onClick={() => bgFileRef.current?.click()}
                     style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(0,0,0,0.75)', border: 'none', color: '#fff', borderRadius: 6, padding: '3px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}
-                  >تغيير</button>
+                  >{t('publishModal.change')}</button>
                 </div>
               ) : (
                 <button
@@ -259,7 +261,7 @@ export default function PublishModal({
                     fontSize: 12, fontWeight: 600, cursor: 'pointer',
                   }}
                 >
-                  📷 ارفع صورة خلفية
+                  {t('publishModal.uploadBgImage')}
                 </button>
               )}
             </div>
@@ -278,7 +280,7 @@ export default function PublishModal({
               color: 'var(--text-muted)', cursor: 'pointer',
             }}
           >
-            إلغاء
+            {t('publishModal.cancel')}
           </button>
           <button
             disabled={!name.trim() || isPublishing}
@@ -293,9 +295,9 @@ export default function PublishModal({
             }}
           >
             {isPublishing ? (
-              <><span style={{ width: 16, height: 16, border: '2px solid #000', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> جاري الرفع...</>
+              <><span style={{ width: 16, height: 16, border: '2px solid #000', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> {t('publishModal.uploading')}</>
             ) : (
-              <><Upload size={15} /> نشر الآن</>
+              <><Upload size={15} /> {t('publishModal.publishNow')}</>
             )}
           </button>
         </div>
