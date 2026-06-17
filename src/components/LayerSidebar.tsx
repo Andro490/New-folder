@@ -74,55 +74,62 @@ function PinterestModal({
 
       const isDirectPinterestImage = trimmed.includes('pinimg.com');
 
+      // Helper to pick the best API base:
+      // 1. explicit env var (Railway URL set in Vercel env)
+      // 2. same-origin /api (Vercel serverless)
+      const API_BASE = (import.meta.env.VITE_API_URL as string) || '';
+
       if (isPinterest && !isDirectPinterestImage) {
-        // Use global API_BASE from env (Railway) instead of Vercel serverless
-        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
-        
+        // Call /api/pinterest-image — works on both Vercel serverless & Railway
         let response: Response;
         try {
           response = await fetch(`${API_BASE}/api/pinterest-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: trimmed })
+            body: JSON.stringify({ url: trimmed }),
+            signal: AbortSignal.timeout(25000), // 25s timeout
           });
-        } catch {
-          setError('تعذّر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.');
+        } catch (fetchErr) {
+          // Network error or timeout
+          setError('تعذّر الاتصال بالخادم. جرّب نسخ رابط الصورة مباشرةن من المتصفح ثم الصقه هنا.');
           setLoading(false);
           return;
         }
 
-        // Safely parse JSON — avoid crash if server returns HTML
-        let data: { success?: boolean; imageUrl?: string; error?: string };
+        // Parse response safely
+        let data: { success?: boolean; imageUrl?: string; error?: string } = {};
         try {
           const text = await response.text();
           data = JSON.parse(text);
         } catch {
-          setError('تعذّر جلب الصورة من الرابط. حاول نسخ رابط الصورة مباشرة، أو اضغط على الصورة ثم "فتح في تبويبة جديدة" وانسخ URLالصورة.');
+          setError('رد غير متوقع من الخادم. جرّب نسخ URL الصورة مباشرة من بنتريست.');
           setLoading(false);
           return;
         }
-        
+
         if (!response.ok || !data.success || !data.imageUrl) {
-          setError(data.error || 'تعذّر استخراج الصورة من الرابط. حاول نسخ رابط الصورة مباشرة؟');
+          setError(
+            (data.error || 'تعذّر استخراج الصورة.') +
+            ' — جرّب: اضغط على صورة بنتريست ثم اختر "فتح في تبويبة جديدة" وانسخ الرابط.'
+          );
           setLoading(false);
           return;
         }
 
         imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+
       } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
-        // Direct image link (Pinterest or other external). We must proxy it to avoid CORS issues.
-        const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+        // Direct image URL — proxy it to avoid CORS
         imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
 
-      // Verify image loads
+      // Verify the image actually loads
       await new Promise<void>((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve();
         img.onerror = () => reject(new Error('image load failed'));
-        // timeout after 15s
-        setTimeout(() => reject(new Error('timeout')), 15000);
+        setTimeout(() => reject(new Error('timeout')), 20000);
         img.src = imageUrl;
       });
 
@@ -139,24 +146,24 @@ function PinterestModal({
         originalImageUrl: imageUrl,
         pinterestUrl: isPinterest ? trimmed : (trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed),
       };
-      
+
       onAddLayer(newLayer);
       onClose();
 
-      // Upload base64 strings in the background
+      // Upload base64 in background
       if (!isPinterest && trimmed.startsWith('data:image') && onUpdateLayer) {
         uploadToImgBB(trimmed).then(publicUrl => {
           onUpdateLayer(newLayer.id, { pinterestUrl: publicUrl });
-        }).catch(err => {
-          console.error("Failed to upload base64 to ImgBB", err);
-        });
+        }).catch(err => console.error('Failed to upload base64 to ImgBB', err));
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : '';
       if (msg === 'timeout') {
         setError('انتهت مدة تحميل الصورة. تحقق من الرابط وحاول مرة أخرى.');
+      } else if (msg === 'image load failed') {
+        setError('جرى جلب الصورة لكن تعذّر تحميلها. انسخ URL الصورة مباشرة وجرّب مرة أخرى.');
       } else {
-        setError('تعذّر تحميل الصورة. حاول نسخ رابط الصورة مباشرة (اضغط على الصورة → فتح في تبويبة جديدة → انسخ URL)الصورة.');
+        setError('حدث خطأ غير متوقع. جرّب نسخ رابط الصورة مباشرة.');
       }
     } finally {
       setLoading(false);

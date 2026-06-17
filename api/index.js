@@ -15,11 +15,12 @@ if (!JWT_SECRET) {
 }
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: function(origin, callback) { callback(null, true); },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
 }));
+app.options('*', cors()); // handle preflight for all routes
 app.use(express.json());
 
 // ── Request Logging Middleware ────────────────────────────────────────────
@@ -228,45 +229,103 @@ app.post('/api/submit-order', async (req, res) => {
     }
 });
 
+async function resolvePinItUrl(shortUrl) {
+    // Resolve short pin.it links to full pinterest.com URL
+    try {
+        const response = await axios.get(shortUrl, {
+            maxRedirects: 10,
+            timeout: 8000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+            },
+            validateStatus: () => true, // accept all status codes
+        });
+        // After redirects, we have the final URL
+        return response.request?.res?.responseUrl || response.config?.url || shortUrl;
+    } catch {
+        return shortUrl;
+    }
+}
+
 async function getPinterestImageUrl(pinUrl) {
     try {
-        const response = await axios.get(pinUrl, {
-            maxRedirects: 10,
-            timeout: 12000,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Cache-Control': 'no-cache',
+        // Strategy 1: Pinterest oEmbed API (official, no scraping needed)
+        try {
+            const oembedUrl = `https://www.pinterest.com/oembed.json?url=${encodeURIComponent(pinUrl)}`;
+            const oembedRes = await axios.get(oembedUrl, {
+                timeout: 8000,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (compatible; facebookexternalhit/1.1)',
+                    'Accept': 'application/json',
+                }
+            });
+            if (oembedRes.data?.thumbnail_url) {
+                console.log('[Pinterest] oEmbed success:', oembedRes.data.thumbnail_url);
+                return oembedRes.data.thumbnail_url;
             }
-        });
+        } catch (e) {
+            console.log('[Pinterest] oEmbed failed, trying scrape:', e.message);
+        }
 
-        const html = response.data;
-        const $ = cheerio.load(html);
+        // Strategy 2: Scrape with multiple User-Agents
+        const agents = [
+            'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+            'Twitterbot/1.0',
+            'LinkedInBot/1.0 (compatible; Mozilla/5.0; Jakarta Commons-HttpClient/3.1 +http://www.linkedin.com)',
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+        ];
 
-        let imageUrl =
-            $('meta[property="og:image"]').attr('content') ||
-            $('meta[name="twitter:image:src"]').attr('content') ||
-            $('meta[name="twitter:image"]').attr('content') ||
-            $('meta[property="og:image:secure_url"]').attr('content');
+        for (const agent of agents) {
+            try {
+                const response = await axios.get(pinUrl, {
+                    maxRedirects: 10,
+                    timeout: 10000,
+                    headers: {
+                        'User-Agent': agent,
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Cache-Control': 'no-cache',
+                    }
+                });
 
-        if (!imageUrl) {
-            const scripts = $('script[type="application/json"]').toArray();
-            for (const script of scripts) {
-                try {
-                    const json = JSON.parse($(script).html() || '');
-                    const str = JSON.stringify(json);
-                    const match = str.match(/"url":"(https:\/\/i\.pinimg\.com\/[^"]+)"/);
-                    if (match) { imageUrl = match[1]; break; }
-                } catch { /* ignore */ }
+                const html = response.data;
+                if (typeof html !== 'string' || html.length < 100) continue;
+
+                const $ = cheerio.load(html);
+
+                let imageUrl =
+                    $('meta[property="og:image:secure_url"]').attr('content') ||
+                    $('meta[property="og:image"]').attr('content') ||
+                    $('meta[name="twitter:image:src"]').attr('content') ||
+                    $('meta[name="twitter:image"]').attr('content');
+
+                // Try pinimg.com from JSON data
+                if (!imageUrl) {
+                    const pinImgMatch = html.match(/https:\/\/i\.pinimg\.com\/[^\s"'\\]+\.(?:jpg|jpeg|png|webp)/i);
+                    if (pinImgMatch) imageUrl = pinImgMatch[0];
+                }
+
+                if (!imageUrl) {
+                    const scripts = $('script[type="application/json"]').toArray();
+                    for (const script of scripts) {
+                        try {
+                            const str = $(script).html() || '';
+                            const match = str.match(/"url":"(https:\/\/i\.pinimg\.com\/[^"]+)"/);
+                            if (match) { imageUrl = match[1]; break; }
+                        } catch { /* ignore */ }
+                    }
+                }
+
+                if (imageUrl) {
+                    console.log(`[Pinterest] Scraped with agent ${agent.slice(0, 30)}: ${imageUrl}`);
+                    return imageUrl;
+                }
+            } catch (e) {
+                console.log(`[Pinterest] Agent failed: ${e.message}`);
             }
         }
 
-        if (!imageUrl) {
-            throw new Error('Image not found in the page meta tags.');
-        }
-
-        return imageUrl;
+        throw new Error('Could not extract image from Pinterest URL after all strategies.');
     } catch (error) {
         console.error('Error extracting Pinterest image:', error.message);
         throw error;
@@ -274,19 +333,32 @@ async function getPinterestImageUrl(pinUrl) {
 }
 
 app.post('/api/pinterest-image', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
     const { url } = req.body;
 
     if (!url) {
-        return res.status(400).json({ error: 'Please provide a valid URL.' });
+        return res.status(400).json({ success: false, error: 'يرجى إدخال رابط صحيح.' });
     }
 
     try {
-        const imageUrl = await getPinterestImageUrl(url);
+        // If it's a short link (pin.it), resolve it first
+        let resolvedUrl = url;
+        if (url.includes('pin.it')) {
+            resolvedUrl = await resolvePinItUrl(url);
+            console.log('[Pinterest] Resolved pin.it →', resolvedUrl);
+        }
+
+        const imageUrl = await getPinterestImageUrl(resolvedUrl);
         res.json({ success: true, imageUrl });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch image from Pinterest URL.' });
+        console.error('[Pinterest] Final error:', error.message);
+        res.status(500).json({ success: false, error: 'تعذّر استخراج الصورة من الرابط. جرّب نسخ رابط الصورة مباشرة من المتصفح.' });
     }
 });
+
 
 app.get('/api/proxy-image', async (req, res) => {
     const { url } = req.query;
