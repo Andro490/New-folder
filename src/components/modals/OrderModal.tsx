@@ -56,7 +56,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
   const isEligibleForDiscount = Boolean(affiliateCode || isBuyingOthersDesign);
 
   const baseDesignPrice = appConfig.pricing.basePrice;
-  const discountAmount = isBuyingOthersDesign ? Math.round(baseDesignPrice * 0.1) : 0;
+  const discountAmount = isEligibleForDiscount ? Math.round(baseDesignPrice * 0.1) : 0;
   const designPrice = baseDesignPrice - discountAmount;
   
   const shippingCost = shipping === 'premium' ? appConfig.shipping.premium.priceEGP : appConfig.shipping.standard.priceEGP;
