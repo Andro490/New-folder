@@ -113,18 +113,6 @@ app.get('/api/auth/google/callback', async (req, res) => {
     }
 });
 
-// ── Get User Profile ───────────────────────────────────────────────
-app.get('/api/auth/me', authenticateToken, async (req, res) => {
-    try {
-        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-        if (!user) return res.sendStatus(404);
-        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl } });
-    } catch (error) {
-        res.sendStatus(500);
-    }
-});
-
-
 // Auth Middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -137,6 +125,17 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
+
+// ── Get User Profile ───────────────────────────────────────────────
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user) return res.sendStatus(404);
+        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl } });
+    } catch (error) {
+        res.sendStatus(500);
+    }
+});
 
 // ── Rate Limiter ──────────────────────────────────────────────────
 const rateLimitStore = new Map();
