@@ -25,6 +25,7 @@ interface Design {
 
 // ── DesignCard with swipe (mobile) + hover (desktop) ──────────────
 function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => void }) {
+  const { t } = useLanguage();
   const [showBack, setShowBack] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
@@ -165,8 +166,8 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
             {design.name}
           </h3>
         </div>
-        <p className="text-sm text-center font-bold truncate w-full mt-2" style={{ color: 'var(--text-secondary)' }}>
-          من تصميم: <span className="font-extrabold" style={{ color: 'var(--text-primary)' }}>{design.user.name || 'فنان مجهول'}</span>
+        <p className="text-xs text-right font-medium truncate w-full mt-2" style={{ color: 'var(--text-secondary)' }}>
+          {t('community.designedBy')} <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{design.user.name || t('community.unknownArtist')}</span>
         </p>
       </div>
 
@@ -351,7 +352,7 @@ export default function Community() {
       <div className="flex-1 flex flex-col min-h-screen overflow-y-auto relative z-10 custom-scrollbar p-4 md:p-8">
 
         {/* Header */}
-        <header className="relative pt-10 pb-12 flex flex-col items-center justify-center">
+        <header className="relative pb-2 flex flex-col items-center justify-center">
           <button
             onClick={() => navigate('/')}
             className="absolute rounded-xl text-[#8b6b43] hover:text-[#594228] transition-colors flex items-center gap-2 group z-50"

@@ -448,8 +448,8 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
     const fitLabelEn = fitParam === 'oversize' ? 'OVERSIZE' : (fitParam === 'boxyFit' ? 'BOXY FIT' : 'REGULAR FIT');
     
     return (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'var(--bg-primary)', fontFamily: "'Inter', sans-serif", overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
-        <div style={{ width: '100%', maxWidth: 700, margin: '0 auto', paddingBottom: 40 }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
+        <div style={{ width: '100%', maxWidth: 560, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif" }} onClick={e => e.stopPropagation()}>
           <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ fontSize: 10, color: '#555', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>STEP 2 OF 2</p>
@@ -508,8 +508,8 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
 
   // ── SIZE SELECTION ───────────────────────────────────────────────
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 200, backgroundColor: 'var(--bg-primary)', fontFamily: "'Inter', sans-serif", overflowY: 'auto' }}>
-      <div style={{ width: '100%', maxWidth: 860, margin: '0 auto', display: 'flex', flexDirection: 'column', paddingBottom: 40 }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClose}>
+      <div style={{ width: '100%', maxWidth: 860, maxHeight: '90vh', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
