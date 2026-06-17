@@ -1,21 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- الصفحة الرئيسية -->
   <url>
     <loc>https://printwear-studio-eg.vercel.app/</loc>
-    <lastmod>2026-06-15</lastmod>
-    <changefreq>daily</changefreq>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- اختيار القصة -->
   <url>
-    <loc>https://printwear-studio-eg.vercel.app/community</loc>
-    <lastmod>2026-06-15</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://printwear-studio-eg.vercel.app/fit</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- اختيار اللون -->
+  <url>
+    <loc>https://printwear-studio-eg.vercel.app/color</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- محرر التصميم -->
+  <url>
+    <loc>https://printwear-studio-eg.vercel.app/editor</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- معرض التصميمات -->
+  <url>
+    <loc>https://printwear-studio-eg.vercel.app/community</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- تسجيل الدخول / إنشاء حساب -->
   <url>
     <loc>https://printwear-studio-eg.vercel.app/auth</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-06-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
   </url>
+
+  <!-- لوحة تحكم المستخدم -->
+  <url>
+    <loc>https://printwear-studio-eg.vercel.app/dashboard</loc>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>
