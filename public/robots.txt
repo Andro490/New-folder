@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://new-folder-peach-rho.vercel.app/sitemap.xml
+Sitemap: https://printwear-studio-eg.vercel.app/sitemap.xml
