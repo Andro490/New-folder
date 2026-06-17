@@ -638,7 +638,14 @@ export function OrderModal({ onClose, tshirtColor, allLayers, designLink }: Orde
 
   const colorLabel = tshirtColor === 'black' ? 'أسود' : tshirtColor === 'white' ? 'أبيض' : tshirtColor === 'navy' ? 'كحلي' : tshirtColor === 'red' ? 'أحمر' : 'رمادي';
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
-  const designPrice = appConfig.pricing.basePrice;
+  const affiliateCode = localStorage.getItem('wearurway_ref') || '';
+  const communityDesignId = new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '';
+  const isEligibleForDiscount = Boolean(affiliateCode || communityDesignId);
+
+  const baseDesignPrice = appConfig.pricing.basePrice;
+  const discountAmount = isEligibleForDiscount ? Math.round(baseDesignPrice * 0.1) : 0;
+  const designPrice = baseDesignPrice - discountAmount;
+  
   const shippingCost = shipping === 'premium' ? appConfig.shipping.premium.priceEGP : appConfig.shipping.standard.priceEGP;
   const total = designPrice + shippingCost;
 
@@ -896,7 +903,7 @@ export function OrderModal({ onClose, tshirtColor, allLayers, designLink }: Orde
               { label: 'ملائم', value: 'مقاس عادي' },
               { label: 'لون', value: <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 12, height: 12, backgroundColor: colorDot, border: '1px solid #333', display: 'inline-block' }} />{colorLabel}</span> },
               { label: 'مقاس', value: selectedSize },
-              { label: 'تصميم', value: `جنيه مصري ${designPrice}` },
+              { label: 'تصميم', value: isEligibleForDiscount ? <span><span style={{ textDecoration: 'line-through', color: '#888', marginLeft: '8px' }}>{baseDesignPrice}</span> <span style={{ color: '#4ade80' }}>جنيه مصري {designPrice} (خصم 10%)</span></span> : `جنيه مصري ${designPrice}` },
               { label: 'رابط التصميم', value: (allLayers.find(l => l.pinterestUrl)?.pinterestUrl || 'لا يوجد رابط') },
               { label: 'شحن', value: shippingCost === 0 ? <span style={{ color: '#4ade80' }}>حر</span> : `${shippingCost} جنيه` },
             ].map(row => (
@@ -1071,7 +1078,10 @@ export function OrderModal({ onClose, tshirtColor, allLayers, designLink }: Orde
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', marginTop: 8 }}>
               <span style={{ fontSize: 11, color: '#555', letterSpacing: '0.1em' }}>TOTAL</span>
-              <span style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent-primary)' }}>{designPrice} <span style={{ fontSize: 13, color: '#888' }}>EGP</span></span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent-primary)' }}>
+                {isEligibleForDiscount && <span style={{ textDecoration: 'line-through', color: '#888', marginRight: '8px', fontSize: 16 }}>{baseDesignPrice}</span>}
+                {designPrice} <span style={{ fontSize: 13, color: '#888' }}>EGP</span>
+              </span>
             </div>
 
             <button
