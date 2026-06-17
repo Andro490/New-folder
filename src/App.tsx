@@ -586,12 +586,21 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const ref = searchParams.get('ref');
+    // Save referral code if present
+    const ref = new URLSearchParams(location.search).get('ref');
     if (ref) {
       localStorage.setItem('wearurway_ref', ref);
     }
-  }, [location]);
+
+    // Secret clear command for testing
+    const clear = new URLSearchParams(location.search).get('clear');
+    if (clear === '1') {
+      localStorage.removeItem('wearurway_ref');
+      localStorage.removeItem('wearurway_community_design_id');
+      window.history.replaceState({}, document.title, window.location.pathname);
+      alert('تم مسح بيانات الخصم المؤقتة من المتصفح بنجاح!');
+    }
+  }, [location.search]);
 
   return (
     <Routes>
