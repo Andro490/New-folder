@@ -105,16 +105,22 @@ app.get('/api/auth/google/callback', async (req, res) => {
 
         // Return JWT to frontend via redirect
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-        const userData = encodeURIComponent(JSON.stringify({
-            id: user.id, name: user.name, email: user.email,
-            affiliateCode: user.affiliateCode, discountBalance: user.discountBalance,
-            referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl
-        }));
-        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}&user=${userData}`);
+        res.redirect(`${CLIENT_URL}/auth/google/success?token=${token}`);
 
     } catch (err) {
         console.error('Google OAuth error:', err.response?.data || err.message);
         res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
+    }
+});
+
+// ── Get User Profile ───────────────────────────────────────────────
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user) return res.sendStatus(404);
+        res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, affiliateCode: user.affiliateCode, discountBalance: user.discountBalance, referredUsers: user.referredUsers, isAdmin: user.isAdmin, avatarUrl: user.avatarUrl } });
+    } catch (error) {
+        res.sendStatus(500);
     }
 });
 
@@ -132,8 +138,28 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// ── Rate Limiter ──────────────────────────────────────────────────
+const rateLimitStore = new Map();
+const checkRateLimit = (ip) => {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000;
+    const max = 5;
+    const record = rateLimitStore.get(ip) || { count: 0, resetTime: now + windowMs };
+    if (now > record.resetTime) {
+        record.count = 1;
+        record.resetTime = now + windowMs;
+    } else {
+        record.count++;
+    }
+    rateLimitStore.set(ip, record);
+    return record.count <= max;
+};
+
 // ── Step 1: Send OTP (register or login) ──────────────────────────
 app.post('/api/auth/send-otp', async (req, res) => {
+    if (!checkRateLimit(req.ip)) {
+        return res.status(429).json({ error: 'Too many attempts. Please try again later.' });
+    }
     try {
         const { name, email, password, isLogin } = req.body;
         if (!email || !password) return res.status(400).json({ error: 'يرجى تعبئة جميع الحقول' });
@@ -149,6 +175,9 @@ app.post('/api/auth/send-otp', async (req, res) => {
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) return res.status(400).json({ error: 'البريد الإلكتروني مسجل بالفعل' });
             if (!name || name.trim().length < 2) return res.status(400).json({ error: 'يرجى إدخال اسم صحيح' });
+            if (password.length < 8) return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' });
+            const commonPasswords = ['12345678', 'password', '123456789'];
+            if (commonPasswords.includes(password.toLowerCase())) return res.status(400).json({ error: 'كلمة المرور ضعيفة جداً' });
         }
 
         // Generate 6-digit OTP
@@ -314,6 +343,15 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 app.post('/api/designs', authenticateToken, async (req, res) => {
     try {
         const { name, frontDesign, backDesign, tshirtColor, imageUrl } = req.body;
+        
+        // Input validation
+        if (typeof name !== 'string' || name.trim().length === 0 || name.length > 100) {
+            return res.status(400).json({ error: 'Invalid design name' });
+        }
+        if (typeof tshirtColor !== 'string' || tshirtColor.length > 20) {
+            return res.status(400).json({ error: 'Invalid tshirt color' });
+        }
+
         const design = await prisma.design.create({
             data: {
                 userId: req.user.id,
@@ -652,38 +690,25 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
 });
 
 // ── Make Admin Route ───────────────────────────────────────────────
-app.get('/api/make-andro-admin', async (req, res) => {
-    // Protected by a secret parameter
-    if (req.query.secret !== (process.env.ADMIN_SECRET || 'admin12345')) {
-        return res.status(403).send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ غير مصرح لك!</h1>');
-    }
-    
+app.post("/api/make-admin", authenticateToken, async (req, res) => {
     try {
-        const nameParam = req.query.name;
-        const emailParam = req.query.email;
-
-        let where = {};
-        if (emailParam) {
-            where = { email: emailParam };
-        } else if (nameParam) {
-            where = { name: nameParam };
-        } else {
-            where = { name: 'ANDRO' }; // default fallback
+        const requester = await prisma.user.findUnique({
+            where: { id: req.user.id },
+        });
+        if (!requester || !requester.isAdmin) {
+            return res.status(403).json({ error: "Not authorized" });
         }
+        
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ error: "Missing userId" });
 
-        const result = await prisma.user.updateMany({
-            where,
+        await prisma.user.update({
+            where: { id: parseInt(userId) },
             data: { isAdmin: true }
         });
-
-        if (result.count === 0) {
-            return res.send('<h1 style="color:red; text-align:center; margin-top:50px;">❌ لم يتم العثور على أي مستخدم بهذا الاسم أو الإيميل.</h1>');
-        }
-
-        const target = emailParam || nameParam || 'ANDRO';
-        res.send(`<h1 style="color:green; text-align:center; margin-top:50px;">✅ تمت الترقية بنجاح! (${target}) أصبح أدمن الآن.<br><br><small style="font-size:16px; color:#555;">قم بتسجيل الخروج والدخول مرة أخرى في موقعك.</small></h1>`);
-    } catch (error) {
-        res.send('Error: ' + error.message);
+        res.json({ success: true, message: "User promoted to Admin" });
+    } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 // Serve static files from the React frontend app

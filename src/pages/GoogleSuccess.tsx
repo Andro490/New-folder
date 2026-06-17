@@ -7,17 +7,33 @@ export default function GoogleSuccess() {
 
   useEffect(() => {
     const token = searchParams.get('token');
-    const userRaw = searchParams.get('user');
 
-    if (token && userRaw) {
-      try {
-        const user = JSON.parse(decodeURIComponent(userRaw));
-        localStorage.setItem('wearurway_token', token);
-        localStorage.setItem('wearurway_user', JSON.stringify(user));
-        navigate('/dashboard', { replace: true });
-      } catch {
+    if (token) {
+      localStorage.setItem('wearurway_token', token);
+      
+      const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
+      
+      fetch(`${API_BASE}/api/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Fetch failed');
+        return res.json();
+      })
+      .then(data => {
+        if (data.success && data.user) {
+          localStorage.setItem('wearurway_user', JSON.stringify(data.user));
+          navigate('/dashboard', { replace: true });
+        } else {
+          throw new Error('Invalid user data');
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('wearurway_token');
         navigate('/auth?error=parse_failed', { replace: true });
-      }
+      });
     } else {
       navigate('/auth?error=missing_params', { replace: true });
     }
