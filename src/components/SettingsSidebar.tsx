@@ -105,13 +105,49 @@ async function generateTshirtImage(
   tshirtColor: TShirtColor,
   view: TShirtView,
   width = 600,
-  height = 600
+  height = 600,
+  bgColor?: string,
+  bgImageBase64?: string
 ): Promise<string> {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('no ctx');
+
+  if (bgColor && bgColor !== 'transparent') {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  if (bgImageBase64) {
+    try {
+      const bgImgUrl = await fetchAsBlobUrl(bgImageBase64);
+      await new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const imgRatio = img.width / img.height;
+          const canvasRatio = width / height;
+          let drawWidth = width;
+          let drawHeight = height;
+          let offsetX = 0;
+          let offsetY = 0;
+          if (imgRatio > canvasRatio) {
+            drawWidth = height * imgRatio;
+            offsetX = (width - drawWidth) / 2;
+          } else {
+            drawHeight = width / imgRatio;
+            offsetY = (height - drawHeight) / 2;
+          }
+          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          URL.revokeObjectURL(bgImgUrl);
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = bgImgUrl;
+      });
+    } catch (e) { console.error('Failed to draw bg image', e); }
+  }
 
   const scale = width / CANVAS_WIDTH;
 
@@ -1179,9 +1215,13 @@ export default function SettingsSidebar({
   const [showPinterestModal, setShowPinterestModal] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [publishName, setPublishName] = useState('');
+  const [publishBgTab, setPublishBgTab] = useState<'none' | 'color' | 'image'>('none');
+  const [publishBgColor, setPublishBgColor] = useState('#1a1a1a');
+  const [publishBgImage, setPublishBgImage] = useState<string | undefined>(undefined);
   const [publishToast, setPublishToast] = useState<string | null>(null);
   const [designUrl, setDesignUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const publishBgRef = useRef<HTMLInputElement>(null);
   const [isPublishing, setIsPublishing] = useState(false);
 
   const showToast = useCallback((msg: string) => {
@@ -1223,7 +1263,9 @@ export default function SettingsSidebar({
     setIsPublishing(true);
     try {
       const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
-      const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400);
+      const bgColorToUse = publishBgTab === 'color' ? publishBgColor : 'transparent';
+      const bgImageToUse = publishBgTab === 'image' ? publishBgImage : undefined;
+      const frontBase64 = await generateTshirtImage(allLayers, tshirtColor, 'front', 400, 400, bgColorToUse, bgImageToUse);
       let imageUrl = '';
       try { imageUrl = await uploadToImgBB(frontBase64); } catch(e) {}
       const res = await fetch(`${API_BASE}/api/designs`, {
@@ -1591,6 +1633,107 @@ export default function SettingsSidebar({
               onFocus={e => e.target.style.borderColor = 'var(--accent-primary)'}
               onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
             />
+
+            {/* Background Section */}
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 10 }}>
+                خلفية بطاقة التصميم (اختياري)
+              </p>
+
+              {/* Tabs */}
+              <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                {(['none', 'color', 'image'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setPublishBgTab(tab)}
+                    style={{
+                      flex: 1, padding: '8px 4px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: publishBgTab === tab ? 'var(--accent-primary)' : 'var(--bg-secondary)',
+                      color: publishBgTab === tab ? '#000' : 'var(--text-muted)',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {tab === 'none' ? 'بدون' : tab === 'color' ? '🎨 لون' : '🖼️ صورة'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Color Picker */}
+              {publishBgTab === 'color' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <input
+                    type="color"
+                    value={publishBgColor}
+                    onChange={e => setPublishBgColor(e.target.value)}
+                    style={{ width: 44, height: 36, padding: 2, border: '1px solid var(--border-color)', borderRadius: 8, cursor: 'pointer', backgroundColor: 'transparent' }}
+                  />
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>اختر لون الخلفية</span>
+                  {['#000000', '#111827', '#1a1a2e', '#0f3460', '#fff8e8', '#fafafa'].map(c => (
+                    <div
+                      key={c}
+                      onClick={() => setPublishBgColor(c)}
+                      style={{
+                        width: 24, height: 24, borderRadius: 6, backgroundColor: c, cursor: 'pointer', flexShrink: 0,
+                        border: publishBgColor === c ? '2.5px solid var(--accent-primary)' : '1px solid #555',
+                        transition: 'transform 0.1s',
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Image Upload */}
+              <input
+                ref={publishBgRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    setPublishBgImage(ev.target?.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                  e.target.value = '';
+                }}
+              />
+              {publishBgTab === 'image' && (
+                <div>
+                  {publishBgImage ? (
+                    <div style={{ position: 'relative', marginTop: 4 }}>
+                      <img
+                        src={publishBgImage}
+                        alt="خلفية"
+                        style={{ width: '100%', height: 90, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border-color)' }}
+                      />
+                      <button
+                        onClick={() => setPublishBgImage(undefined)}
+                        style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,0.75)', border: 'none', color: '#fff', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >×</button>
+                      <button
+                        onClick={() => publishBgRef.current?.click()}
+                        style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(0,0,0,0.75)', border: 'none', color: '#fff', borderRadius: 6, padding: '3px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 700 }}
+                      >تغيير</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => publishBgRef.current?.click()}
+                      style={{
+                        width: '100%', padding: '14px', marginTop: 4,
+                        border: '1.5px dashed var(--border-color)', borderRadius: 10,
+                        backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)',
+                        fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                      }}
+                    >
+                      📷 ارفع صورة خلفية
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Buttons */}
             <div style={{ display: 'flex', gap: 10 }}>
