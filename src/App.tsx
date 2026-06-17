@@ -316,7 +316,7 @@ function ProductStep() {
       
       {/* Banner */}
       <div 
-        className="w-full py-10 flex flex-col items-center justify-center relative overflow-hidden mt-4"
+        className="w-full py-5 flex flex-col items-center justify-center relative overflow-hidden mt-2"
         style={{ 
           background: 'linear-gradient(rgba(70, 50, 30, 0.9), rgba(50, 35, 20, 0.9))',
           boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
@@ -352,16 +352,6 @@ function ProductStep() {
                   <span className="font-bold text-sm uppercase" style={{ color: 'var(--text-primary)' }}>
                     {language === 'ar' ? appConfig.products.tshirt.nameAr : appConfig.products.tshirt.nameEn}
                   </span>
-                  <div
-                    className="w-full py-3 rounded text-[#fff8e8] font-bold tracking-wider transition-all flex items-center justify-center pointer-events-none uppercase"
-                    style={{ 
-                      background: 'linear-gradient(to right, #6a4f2d, #b1894d, #6a4f2d)',
-                      backgroundSize: '200% auto',
-                      boxShadow: '0 4px 10px rgba(106, 79, 45, 0.4)'
-                    }}
-                  >
-                    {t('home.getStarted')}
-                  </div>
                 </div>
               </div>
             </div>
