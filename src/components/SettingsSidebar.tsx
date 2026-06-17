@@ -7,7 +7,6 @@ import { PRINT_AREA } from '../utils/tshirtSvg';
 // Modals
 import OrderModal from './modals/OrderModal';
 import PinterestModal from './modals/PinterestModal';
-import PinterestModal from './modals/PinterestModal';
 import TextModal from './modals/TextModal';
 import PublishModal from './modals/PublishModal';
 import { useLanguage } from '../contexts/LanguageContext';
