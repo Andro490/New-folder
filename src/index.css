@@ -14,6 +14,7 @@
   --bg-secondary: #e8d5a3;
   --bg-tertiary: #d4b97a;
   --bg-card: #f9f4e6;
+  --banner-bg: linear-gradient(rgba(70, 50, 30, 0.9), rgba(50, 35, 20, 0.9));
   
   --border-color: rgba(139, 107, 67, 0.4); /* #8b6b43 */
   --border-glow: rgba(139, 107, 67, 0.2);
@@ -36,6 +37,7 @@ html.dark {
   --bg-secondary: #171717;
   --bg-tertiary: #262626;
   --bg-card: rgba(23, 23, 23, 0.85);
+  --banner-bg: linear-gradient(to right, rgba(25, 25, 25, 0.95), rgba(10, 10, 10, 0.95));
   
   --border-color: rgba(245, 200, 66, 0.3);
   --border-glow: rgba(245, 200, 66, 0.1);

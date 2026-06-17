@@ -318,8 +318,10 @@ function ProductStep() {
       <div 
         className="w-full py-2 flex flex-col items-center justify-center relative overflow-hidden mt-4"
         style={{ 
-          background: 'linear-gradient(rgba(70, 50, 30, 0.9), rgba(50, 35, 20, 0.9))',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+          background: 'var(--banner-bg)',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+          borderTop: '1px solid var(--border-color)',
+          borderBottom: '1px solid var(--border-color)'
         }}
       >
         {/* Subtle wood texture effect via repeating gradient */}
