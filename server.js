@@ -65,28 +65,52 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// ── CSRF Token Middleware ─────────────────────────────────────────
-const csrfTokens = new Map(); // In production, use Redis
+// ── Stateless CSRF Token Middleware (HMAC-signed, works across restarts & multiple instances) ──
+// Auth routes are already protected by bcrypt + JWT + rate-limiting, so they are exempt.
+const CSRF_SECRET = process.env.CSRF_SECRET || JWT_SECRET; // Reuse JWT_SECRET as fallback
+
+// Endpoints that are exempt from CSRF (already protected by other means)
+const CSRF_EXEMPT_PATHS = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/send-otp',
+    '/api/auth/verify-otp',
+    '/api/auth/google',
+    '/api/auth/google/callback',
+];
 
 app.get('/api/csrf-token', (req, res) => {
-    const token = crypto.randomBytes(32).toString('hex');
-    const clientIp = req.ip;
-    csrfTokens.set(token, { ip: clientIp, expires: Date.now() + 60 * 60 * 1000 });
-    res.json({ csrfToken: token });
+    const ts = Date.now();
+    const rand = crypto.randomBytes(16).toString('hex');
+    const payload = `${ts}:${rand}`;
+    const sig = crypto.createHmac('sha256', CSRF_SECRET).update(payload).digest('hex');
+    res.json({ csrfToken: `${payload}:${sig}` });
 });
 
 const verifyCsrfToken = (req, res, next) => {
-    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
-        const token = req.headers['x-csrf-token'];
-        if (!token || !csrfTokens.has(token)) {
-            return res.status(403).json({ error: 'Invalid CSRF token' });
+    // Skip non-mutating methods
+    if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) return next();
+    // Skip exempt auth paths
+    if (CSRF_EXEMPT_PATHS.includes(req.path)) return next();
+
+    const token = req.headers['x-csrf-token'];
+    if (!token) return res.status(403).json({ error: 'Invalid CSRF token' });
+
+    try {
+        const parts = token.split(':');
+        if (parts.length !== 3) throw new Error('malformed');
+        const [ts, rand, sig] = parts;
+        const payload = `${ts}:${rand}`;
+        const expected = crypto.createHmac('sha256', CSRF_SECRET).update(payload).digest('hex');
+        if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'))) {
+            throw new Error('signature mismatch');
         }
-        const tokenData = csrfTokens.get(token);
-        if (Date.now() > tokenData.expires) {
-            csrfTokens.delete(token);
+        // Token valid for 2 hours
+        if (Date.now() - parseInt(ts, 10) > 2 * 60 * 60 * 1000) {
             return res.status(403).json({ error: 'CSRF token expired' });
         }
-        csrfTokens.delete(token); // One-time use
+    } catch {
+        return res.status(403).json({ error: 'Invalid CSRF token' });
     }
     next();
 };
