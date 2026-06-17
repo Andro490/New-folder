@@ -74,29 +74,26 @@ function PinterestModal({
 
       const isDirectPinterestImage = trimmed.includes('pinimg.com');
 
-      // Helper to pick the best API base:
-      // 1. explicit env var (Railway URL set in Vercel env)
-      // 2. same-origin /api (Vercel serverless)
-      const API_BASE = (import.meta.env.VITE_API_URL as string) || '';
+      // ⚡ Pinterest & proxy endpoints: always use same-origin (Vercel serverless).
+      // This avoids CORS issues entirely — no cross-domain calls needed.
+      // VITE_API_URL (Railway) is for auth/order endpoints only.
+      const PINTEREST_API = ''; // always same-origin on Vercel
 
       if (isPinterest && !isDirectPinterestImage) {
-        // Call /api/pinterest-image — works on both Vercel serverless & Railway
         let response: Response;
         try {
-          response = await fetch(`${API_BASE}/api/pinterest-image`, {
+          response = await fetch(`/api/pinterest-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: trimmed }),
-            signal: AbortSignal.timeout(25000), // 25s timeout
+            signal: AbortSignal.timeout(25000),
           });
-        } catch (fetchErr) {
-          // Network error or timeout
-          setError('تعذّر الاتصال بالخادم. جرّب نسخ رابط الصورة مباشرةن من المتصفح ثم الصقه هنا.');
+        } catch {
+          setError('تعذّر الاتصال. جرّب نسخ رابط الصورة مباشرة من المتصفح ثم الصقه هنا.');
           setLoading(false);
           return;
         }
 
-        // Parse response safely
         let data: { success?: boolean; imageUrl?: string; error?: string } = {};
         try {
           const text = await response.text();
@@ -110,18 +107,19 @@ function PinterestModal({
         if (!response.ok || !data.success || !data.imageUrl) {
           setError(
             (data.error || 'تعذّر استخراج الصورة.') +
-            ' — جرّب: اضغط على صورة بنتريست ثم اختر "فتح في تبويبة جديدة" وانسخ الرابط.'
+            ' — جرّب: اضغط على صورة بنتريست → "فتح في تبويبة جديدة" → انسخ الرابط.'
           );
           setLoading(false);
           return;
         }
 
-        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
+        imageUrl = `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
 
       } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
-        // Direct image URL — proxy it to avoid CORS
-        imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
+        // Direct external image URL — proxy via same-origin to bypass CORS
+        imageUrl = `/api/proxy-image?url=${encodeURIComponent(trimmed)}`;
       }
+
 
       // Verify the image actually loads
       await new Promise<void>((resolve, reject) => {
