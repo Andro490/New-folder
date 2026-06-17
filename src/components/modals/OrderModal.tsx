@@ -48,10 +48,15 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
   const colorDot = tshirtColor === 'black' ? '#111' : tshirtColor === 'white' ? '#f0f0f0' : tshirtColor === 'navy' ? '#1e3a5f' : tshirtColor === 'red' ? '#c0392b' : '#888';
   const affiliateCode = localStorage.getItem('wearurway_ref') || '';
   const communityDesignId = new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '';
-  const isEligibleForDiscount = Boolean(affiliateCode || communityDesignId);
+
+  // ── خصم 10% بس لو بيشتري تصميم حد تاني (مش تصميمه هو) ──────────
+  const designOwnerId = localStorage.getItem('wearurway_community_design_owner') || '';
+  const loggedInUserId = String(storedUser.id || '');
+  const isBuyingOthersDesign = Boolean(communityDesignId) && (designOwnerId !== loggedInUserId || !loggedInUserId);
+  const isEligibleForDiscount = Boolean(affiliateCode || isBuyingOthersDesign);
 
   const baseDesignPrice = appConfig.pricing.basePrice;
-  const discountAmount = isEligibleForDiscount ? Math.round(baseDesignPrice * 0.1) : 0;
+  const discountAmount = isBuyingOthersDesign ? Math.round(baseDesignPrice * 0.1) : 0;
   const designPrice = baseDesignPrice - discountAmount;
   
   const shippingCost = shipping === 'premium' ? appConfig.shipping.premium.priceEGP : appConfig.shipping.standard.priceEGP;
@@ -438,6 +443,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   setStep('thanks');
                   localStorage.removeItem('wearurway_ref');
                   localStorage.removeItem('wearurway_community_design_id');
+                  localStorage.removeItem('wearurway_community_design_owner');
                 } catch (err: any) {
                   alert('❌ Error: \n' + err.message);
                 } finally {

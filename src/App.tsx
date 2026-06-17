@@ -589,6 +589,7 @@ export default function App() {
     if (clear === '1') {
       localStorage.removeItem('wearurway_ref');
       localStorage.removeItem('wearurway_community_design_id');
+      localStorage.removeItem('wearurway_community_design_owner');
       window.history.replaceState({}, document.title, window.location.pathname);
       alert('تم مسح بيانات الخصم المؤقتة من المتصفح بنجاح!');
     }

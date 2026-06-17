@@ -17,6 +17,7 @@ interface Design {
   frontDesign: string;
   backDesign: string;
   purchases: number;
+  userId: number;  // منشئ التصميم
   user: {
     name: string;
     affiliateCode: string;
@@ -240,6 +241,8 @@ export default function Community() {
 
   const handleBuy = (design: Design) => {
     localStorage.setItem('wearurway_community_design_id', String(design.id));
+    // حفظ userId لمنشئ التصميم عشان نتحقق ان المشتري مش هو المنشئ
+    localStorage.setItem('wearurway_community_design_owner', String(design.userId));
     try {
       const front = JSON.parse(design.frontDesign || '[]');
       const back = JSON.parse(design.backDesign || '[]');
