@@ -36,3 +36,22 @@ model Design {
 
   user        User     @relation(fields: [userId], references: [id])
 }
+
+model OTP {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model SecurityLog {
+  id        Int      @id @default(autoincrement())
+  event     String
+  userId    Int?
+  userEmail String?
+  details   String?
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+}

@@ -48,6 +48,24 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// ── Security Headers & HTTPS Enforcement ────────────────────────────
+app.use((req, res, next) => {
+    // HTTPS Enforcement in production
+    if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
+    
+    // Security Headers (Helmet alternative)
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    // Content Security Policy (basic)
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data: blob:; connect-src *;");
+    
+    next();
+});
+
 // ── Google OAuth (native - no passport needed) ──────────────────────
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
@@ -181,10 +199,14 @@ app.post('/api/auth/send-otp', async (req, res) => {
 
         // Generate 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expires = Date.now() + 10 * 60 * 1000; // 10 minutes
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        // Store pending data
-        otpStore.set(email, { otp, expires, pendingData: { name, email, password, isLogin } });
+        // Store OTP in database
+        // Delete any existing OTP for this email first
+        await prisma.oTP.deleteMany({ where: { email } });
+        await prisma.oTP.create({
+            data: { email, code: otp, expiresAt }
+        });
 
         // Send email or fallback to console if no email configured
         const gasUrl = process.env.GAS_EMAIL_URL;
@@ -262,18 +284,22 @@ app.post('/api/auth/send-otp', async (req, res) => {
 // ── Step 2: Verify OTP and complete auth ──────────────────────────
 app.post('/api/auth/verify-otp', async (req, res) => {
     try {
-        const { email, otp } = req.body;
-        const entry = otpStore.get(email);
+        const { email, otp, name, password, isLogin } = req.body;
+        
+        // Find OTP in database
+        const entry = await prisma.oTP.findFirst({
+            where: { email },
+            orderBy: { createdAt: 'desc' }
+        });
 
         if (!entry) return res.status(400).json({ error: 'لم يتم إرسال كود لهذا البريد' });
-        if (Date.now() > entry.expires) {
-            otpStore.delete(email);
+        if (new Date() > entry.expiresAt) {
+            await prisma.oTP.delete({ where: { id: entry.id } });
             return res.status(400).json({ error: 'انتهت صلاحية الكود. أعد الإرسال.' });
         }
-        if (entry.otp !== otp.trim()) return res.status(400).json({ error: 'الكود غير صحيح' });
+        if (entry.code !== otp.trim()) return res.status(400).json({ error: 'الكود غير صحيح' });
 
-        otpStore.delete(email);
-        const { name, password, isLogin } = entry.pendingData;
+        await prisma.oTP.delete({ where: { id: entry.id } });
 
         let user;
         if (isLogin) {
@@ -370,11 +396,19 @@ app.post('/api/designs', authenticateToken, async (req, res) => {
 
 app.get('/api/designs', async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+
         const designs = await prisma.design.findMany({
+            skip,
+            take: limit,
             include: { user: { select: { name: true, affiliateCode: true } } },
             orderBy: { createdAt: 'desc' }
         });
-        res.json({ success: true, designs });
+        const total = await prisma.design.count();
+        
+        res.json({ success: true, designs, total, pages: Math.ceil(total / limit) });
     } catch (error) {
         console.error('Error fetching designs:', error);
         res.status(500).json({ error: 'حدث خطأ أثناء جلب التصميمات' });
@@ -627,7 +661,10 @@ app.get('/api/proxy-image', async (req, res) => {
     
     try {
         const parsedUrl = new URL(url);
-        if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1' || !parsedUrl.hostname.includes('.')) {
+        if (parsedUrl.hostname === 'localhost' || 
+            parsedUrl.hostname === '127.0.0.1' || 
+            !parsedUrl.hostname.includes('.') ||
+            parsedUrl.hostname.match(/^192\.168\.|^10\.|^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[01]\./)) {
             return res.status(403).send('❌ مسار غير مسموح');
         }
         
@@ -640,6 +677,24 @@ app.get('/api/proxy-image', async (req, res) => {
     }
 });
 // ── Admin Routes ───────────────────────────────────────────────────
+
+// Security Audit Logger
+const logSecurityEvent = async (event, req, details = {}) => {
+    try {
+        await prisma.securityLog.create({
+            data: {
+                event,
+                userId: req.user?.id,
+                userEmail: req.user?.email,
+                details: JSON.stringify(details),
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            }
+        });
+    } catch (e) {
+        console.error("Audit log failed", e);
+    }
+};
 
 // Middleware to check if admin
 const authenticateAdmin = async (req, res, next) => {
@@ -669,7 +724,11 @@ app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, re
 app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async (req, res) => {
     try {
         const designId = parseInt(req.params.id);
-        await prisma.design.delete({ where: { id: designId } });
+        const design = await prisma.design.findUnique({ where: { id: designId } });
+        if (design) {
+            await prisma.design.delete({ where: { id: designId } });
+            await logSecurityEvent('ADMIN_DELETE_DESIGN', req, { designId, designName: design.name });
+        }
         res.json({ success: true, message: 'تم مسح التصميم بنجاح' });
     } catch (error) {
         res.status(500).json({ error: 'فشل مسح التصميم' });
@@ -679,9 +738,12 @@ app.delete('/api/admin/designs/:id', authenticateToken, authenticateAdmin, async
 app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
-        // Delete designs first to avoid foreign key constraints
-        await prisma.design.deleteMany({ where: { userId } });
-        await prisma.user.delete({ where: { id: userId } });
+        const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+        if (targetUser) {
+            await prisma.design.deleteMany({ where: { userId } });
+            await prisma.user.delete({ where: { id: userId } });
+            await logSecurityEvent('ADMIN_DELETE_USER', req, { targetUserId: userId, targetEmail: targetUser.email });
+        }
         res.json({ success: true, message: 'تم مسح المستخدم بنجاح' });
     } catch (error) {
         res.status(500).json({ error: 'فشل مسح المستخدم' });
@@ -705,6 +767,7 @@ app.post("/api/make-admin", authenticateToken, async (req, res) => {
             where: { id: parseInt(userId) },
             data: { isAdmin: true }
         });
+        await logSecurityEvent('ADMIN_PROMOTE_USER', req, { targetUserId: userId });
         res.json({ success: true, message: "User promoted to Admin" });
     } catch (err) {
         res.status(500).json({ error: "Internal Server Error" });

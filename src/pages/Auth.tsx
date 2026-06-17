@@ -121,7 +121,7 @@ export default function Auth() {
       const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp, name, password, isLogin }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'كود خاطئ');
