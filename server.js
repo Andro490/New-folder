@@ -81,6 +81,7 @@ const CSRF_EXEMPT_PATHS = [
     '/api/auth/google/callback',
     '/api/pinterest-image',
     '/api/submit-order',
+    '/api/designs',
 ];
 
 app.get('/api/csrf-token', (req, res) => {
@@ -148,7 +149,7 @@ app.use((req, res, next) => {
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     // Content Security Policy (basic)
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data: blob:; connect-src * blob:;");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src * data: blob:; connect-src * blob: data:;");
     
     next();
 });
