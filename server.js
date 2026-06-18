@@ -877,50 +877,58 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         }
 
         // ── Resolve Pinterest/pin.it URLs in designImages before forwarding ──
-        // Telegram needs a DIRECT image URL. Pinterest has two cases:
-        //   • Single Pin  (/pin/123456/) → we CAN extract a direct image
-        //   • Board / Profile            → og:image is a useless mosaic collage
-        // Strategy: resolve shortlink first, then decide based on the final URL shape.
-        if (orderData.designImages && typeof orderData.designImages === 'string') {
-            const rawUrl = orderData.designImages.trim();
-            const isPinterest = rawUrl.includes('pin.it') || rawUrl.includes('pinterest.com');
-            if (isPinterest) {
+        // designImages can contain MULTIPLE URLs separated by newlines.
+        // Each URL is resolved independently to a direct image URL for Telegram.
+        if (orderData.designImages && typeof orderData.designImages === 'string'
+            && orderData.designImages !== 'لا توجد صور') {
+
+            const rawUrls = orderData.designImages
+                .split('\n')
+                .map(u => u.trim())
+                .filter(u => u.length > 0);
+
+            const resolvedUrls = [];
+
+            for (const rawUrl of rawUrls) {
+                const isPinterest = rawUrl.includes('pin.it') || rawUrl.includes('pinterest.com');
+                if (!isPinterest) {
+                    // Not Pinterest — pass through as-is (ibb.co, etc.)
+                    resolvedUrls.push(rawUrl);
+                    continue;
+                }
                 try {
-                    // Step 1: resolve pin.it shortlink to full Pinterest URL
+                    // Step 1: resolve pin.it shortlink → full Pinterest URL
                     let resolvedUrl = rawUrl;
                     if (rawUrl.includes('pin.it')) {
                         resolvedUrl = await resolvePinItUrl(rawUrl);
-                        console.log('[Order] Resolved pin.it shortlink →', resolvedUrl);
+                        console.log(`[Order] pin.it resolved: ${rawUrl} → ${resolvedUrl}`);
                     }
-
-                    // Step 2: detect if it's a SINGLE PIN or a BOARD/PROFILE
-                    // Single pin URLs contain /pin/ followed by digits
+                    // Step 2: single pin or board?
                     const isSinglePin = /pinterest\.com\/pin\/\d+/i.test(resolvedUrl);
-
                     if (isSinglePin) {
-                        // ✅ Extract the real image from the pin page
-                        const directImageUrl = await getPinterestImageUrl(resolvedUrl);
-                        console.log('[Order] Single pin image resolved →', directImageUrl);
-                        orderData.designImages = directImageUrl;
+                        const directImg = await getPinterestImageUrl(resolvedUrl);
+                        console.log(`[Order] ✅ Single pin image:`, directImg);
+                        resolvedUrls.push(directImg);
                     } else {
-                        // ⚠️ It's a Board/Profile — extract the first real pin image from it
-                        console.log('[Order] Pinterest Board detected — extracting first pin image from:', resolvedUrl);
+                        // Board/Profile — extract first real pin image
+                        console.log(`[Order] 📌 Board detected, extracting first pin image:`, resolvedUrl);
                         try {
-                            const boardImageUrl = await getFirstImageFromPinterestBoard(resolvedUrl);
-                            console.log('[Order] Board first-pin image resolved →', boardImageUrl);
-                            orderData.designImages = boardImageUrl;
+                            const boardImg = await getFirstImageFromPinterestBoard(resolvedUrl);
+                            console.log(`[Order] ✅ Board image:`, boardImg);
+                            resolvedUrls.push(boardImg);
                         } catch (boardErr) {
-                            // If board extraction fails, fallback to text link
-                            console.warn('[Order] Board image extraction failed:', boardErr.message);
-                            orderData.designImages = `🔗 رابط ألبوم التصميم:\n${resolvedUrl}`;
+                            console.warn(`[Order] ⚠️ Board extraction failed:`, boardErr.message);
+                            resolvedUrls.push(`🔗 رابط ألبوم: ${resolvedUrl}`);
                         }
                     }
-                } catch (pinterestErr) {
-                    // Non-fatal fallback: keep URL as plain text
-                    console.warn('[Order] Could not resolve Pinterest URL:', pinterestErr.message);
-                    orderData.designImages = `🔗 رابط التصميم (تعذّر معالجته):\n${rawUrl}`;
+                } catch (err) {
+                    console.warn(`[Order] ⚠️ Could not resolve: ${rawUrl}`, err.message);
+                    resolvedUrls.push(`🔗 ${rawUrl}`);
                 }
             }
+
+            orderData.designImages = resolvedUrls.join('\n');
+            console.log(`[Order] Final designImages:\n`, orderData.designImages);
         }
 
         const response = await axios.post(APPS_SCRIPT_URL, orderData, {
