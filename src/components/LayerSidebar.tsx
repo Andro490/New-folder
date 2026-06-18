@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import { DesignLayer, TShirtView } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { PRINT_AREA } from '../utils/tshirtSvg';
-import { pipeline, env, RawImage } from '@xenova/transformers';
+// @ts-ignore
+import { pipeline, env, RawImage } from '@huggingface/transformers';
 import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Wand2, Droplet, Edit2, RotateCw, RotateCcw, Undo2 } from 'lucide-react';
 
 interface LayerSidebarProps {
