@@ -471,6 +471,55 @@ export default function LayerSidebar({
     }
   }
 
+  async function handleCleanEdges(layerId: string, imageUrl: string) {
+    try {
+      setRemovingBg(prev => ({ ...prev, [layerId]: true }));
+      
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // Remove any pixel that is semi-transparent (alpha < 200) to get rid of smoke/halos
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] > 0 && data[i + 3] < 200) {
+          data[i + 3] = 0; // Make fully transparent
+        }
+      }
+      
+      ctx.putImageData(imageData, 0, 0);
+      const newImageUrl = canvas.toDataURL('image/png');
+      const layer = layers.find(l => l.id === layerId);
+      onUpdate(layerId, { 
+        imageUrl: newImageUrl,
+        originalImageUrl: layer?.originalImageUrl || imageUrl,
+        pinterestUrl: 'جاري الرفع...'
+      });
+
+      uploadToImgBB(newImageUrl).then(publicUrl => {
+        onUpdate(layerId, { pinterestUrl: publicUrl });
+      }).catch(err => console.error("Upload failed", err));
+
+    } catch (error) {
+      console.error("Failed to clean edges:", error);
+      alert("تعذر تنظيف الحواف، حاول مرة أخرى.");
+    } finally {
+      setRemovingBg(prev => ({ ...prev, [layerId]: false }));
+    }
+  }
+
   const viewLabel = view === 'front' ? 'FRONT' : 'BACK';
 
   const S = {
@@ -648,6 +697,15 @@ export default function LayerSidebar({
                             <Droplet size={14} color="#ddd" /> إزالة الأبيض
                           </button>
                         </div>
+                        <button
+                          style={{ ...S.actionBtn(removingBg[layer.id]), width: '100%', justifyContent: 'center' }}
+                          onClick={() => handleCleanEdges(layer.id, layer.imageUrl)}
+                          disabled={removingBg[layer.id]}
+                          title="يزيل الهالة السوداء أو الدخان الخفيف المتبقي بعد العزل"
+                        >
+                          <Wand2 size={14} color="#3b82f6" />
+                          {removingBg[layer.id] ? 'جاري التنظيف...' : 'تنظيف الحواف (إزالة الدخان/الهالة)'}
+                        </button>
                         <button
                           style={{ ...S.actionBtn(removingBg[layer.id]), width: '100%', justifyContent: 'center' }}
                           onClick={() => handleRemoveBg(layer.id, layer.imageUrl)}
