@@ -694,6 +694,12 @@ async function getFirstImageFromPinterestBoard(boardUrl) {
         'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
     ];
 
+    // Skip icon-sized / avatar / UI images
+    const BAD = [/\/\d{1,2}x\d{1,2}\//, /\/28x\//, /\/30x\//, /\/45x\//, /\/60x60\//, /\/75x\//, /avatars/, /\/profile\//];
+    const GOOD_SIZES = ['736x', '564x', '474x', 'originals'];
+    const isGoodUrl = (u) => !BAD.some(r => r.test(u));
+    const upgradeSize = (u) => u.replace(/\/\d{2,3}x\//, '/736x/').replace(/\/150x\//, '/736x/').replace(/\/236x\//, '/736x/');
+
     for (const agent of agents) {
         try {
             const response = await axios.get(boardUrl, {
@@ -710,47 +716,47 @@ async function getFirstImageFromPinterestBoard(boardUrl) {
             const html = response.data;
             if (typeof html !== 'string' || html.length < 100) continue;
 
-            // Strategy A: Extract pin IDs from HTML using regex patterns
-            const pinPatterns = [
-                /pinterest\.com\/pin\/(\d+)/gi,
-                /\/pin\/(\d{10,})/gi,
-                /"id":"(\d{10,})"/g,
-            ];
-
-            const pinIds = new Set();
-            for (const pattern of pinPatterns) {
-                let match;
-                while ((match = pattern.exec(html)) !== null) {
-                    if (match[1] && match[1].length >= 10) {
-                        pinIds.add(match[1]);
-                    }
-                    if (pinIds.size >= 5) break;
+            // Strategy A: Extract pin IDs → fetch each pin's real image
+            const pinIdSet = new Set();
+            const pinPats = [/pinterest\.com\/pin\/(\d{10,})/gi, /\/pin\/(\d{10,})/gi];
+            for (const pat of pinPats) {
+                let m;
+                while ((m = pat.exec(html)) !== null) {
+                    pinIdSet.add(m[1]);
+                    if (pinIdSet.size >= 6) break;
                 }
-                if (pinIds.size >= 5) break;
+                if (pinIdSet.size >= 6) break;
             }
-
-            // Strategy B: Look for pinimg.com direct image URLs in the board HTML
-            const imgMatch = html.match(/https:\/\/i\.pinimg\.com\/[^\s"'\\]+\.(?:jpg|jpeg|png|webp)/i);
-            if (imgMatch) {
-                // Upgrade to largest size (564x or 736x)
-                const imgUrl = imgMatch[0]
-                    .replace(/\/\d+x\//, '/736x/')
-                    .replace(/\/60x60\//, '/736x/')
-                    .replace(/\/150x\//, '/736x/');
-                console.log('[Pinterest Board] Found direct pinimg.com image:', imgUrl);
-                return imgUrl;
-            }
-
-            // Strategy C: Try each extracted pin ID to get its image
-            for (const pinId of pinIds) {
+            for (const pinId of pinIdSet) {
                 try {
-                    const pinUrl = `https://www.pinterest.com/pin/${pinId}/`;
-                    const imgUrl = await getPinterestImageUrl(pinUrl);
-                    if (imgUrl) {
-                        console.log(`[Pinterest Board] Got image from pin ${pinId}:`, imgUrl);
+                    const imgUrl = await getPinterestImageUrl(`https://www.pinterest.com/pin/${pinId}/`);
+                    if (imgUrl && isGoodUrl(imgUrl)) {
+                        console.log(`[Pinterest Board] Got pin image (${pinId}):`, imgUrl);
                         return imgUrl;
                     }
-                } catch { /* try next pin */ }
+                } catch { /* try next */ }
+            }
+
+            // Strategy B: collect ALL pinimg.com URLs, prefer large sizes, skip icons
+            const allPinImgs = [];
+            const imgRe = /https:\/\/i\.pinimg\.com\/[^\s"'\\]+\.(?:jpg|jpeg|png|webp)/gi;
+            let m2;
+            while ((m2 = imgRe.exec(html)) !== null) allPinImgs.push(m2[0]);
+
+            // Pass 1: already large
+            for (const url of allPinImgs) {
+                if (!isGoodUrl(url)) continue;
+                if (GOOD_SIZES.some(s => url.includes(s))) {
+                    console.log('[Pinterest Board] Found large pinimg URL:', url);
+                    return url;
+                }
+            }
+            // Pass 2: upgrade medium → 736x
+            for (const url of allPinImgs) {
+                if (!isGoodUrl(url)) continue;
+                const up = upgradeSize(url);
+                console.log('[Pinterest Board] Upgraded pinimg URL:', up);
+                return up;
             }
 
         } catch (e) {
