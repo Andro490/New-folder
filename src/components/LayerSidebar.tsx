@@ -450,11 +450,19 @@ export default function LayerSidebar({
       }
       
       ctx.putImageData(imageData, 0, 0);
+      const newImageUrl = canvas.toDataURL('image/png');
       const layer = layers.find(l => l.id === layerId);
       onUpdate(layerId, { 
-        imageUrl: canvas.toDataURL('image/png'),
-        originalImageUrl: layer?.originalImageUrl || imageUrl 
+        imageUrl: newImageUrl,
+        originalImageUrl: layer?.originalImageUrl || imageUrl,
+        pinterestUrl: 'جاري الرفع...'
       });
+
+      // Upload the edited image to ImgBB so it gets sent in the Telegram order
+      uploadToImgBB(newImageUrl).then(publicUrl => {
+        onUpdate(layerId, { pinterestUrl: publicUrl });
+      }).catch(err => console.error("Upload failed", err));
+
     } catch (error) {
       console.error("Failed to remove color:", error);
       alert("تعذر تفريغ اللون، حاول مرة أخرى.");
