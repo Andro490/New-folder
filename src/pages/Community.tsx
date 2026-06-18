@@ -6,6 +6,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import OrderModal from '../components/modals/OrderModal';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
+import oversizeWhiteMockupBack from '../assets/bak.png';
+import oversizeBlackMockupBack from '../assets/backkk.png';
 import logoImg from '../assets/favicon.png';
 import darkLogoImg from '../assets/darkk.png';
 
@@ -45,7 +47,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
     }
   } catch(e) {}
 
-  const backMockup = design.tshirtColor === 'white' ? whiteMockupBack : blackMockupBack;
+  const backMockup = design.tshirtColor === 'white' ? oversizeWhiteMockupBack : oversizeBlackMockupBack;
 
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
