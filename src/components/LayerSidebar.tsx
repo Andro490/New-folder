@@ -384,10 +384,8 @@ export default function LayerSidebar({
       const res = await fetch(imageUrl);
       const imageBlob = await res.blob();
 
-      // 2. استخدام الموديل الأصغر "isnet_quint8" عشان يكون أسرع بكتير من الافتراضي
-      const blob = await removeBackground(imageBlob, {
-        model: 'isnet_quint8',
-      });
+      // 2. استخدام الموديل الافتراضي ذو الجودة العالية (isnet) للحصول على أفضل دقة عزل بدون تشوه الصورة
+      const blob = await removeBackground(imageBlob);
       
       const newUrl = URL.createObjectURL(blob);
       const layer = layers.find(l => l.id === layerId);
