@@ -127,7 +127,7 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
             <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className="relative flex items-center justify-center"
-                style={{ width: '100%', height: '100%', aspectRatio: '500/600', maxWidth: '100%', maxHeight: '100%' }}
+                style={{ width: '100%', height: '100%', aspectRatio: '500/560', maxWidth: '100%', maxHeight: '100%' }}
               >
                 <img
                   src={backMockup}
@@ -142,9 +142,9 @@ function DesignCard({ design, onBuy }: { design: Design; onBuy: (d: Design) => v
                       className="absolute z-10"
                       style={{
                         left: `${(layer.x / 500) * 100}%`,
-                        top: `${(layer.y / 600) * 100}%`,
+                        top: `${(layer.y / 560) * 100}%`,
                         width: `${(layer.width / 500) * 100}%`,
-                        height: `${(layer.height / 600) * 100}%`,
+                        height: `${(layer.height / 560) * 100}%`,
                         transform: `rotate(${layer.rotation || 0}deg)`,
                         opacity: layer.opacity ?? 1,
                         pointerEvents: 'none',
