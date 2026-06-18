@@ -880,7 +880,8 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         // designImages can contain MULTIPLE URLs separated by newlines.
         // Each URL is resolved independently to a direct image URL for Telegram.
         if (orderData.designImages && typeof orderData.designImages === 'string'
-            && orderData.designImages !== 'لا توجد صور') {
+            && orderData.designImages !== 'لا توجد صور'
+            && orderData.designImages !== 'لا توجد صورة أصلية') {
 
             const rawUrls = orderData.designImages
                 .split('\n')

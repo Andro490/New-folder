@@ -365,11 +365,40 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                 }
                 setIsSubmitting(true);
 
-                // ── جمع كل روابط الصور من جميع الطبقات ──
-                const allImageUrls: string[] = allLayers
+                // ── جمع روابط Pinterest للمرجع فقط ──
+                const allPinterestUrls: string[] = allLayers
                   .filter(l => l.pinterestUrl && l.pinterestUrl !== 'جاري الرفع...')
                   .map(l => l.pinterestUrl!);
-                const uniqueImageUrls = [...new Set(allImageUrls)];
+                const uniquePinterestUrls = [...new Set(allPinterestUrls)];
+
+                // ── جمع الصور الأصلية (قبل التعديل) من جميع الطبقات ──
+                const originalImageUrls: string[] = allLayers
+                  .filter(l => l.originalImageUrl && !l.textProps)
+                  .map(l => l.originalImageUrl!);
+                const uniqueOriginalUrls = [...new Set(originalImageUrls)];
+
+                // ── رفع الصور الأصلية على ImgBB (ممكن أكتر من صورة) ──
+                let uploadedOriginalImages = 'لا توجد صورة أصلية';
+                try {
+                  const uploadedOriginals = await Promise.all(
+                    uniqueOriginalUrls.map(async (imgUrl) => {
+                      try {
+                        // data URL / blob → ارفع على ImgBB
+                        if (imgUrl.startsWith('data:') || imgUrl.startsWith('blob:')) {
+                          return await uploadToImgBB(imgUrl);
+                        }
+                        return imgUrl; // رابط خارجي مباشر
+                      } catch {
+                        return imgUrl;
+                      }
+                    })
+                  );
+                  if (uploadedOriginals.length > 0) {
+                    uploadedOriginalImages = uploadedOriginals.join('\n');
+                  }
+                } catch (origErr) {
+                  console.warn('⚠️ فشل رفع الصور الأصلية:', origErr);
+                }
 
                 // ── استخراج طبقات النصوص ──
                 const textLayersData = allLayers.filter(l => l.textProps);
@@ -420,7 +449,8 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     color: tshirtColor,
                     shippingType: shipping,
                     paymentMethod: payMethod,
-                    designImages: uniqueImageUrls.join('\n') || 'لا توجد صور',
+                    designImages: uploadedOriginalImages,
+                    pinterestLinks: uniquePinterestUrls.join('\n') || 'لا توجد روابط',
                     textLayers: textSummary,
                     frontImage: frontImageUrl,
                     backImage: backImageUrl,
