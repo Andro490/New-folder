@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { DesignLayer, TShirtView } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { PRINT_AREA } from '../utils/tshirtSvg';
-import { removeBackground } from '@imgly/background-removal';
+import { pipeline, env, RawImage } from '@xenova/transformers';
 import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Wand2, Droplet, Edit2, RotateCw, RotateCcw, Undo2 } from 'lucide-react';
 
 interface LayerSidebarProps {
@@ -376,27 +376,75 @@ export default function LayerSidebar({
     }
   }
 
+  // ── تهيئة موديل RMBG-1.4 ──
+  const getSegmenter = async () => {
+    // منع تحميل الموديل محلياً والاعتماد على CDN
+    env.allowLocalModels = false;
+    // تحميل الموديل فقط عند أول استخدام (حجمه حوالي 170MB بيتحمل مرة واحدة في الكاش)
+    if (!(window as any)._rmbgSegmenter) {
+      (window as any)._rmbgSegmenter = await pipeline('image-segmentation', 'briaai/RMBG-1.4', {
+        revision: 'main'
+      });
+    }
+    return (window as any)._rmbgSegmenter;
+  };
+
   async function handleRemoveBg(layerId: string, imageUrl: string) {
     try {
       setRemovingBg(prev => ({ ...prev, [layerId]: true }));
       
-      // 1. جلب الصورة كملف محلي (Blob) بيسرع العملية وبيمنع مشاكل السيرفرات (CORS)
-      const res = await fetch(imageUrl);
-      const imageBlob = await res.blob();
+      const segmenter = await getSegmenter();
 
-      // 2. استخدام الموديل الافتراضي ذو الجودة العالية (isnet) للحصول على أفضل دقة عزل بدون تشوه الصورة
-      const blob = await removeBackground(imageBlob);
+      // 1. قراءة الصورة باستخدام RawImage
+      const img = await RawImage.fromURL(imageUrl);
+
+      // 2. تطبيق موديل RMBG-1.4 (النتيجة هتكون مصفوفة من الـ masks)
+      const results = await segmenter(img);
       
-      const newUrl = URL.createObjectURL(blob);
+      // الحصول على الـ Mask الخاص بالـ foreground
+      const foregroundMask = results.find((r: any) => r.label === 'foreground' || r.label === 'LABEL_1')?.mask || results[0].mask;
+      
+      if (!foregroundMask) throw new Error('لم يتم العثور على عنصر لعزله');
+
+      // 3. دمج الـ Mask مع الصورة الأصلية لقص الخلفية بشفافية
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+
+      // رسم الـ Mask (اللي بيكون أبيض على أسود)
+      const maskImageData = new ImageData(
+        new Uint8ClampedArray(foregroundMask.data), 
+        foregroundMask.width, 
+        foregroundMask.height
+      );
+      ctx.putImageData(maskImageData, 0, 0);
+
+      // تغيير نظام الرسم لدمج الصورة الأصلية فقط في الأماكن البيضاء (الـ foreground)
+      ctx.globalCompositeOperation = 'source-in';
+      
+      // رسم الصورة الأصلية
+      const originalImage = new Image();
+      originalImage.crossOrigin = "anonymous";
+      originalImage.src = imageUrl;
+      await new Promise(resolve => { originalImage.onload = resolve; });
+      ctx.drawImage(originalImage, 0, 0);
+
+      const finalImageUrl = canvas.toDataURL('image/png');
+
       const layer = layers.find(l => l.id === layerId);
       onUpdate(layerId, { 
-        imageUrl: newUrl, 
+        imageUrl: finalImageUrl, 
         originalImageUrl: layer?.originalImageUrl || imageUrl,
         pinterestUrl: 'جاري الرفع...' 
       });
 
-      // 3. نرفع الصورة المعزولة على ImgBB في الخلفية عشان تتبعت في تليجرام
-      const fileToUpload = new File([blob], 'removed_bg.png', { type: 'image/png' });
+      // 4. نرفع الصورة المعزولة على ImgBB في الخلفية عشان تتبعت في تليجرام
+      // نحول الـ DataURL إلى File
+      const res = await fetch(finalImageUrl);
+      const blob = await res.blob();
+      const fileToUpload = new File([blob], 'rmbg_1_4_removed.png', { type: 'image/png' });
+      
       uploadToImgBB(fileToUpload).then(publicUrl => {
         onUpdate(layerId, { pinterestUrl: publicUrl });
       }).catch(err => console.error("Upload failed", err));
