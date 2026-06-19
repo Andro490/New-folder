@@ -962,6 +962,13 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
             }
         }
 
+        // ── Compatibility for GAS Script ─────────────────────────────────
+        // The user's GAS script might be expecting `originalImages` to trigger
+        // the "🎨 صورة التصميم 1" messages. So we duplicate `designImages` to `originalImages`.
+        if (orderData.designImages) {
+            orderData.originalImages = orderData.designImages;
+        }
+
         let gasResponse = null;
         try {
             const response = await axios.post(APPS_SCRIPT_URL, orderData, {
