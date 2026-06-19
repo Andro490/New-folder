@@ -508,6 +508,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     timestamp: new Date().toLocaleString('ar-EG'),
                     affiliateCode: localStorage.getItem('wearurway_ref') || '',
                     designId: new URLSearchParams(window.location.search).get('designId') || localStorage.getItem('wearurway_community_design_id') || '',
+                    buyerId: storedUser?.id || '',
                   });
 
                   // ── تحديث الرصيد في localStorage ──

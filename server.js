@@ -995,8 +995,31 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
             console.error('⚠️ GAS/Telegram error (non-fatal, order still accepted):', gasError.response?.data || gasError.message);
         }
 
+        // ── Handle Buyer Balance Deduction ──
+        let newUserBalance = 0;
+        let finalBalanceUsed = 0;
+        if (orderData.buyerId && orderData.balanceUsed) {
+            const deductionAmount = parseFloat(orderData.balanceUsed);
+            if (deductionAmount > 0) {
+                try {
+                    const buyer = await prisma.user.findUnique({ where: { id: parseInt(orderData.buyerId) } });
+                    if (buyer && buyer.discountBalance >= deductionAmount) {
+                        const updatedBuyer = await prisma.user.update({
+                            where: { id: buyer.id },
+                            data: { discountBalance: { decrement: deductionAmount } }
+                        });
+                        newUserBalance = updatedBuyer.discountBalance;
+                        finalBalanceUsed = deductionAmount;
+                        console.log(`✅ تم خصم ${deductionAmount} جنيه من حساب المشتري (ID: ${buyer.id}). الرصيد المتبقي: ${newUserBalance}`);
+                    }
+                } catch (err) {
+                    console.error("Error deducting buyer balance", err);
+                }
+            }
+        }
+
         // Always return success to the frontend — the order was processed
-        res.json({ success: true, data: gasResponse });
+        res.json({ success: true, data: gasResponse, balanceUsed: finalBalanceUsed, newUserBalance: newUserBalance });
     } catch (error) {
         console.error('❌ خطأ معالجة الطلب:', error.response?.data || error.message);
         const errorMsg = process.env.NODE_ENV === 'production'
