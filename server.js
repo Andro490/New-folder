@@ -967,12 +967,6 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         // the "🎨 صورة التصميم 1" messages. So we duplicate all images to `originalImages`.
         if (orderData.designImages) {
             orderData.originalImages = orderData.designImages;
-            
-            // To prevent old GAS scripts from crashing if they try to pass multiple \n separated URLs
-            // to Telegram's sendPhoto, we ensure `designImages` only contains the FIRST URL.
-            const allImgs = orderData.designImages.split('\n');
-            orderData.designImages = allImgs[0];
-            orderData.designImage = allImgs[0]; // Extra fallback
         }
 
         let gasResponse = null;

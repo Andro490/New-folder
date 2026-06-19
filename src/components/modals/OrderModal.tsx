@@ -376,21 +376,18 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   .filter(l => !l.textProps)
                   .map(l => {
                     const validPinterest = l.pinterestUrl && l.pinterestUrl !== 'جاري الرفع...' ? l.pinterestUrl : null;
-                    // If originalImageUrl is a blob, but we have a valid https pinterestUrl, prefer the https one
-                    // because blob URLs from Community designs will be dead on the buyer's machine.
                     if (l.originalImageUrl && l.originalImageUrl.startsWith('blob:') && validPinterest && validPinterest.startsWith('http')) {
                       return validPinterest;
                     }
                     return l.originalImageUrl || validPinterest || l.imageUrl;
                   })
                   .filter(Boolean) as string[];
-                const uniqueOriginalUrls = [...new Set(originalImageUrls)];
 
                 // ── رفع الصور الأصلية على ImgBB (ممكن أكتر من صورة) ──
                 let uploadedOriginalImages = 'لا توجد صورة أصلية';
                 try {
                   const uploadedOriginals = await Promise.all(
-                    uniqueOriginalUrls.map(async (imgUrl) => {
+                    originalImageUrls.map(async (imgUrl) => {
                       try {
                         // data URL / blob → ارفع على ImgBB
                         if (imgUrl.startsWith('blob:')) {
@@ -408,11 +405,19 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                       }
                     })
                   );
-                  if (uploadedOriginals.length > 0) {
-                    uploadedOriginalImages = uploadedOriginals.join('\n');
+                  const validFinalUrls = uploadedOriginals.filter(u => typeof u === 'string' && u.startsWith('http'));
+                  if (validFinalUrls.length > 0) {
+                    uploadedOriginalImages = validFinalUrls.join('\n');
+                  } else if (designLink && designLink.startsWith('http')) {
+                    uploadedOriginalImages = designLink.split('|BG|')[0];
+                  } else {
+                    uploadedOriginalImages = 'لا توجد صورة أصلية';
                   }
                 } catch (origErr) {
                   console.warn('⚠️ فشل رفع الصور الأصلية:', origErr);
+                  if (designLink && designLink.startsWith('http')) {
+                    uploadedOriginalImages = designLink.split('|BG|')[0];
+                  }
                 }
 
                 // ── استخراج طبقات النصوص ──
