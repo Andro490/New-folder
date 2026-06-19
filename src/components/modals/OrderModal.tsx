@@ -389,12 +389,31 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   const uploadedOriginals = await Promise.all(
                     originalImageUrls.map(async (imgUrl) => {
                       try {
-                        // data URL / blob → ارفع على ImgBB
                         if (imgUrl.startsWith('blob:')) {
-                          const res = await fetch(imgUrl);
-                          const blob = await res.blob();
-                          const file = new File([blob], 'original.png', { type: 'image/png' });
-                          return await uploadToImgBB(file);
+                          try {
+                            const res = await fetch(imgUrl);
+                            const blob = await res.blob();
+                            const file = new File([blob], 'original.png', { type: 'image/png' });
+                            return await uploadToImgBB(file);
+                          } catch (fileUploadErr) {
+                            // Fallback: draw to canvas and upload as base64 PNG (fixes SVGs and other unsupported types)
+                            return await new Promise<string>((resolve, reject) => {
+                              const img = new Image();
+                              img.onload = async () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.width; canvas.height = img.height;
+                                const ctx = canvas.getContext('2d');
+                                ctx?.drawImage(img, 0, 0);
+                                try {
+                                  const base64 = canvas.toDataURL('image/png');
+                                  const url = await uploadToImgBB(base64);
+                                  resolve(url);
+                                } catch (e) { reject(e); }
+                              };
+                              img.onerror = reject;
+                              img.src = imgUrl;
+                            });
+                          }
                         }
                         if (imgUrl.startsWith('data:')) {
                           return await uploadToImgBB(imgUrl);
