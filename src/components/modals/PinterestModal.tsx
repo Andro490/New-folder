@@ -34,6 +34,7 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
 
       const isDirectPinterestImage = trimmed.includes('pinimg.com');
 
+      let finalDirectUrl = trimmed;
       if (isPinterest && !isDirectPinterestImage) {
         const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
         const response = await fetch(`${API_BASE}/api/pinterest-image`, {
@@ -44,6 +45,7 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
         });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.error || 'فشل في جلب الصورة');
+        finalDirectUrl = data.imageUrl; // The direct i.pinimg.com URL
         imageUrl = `${API_BASE}/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`;
       } else if (isDirectPinterestImage || (trimmed.startsWith('http') && !trimmed.includes('localhost'))) {
         const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
@@ -55,6 +57,7 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
         id: uuidv4(),
         name: 'Pinterest Image',
         imageUrl,
+        originalImageUrl: finalDirectUrl,
         x: printArea.x + 20,
         y: printArea.y + 20,
         width: Math.min(150, printArea.width - 40),
@@ -64,7 +67,7 @@ export default function PinterestModal({ onClose, onAddLayer, view, setDesignUrl
         visible: true,
         locked: false,
         view,
-        pinterestUrl: isPinterest ? trimmed : trimmed.startsWith('data:image') ? 'جاري الرفع...' : trimmed,
+        pinterestUrl: finalDirectUrl.startsWith('data:image') ? 'جاري الرفع...' : finalDirectUrl,
       };
 
       onAddLayer(newLayer);
