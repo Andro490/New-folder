@@ -932,20 +932,60 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
             console.log(`[Order] Final designImages:\n`, orderData.designImages);
         }
 
-        const response = await axios.post(APPS_SCRIPT_URL, orderData, {
-            headers: { 'Content-Type': 'application/json' },
-            timeout: 15000,
-        });
-
-        console.log('✅ استجابة Google Script:', response.data);
-        if (response.data && response.data.status === 'error') {
-            return res.status(500).json({ success: false, error: response.data.message });
+        // ── Sanitize image URLs before sending to GAS ──────────────────────────
+        // Telegram rejects non-http(s) strings as photo URLs → causes 400/500 errors.
+        // Replace any image field that isn't a valid https:// URL with an empty string
+        // so the GAS script knows to skip it.
+        const IMAGE_FIELDS = ['frontImage', 'backImage', 'instapayProof'];
+        const isValidHttpsUrl = (val) => {
+            if (!val || typeof val !== 'string') return false;
+            try {
+                const u = new URL(val.trim());
+                return u.protocol === 'https:' && u.hostname.length > 0;
+            } catch { return false; }
+        };
+        for (const field of IMAGE_FIELDS) {
+            if (orderData[field] !== undefined && !isValidHttpsUrl(orderData[field])) {
+                console.warn(`[Order] ⚠️ Blanking invalid image URL for field "${field}": ${orderData[field]}`);
+                orderData[field] = '';
+            }
         }
-        res.json({ success: true, data: response.data });
+        // Also sanitize each line of designImages — keep only valid https:// URLs
+        if (orderData.designImages && typeof orderData.designImages === 'string') {
+            const sanitizedDesignImgs = orderData.designImages
+                .split('\n')
+                .filter(u => isValidHttpsUrl(u.trim()))
+                .join('\n');
+            if (sanitizedDesignImgs !== orderData.designImages) {
+                console.warn('[Order] ⚠️ Some designImages lines were invalid URLs and removed.');
+                orderData.designImages = sanitizedDesignImgs || '';
+            }
+        }
+
+        let gasResponse = null;
+        try {
+            const response = await axios.post(APPS_SCRIPT_URL, orderData, {
+                headers: { 'Content-Type': 'application/json' },
+                timeout: 15000,
+            });
+            gasResponse = response.data;
+            console.log('✅ استجابة Google Script:', gasResponse);
+
+            // If GAS explicitly reports an error (e.g. Telegram failure), log it but don't fail
+            if (gasResponse && gasResponse.status === 'error') {
+                console.warn('⚠️ GAS reported error (non-fatal):', gasResponse.message);
+            }
+        } catch (gasError) {
+            // GAS/Telegram errors are non-fatal — DB updates & affiliate rewards already applied
+            console.error('⚠️ GAS/Telegram error (non-fatal, order still accepted):', gasError.response?.data || gasError.message);
+        }
+
+        // Always return success to the frontend — the order was processed
+        res.json({ success: true, data: gasResponse });
     } catch (error) {
-        console.error('❌ خطأ Google Script:', error.response?.data || error.message);
-        const errorMsg = process.env.NODE_ENV === 'production' 
-            ? 'حدث خطأ أثناء معالجة الطلب' 
+        console.error('❌ خطأ معالجة الطلب:', error.response?.data || error.message);
+        const errorMsg = process.env.NODE_ENV === 'production'
+            ? 'حدث خطأ أثناء معالجة الطلب'
             : error.message;
         res.status(500).json({ success: false, error: errorMsg });
     }
