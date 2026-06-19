@@ -963,17 +963,9 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         }
 
         // ── Compatibility for GAS Script ─────────────────────────────────
-        // The user's updated GAS script might be expecting `originalImages` to trigger
-        // the "🎨 صورة التصميم 1" messages. So we duplicate all images to `originalImages`.
+        // The user's updated GAS script expects multiple URLs separated by \n in `designImages`.
         if (orderData.designImages) {
             orderData.originalImages = orderData.designImages;
-            
-            // CRITICAL FIX: If the user's GAS script still has old code that passes `designImages` 
-            // directly to sendPhoto, multiple URLs (\n) will cause a 400 Bad Request and crash the script!
-            // To prevent the GAS script from crashing, we MUST strip \n from `designImages`.
-            const allImgs = orderData.designImages.split('\n');
-            orderData.designImages = allImgs[0];
-            orderData.designImage = allImgs[0];
         }
 
         let gasResponse = null;
