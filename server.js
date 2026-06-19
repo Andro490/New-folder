@@ -879,6 +879,15 @@ app.post('/api/submit-order', createRateLimiter(60 * 60 * 1000, 10), async (req,
         // ── Resolve Pinterest/pin.it URLs in designImages before forwarding ──
         // designImages can contain MULTIPLE URLs separated by newlines.
         // Each URL is resolved independently to a direct image URL for Telegram.
+        if (!orderData.designImages || orderData.designImages.trim() === 'لا توجد صورة أصلية' || orderData.designImages.trim() === '') {
+            let fallbackImgs = orderData.frontImage || '';
+            if (orderData.backImage && orderData.backImage !== 'لا توجد صورة') {
+                fallbackImgs += (fallbackImgs ? '\n' : '') + orderData.backImage;
+            }
+            orderData.designImages = fallbackImgs || '';
+            orderData.originalImages = fallbackImgs || '';
+        }
+        
         if (orderData.designImages && typeof orderData.designImages === 'string'
             && orderData.designImages !== 'لا توجد صور'
             && orderData.designImages !== 'لا توجد صورة أصلية') {

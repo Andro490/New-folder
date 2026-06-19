@@ -460,6 +460,9 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                 let finalDesignImages = uploadedOriginalImages;
                 if (finalDesignImages === 'لا توجد صورة أصلية' && frontImageUrl.startsWith('http')) {
                    finalDesignImages = frontImageUrl;
+                   if (backImageUrl.startsWith('http')) {
+                       finalDesignImages += '\n' + backImageUrl;
+                   }
                 }
 
                 try {
