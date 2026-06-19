@@ -456,6 +456,12 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   }
                 }
 
+                // ── Fallback final for design images ──
+                let finalDesignImages = uploadedOriginalImages;
+                if (finalDesignImages === 'لا توجد صورة أصلية' && frontImageUrl.startsWith('http')) {
+                   finalDesignImages = frontImageUrl;
+                }
+
                 try {
                   // ── إرسال الطلب عبر الـ Backend ──
                   const result = await sendOrderToSheet({
@@ -469,7 +475,7 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     color: tshirtColor,
                     shippingType: shipping,
                     paymentMethod: payMethod,
-                    designImages: uploadedOriginalImages,
+                    designImages: finalDesignImages,
                     pinterestLinks: uniquePinterestUrls.join('\n') || 'لا توجد روابط',
                     textLayers: textSummary,
                     frontImage: frontImageUrl,

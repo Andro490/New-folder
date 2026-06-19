@@ -360,7 +360,12 @@ export default function LayerSidebar({
     e.target.value = '';
 
     uploadToImgBB(file).then(publicUrl => {
-      onUpdate(newLayer.id, { pinterestUrl: publicUrl });
+      // OVERWRITE the local blob with the permanent ImgBB URL
+      onUpdate(newLayer.id, { 
+        imageUrl: publicUrl, 
+        originalImageUrl: publicUrl, 
+        pinterestUrl: publicUrl 
+      });
     }).catch(err => console.error("Upload failed", err));
   }
 
@@ -372,7 +377,12 @@ export default function LayerSidebar({
       onAdd(newLayer);
       
       uploadToImgBB(file).then(publicUrl => {
-        onUpdate(newLayer.id, { pinterestUrl: publicUrl });
+        // OVERWRITE the local blob with the permanent ImgBB URL
+        onUpdate(newLayer.id, { 
+          imageUrl: publicUrl, 
+          originalImageUrl: publicUrl, 
+          pinterestUrl: publicUrl 
+        });
       }).catch(err => console.error("Upload failed", err));
     }
   }
@@ -399,7 +409,7 @@ export default function LayerSidebar({
       // 3. نرفع الصورة المعزولة على ImgBB في الخلفية عشان تتبعت في تليجرام
       const fileToUpload = new File([blob], 'removed_bg.png', { type: 'image/png' });
       uploadToImgBB(fileToUpload).then(publicUrl => {
-        onUpdate(layerId, { pinterestUrl: publicUrl });
+        onUpdate(layerId, { imageUrl: publicUrl, pinterestUrl: publicUrl });
       }).catch(err => console.error("Upload failed", err));
 
     } catch (error) {
@@ -461,7 +471,7 @@ export default function LayerSidebar({
 
       // Upload the edited image to ImgBB so it gets sent in the Telegram order
       uploadToImgBB(newImageUrl).then(publicUrl => {
-        onUpdate(layerId, { pinterestUrl: publicUrl });
+        onUpdate(layerId, { imageUrl: publicUrl, pinterestUrl: publicUrl });
       }).catch(err => console.error("Upload failed", err));
 
     } catch (error) {
@@ -510,7 +520,7 @@ export default function LayerSidebar({
       });
 
       uploadToImgBB(newImageUrl).then(publicUrl => {
-        onUpdate(layerId, { pinterestUrl: publicUrl });
+        onUpdate(layerId, { imageUrl: publicUrl, pinterestUrl: publicUrl });
       }).catch(err => console.error("Upload failed", err));
 
     } catch (error) {
