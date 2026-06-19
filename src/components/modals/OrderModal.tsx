@@ -371,10 +371,19 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                   .map(l => l.pinterestUrl!);
                 const uniquePinterestUrls = [...new Set(allPinterestUrls)];
 
-                // ── جمع الصور الأصلية (قبل التعديل) من جميع الطبقات ──
+                // ── جمع الصور الأصلية (قبل التعديل) أو بدائلها من جميع الطبقات ──
                 const originalImageUrls: string[] = allLayers
-                  .filter(l => l.originalImageUrl && !l.textProps)
-                  .map(l => l.originalImageUrl!);
+                  .filter(l => !l.textProps)
+                  .map(l => {
+                    const validPinterest = l.pinterestUrl && l.pinterestUrl !== 'جاري الرفع...' ? l.pinterestUrl : null;
+                    // If originalImageUrl is a blob, but we have a valid https pinterestUrl, prefer the https one
+                    // because blob URLs from Community designs will be dead on the buyer's machine.
+                    if (l.originalImageUrl && l.originalImageUrl.startsWith('blob:') && validPinterest && validPinterest.startsWith('http')) {
+                      return validPinterest;
+                    }
+                    return l.originalImageUrl || validPinterest || l.imageUrl;
+                  })
+                  .filter(Boolean) as string[];
                 const uniqueOriginalUrls = [...new Set(originalImageUrls)];
 
                 // ── رفع الصور الأصلية على ImgBB (ممكن أكتر من صورة) ──
@@ -384,7 +393,13 @@ export default function OrderModal({ onClose, tshirtColor, allLayers, designLink
                     uniqueOriginalUrls.map(async (imgUrl) => {
                       try {
                         // data URL / blob → ارفع على ImgBB
-                        if (imgUrl.startsWith('data:') || imgUrl.startsWith('blob:')) {
+                        if (imgUrl.startsWith('blob:')) {
+                          const res = await fetch(imgUrl);
+                          const blob = await res.blob();
+                          const file = new File([blob], 'original.png', { type: 'image/png' });
+                          return await uploadToImgBB(file);
+                        }
+                        if (imgUrl.startsWith('data:')) {
                           return await uploadToImgBB(imgUrl);
                         }
                         return imgUrl; // رابط خارجي مباشر
