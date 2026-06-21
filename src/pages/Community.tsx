@@ -355,12 +355,10 @@ export default function Community() {
     </aside>
   );
 
-  if (showSplash) {
-    return <SplashScreen />;
-  }
-
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen relative" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir={dir}>
+    <>
+      {showSplash && <SplashScreen />}
+      <div className={`flex flex-col lg:flex-row min-h-screen relative ${showSplash ? 'h-screen overflow-hidden' : ''}`} style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir={dir}>
       {/* Vintage Paper Texture Overlay */}
       <div className="fixed inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/old-wall.png")' }}></div>
 
@@ -449,5 +447,6 @@ export default function Community() {
         />
       )}
     </div>
+    </>
   );
 }

@@ -604,11 +604,10 @@ export default function App() {
     }
   }, [location.search]);
 
-  if (showSplash) {
-    return <SplashScreen />;
-  }
-
   return (
+    <>
+      {showSplash && <SplashScreen />}
+      <div style={{ display: showSplash ? 'none' : 'block' }}>
     <Routes>
       <Route path="/" element={<ProductStep />} />
       <Route path="/fit" element={<FitStep />} />
@@ -620,5 +619,7 @@ export default function App() {
       <Route path="/community" element={<Community />} />
       <Route path="/admin" element={<AdminDashboard />} />
     </Routes>
+    </div>
+    </>
   );
 }
