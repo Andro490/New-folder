@@ -57,7 +57,7 @@ html.dark {
 html, body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-primary);
-  background-image: url('https://i.ibb.co/Y4S44Dqq/back.png');
+  background-image: url('./assets/back.png');
   background-size: 50%; 
   background-position: top left;
   background-attachment: fixed;
@@ -69,7 +69,7 @@ html, body {
 }
 
 html.dark body {
-  background-image: url('https://i.ibb.co/Lzgc3rcF/bakke.png');
+  background-image: url('./assets/bakke.png');
   background-size: 50%;
   background-position: top left;
   background-attachment: fixed;

@@ -12,7 +12,7 @@ import { useLocation } from 'react-router-dom';
 import oversizeWhiteMockupFront from '../../assets/size.png';
 import oversizeWhiteMockupBack from '../../assets/bak.png';
 import oversizeBlackMockupFront from '../../assets/blackk.png';
-const oversizeBlackMockupBack = 'https://i.ibb.co/NgtD8tcY/backkk.png';
+import oversizeBlackMockupBack from '../../assets/backkk.png';
 
 interface Props {
   layers: DesignLayer[];
