@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import Auth from './pages/Auth';
-import Dashboard from './pages/Dashboard';
-import Community from './pages/Community';
-import AdminDashboard from './pages/AdminDashboard';
-import GoogleSuccess from './pages/GoogleSuccess';
+
+const Auth = lazy(() => import('./pages/Auth'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Community = lazy(() => import('./pages/Community'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const GoogleSuccess = lazy(() => import('./pages/GoogleSuccess'));
 import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
@@ -608,17 +609,19 @@ export default function App() {
     <>
       {showSplash && <SplashScreen />}
       <div style={{ display: showSplash ? 'none' : 'block' }}>
-    <Routes>
-      <Route path="/" element={<ProductStep />} />
-      <Route path="/fit" element={<FitStep />} />
-      <Route path="/color" element={<ColorStep />} />
-      <Route path="/editor" element={<Editor />} />
-      <Route path="/auth" element={<Auth />} />
-      <Route path="/auth/google/success" element={<GoogleSuccess />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/community" element={<Community />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-    </Routes>
+    <Suspense fallback={<SplashScreen />}>
+      <Routes>
+        <Route path="/" element={<ProductStep />} />
+        <Route path="/fit" element={<FitStep />} />
+        <Route path="/color" element={<ColorStep />} />
+        <Route path="/editor" element={<Editor />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/google/success" element={<GoogleSuccess />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+    </Suspense>
     </div>
     </>
   );

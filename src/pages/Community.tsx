@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
 
@@ -261,15 +261,19 @@ export default function Community() {
     setBuyingDesign(design);
   };
 
-  const uniqueArtists = Array.from(new Set(designs.map(d => d.user.name || t('community.unknownArtist'))));
+  const uniqueArtists = useMemo(() => 
+    Array.from(new Set(designs.map(d => d.user.name || t('community.unknownArtist')))),
+  [designs, t]);
 
-  const filteredDesigns = designs.filter(design => {
-    if (selectedCategory === 'hoodies') return false;
-    if (selectedArtist !== 'all') {
-      if ((design.user.name || t('community.unknownArtist')) !== selectedArtist) return false;
-    }
-    return true;
-  });
+  const filteredDesigns = useMemo(() => 
+    designs.filter(design => {
+      if (selectedCategory === 'hoodies') return false;
+      if (selectedArtist !== 'all') {
+        if ((design.user.name || t('community.unknownArtist')) !== selectedArtist) return false;
+      }
+      return true;
+    }),
+  [designs, selectedCategory, selectedArtist, t]);
 
   const renderSidebar = (isMobile: boolean) => (
     <aside className={isMobile 
