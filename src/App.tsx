@@ -9,6 +9,7 @@ import Canvas from './components/Canvas';
 import LayerSidebar from './components/LayerSidebar';
 import SettingsSidebar from './components/SettingsSidebar';
 import Navbar from './components/Navbar';
+import SplashScreen from './components/SplashScreen';
 import { useLanguage } from './contexts/LanguageContext';
 import { appConfig } from './config';
 import { DesignLayer, TShirtColor, TShirtView } from './types';
@@ -576,6 +577,14 @@ function ColorStep() {
 
 export default function App() {
   const location = useLocation();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Save referral code if present
@@ -594,6 +603,10 @@ export default function App() {
       alert('تم مسح بيانات الخصم المؤقتة من المتصفح بنجاح!');
     }
   }, [location.search]);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
     <Routes>
