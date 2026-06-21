@@ -4,6 +4,7 @@ import { ShoppingCart, LayoutGrid, Star, ArrowRight } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import OrderModal from '../components/modals/OrderModal';
+import SplashScreen from '../components/SplashScreen';
 import blackMockupBack from '../assets/black-mockup-back.png';
 import whiteMockupBack from '../assets/—Pngtree—back white t shirt_13029479.png';
 import oversizeWhiteMockupBack from '../assets/bak.png';
@@ -222,6 +223,12 @@ export default function Community() {
   const [selectedArtist, setSelectedArtist] = useState<string>('all');
   const navigate = useNavigate();
   const { t, dir } = useLanguage();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [isDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
@@ -347,6 +354,10 @@ export default function Community() {
       </div>
     </aside>
   );
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen relative" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }} dir={dir}>
