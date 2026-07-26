@@ -14,6 +14,17 @@ if (!JWT_SECRET) {
     process.exit(1);
 }
 
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+// In Vercel, SERVER_URL and CLIENT_URL will generally be the same origin.
+// We try to use process.env.VERCEL_PROJECT_PRODUCTION_URL if available, otherwise fallback.
+const getBaseUrl = (req) => {
+    if (process.env.SERVER_URL) return process.env.SERVER_URL;
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const proto = req.headers['x-forwarded-proto'] || 'http';
+    return `${proto}://${host}`;
+};
+
 app.use(cors({
     origin: function(origin, callback) { callback(null, true); },
     credentials: true,
@@ -45,6 +56,73 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
+
+// ── Google OAuth (native - no passport needed) ──────────────────────
+const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
+
+// Step 1: Redirect user to Google login
+app.get('/api/auth/google', (req, res) => {
+    const baseUrl = getBaseUrl(req);
+    const params = new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        redirect_uri: `${baseUrl}/api/auth/google/callback`,
+        response_type: 'code',
+        scope: 'openid email profile',
+        access_type: 'offline',
+        prompt: 'select_account',
+    });
+    res.redirect(`${GOOGLE_AUTH_URL}?${params}`);
+});
+
+// Step 2: Google redirects back with a code
+app.get('/api/auth/google/callback', async (req, res) => {
+    const baseUrl = getBaseUrl(req);
+    const { code } = req.query;
+    if (!code) return res.redirect(`${baseUrl}/auth?error=google_failed`);
+
+    try {
+        // Exchange code for access token
+        const tokenRes = await axios.post(GOOGLE_TOKEN_URL, {
+            code,
+            client_id: GOOGLE_CLIENT_ID,
+            client_secret: GOOGLE_CLIENT_SECRET,
+            redirect_uri: `${baseUrl}/api/auth/google/callback`,
+            grant_type: 'authorization_code',
+        });
+
+        const { access_token } = tokenRes.data;
+
+        // Get user profile from Google
+        const userInfoRes = await axios.get(GOOGLE_USERINFO_URL, {
+            headers: { Authorization: `Bearer ${access_token}` }
+        });
+
+        const { sub: googleId, email, name, picture: avatarUrl } = userInfoRes.data;
+        if (!email) return res.redirect(`${baseUrl}/auth?error=google_failed`);
+
+        // Find or create user in DB
+        let user = await prisma.user.findUnique({ where: { googleId } });
+        if (!user) {
+            user = await prisma.user.findUnique({ where: { email } });
+            if (user) {
+                user = await prisma.user.update({ where: { email }, data: { googleId, avatarUrl } });
+            } else {
+                const affiliateCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                user = await prisma.user.create({ data: { name, email, googleId, avatarUrl, affiliateCode } });
+            }
+        }
+
+        // Return JWT to frontend via URL query param
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+        res.redirect(`${baseUrl}/auth/google/success?token=${token}`);
+
+    } catch (err) {
+        console.error('Google OAuth error:', err.response?.data || err.message);
+        res.redirect(`${baseUrl}/auth?error=google_failed`);
+    }
+});
 
 // ── User Registration ──────────────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
