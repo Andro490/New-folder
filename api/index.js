@@ -57,6 +57,17 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// ── Admin Middleware ───────────────────────────────────────────────
+const authenticateAdmin = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user || !user.isAdmin) return res.status(403).json({ error: 'Admin access required' });
+        next();
+    } catch {
+        res.status(500).json({ error: 'Authorization check failed' });
+    }
+};
+
 // ── Google OAuth (native - no passport needed) ──────────────────────
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
