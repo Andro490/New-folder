@@ -39,7 +39,14 @@ if (!JWT_SECRET) {
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
-const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
+// SERVER_URL is auto-detected from the incoming request — no need to configure it manually.
+// This prevents redirect_uri_mismatch errors when Railway URL changes.
+const getServerUrl = (req) => {
+    if (process.env.SERVER_URL) return process.env.SERVER_URL;
+    const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    return `${proto}://${host}`;
+};
 
 // ── Email Transporter (Nodemailer) ──────────────────────────────────
 const emailTransporter = nodemailer.createTransport({
@@ -163,9 +170,10 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
 
 // Step 1: Redirect user to Google login
 app.get('/api/auth/google', (req, res) => {
+    const serverUrl = getServerUrl(req);
     const params = new URLSearchParams({
         client_id: GOOGLE_CLIENT_ID,
-        redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+        redirect_uri: `${serverUrl}/api/auth/google/callback`,
         response_type: 'code',
         scope: 'openid email profile',
         access_type: 'offline',
@@ -176,6 +184,7 @@ app.get('/api/auth/google', (req, res) => {
 
 // Step 2: Google redirects back with a code
 app.get('/api/auth/google/callback', async (req, res) => {
+    const serverUrl = getServerUrl(req);
     const { code } = req.query;
     if (!code) return res.redirect(`${CLIENT_URL}/auth?error=google_failed`);
 
@@ -185,7 +194,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
             code,
             client_id: GOOGLE_CLIENT_ID,
             client_secret: GOOGLE_CLIENT_SECRET,
-            redirect_uri: `${SERVER_URL}/api/auth/google/callback`,
+            redirect_uri: `${serverUrl}/api/auth/google/callback`,
             grant_type: 'authorization_code',
         });
 
