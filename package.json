@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "prisma generate && prisma db push --accept-data-loss && tsc -b && vite build",
+    "build": "prisma generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node server.js"
+    "start": "prisma db push --accept-data-loss && node server.js"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
