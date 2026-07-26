@@ -36,9 +36,9 @@ if (!JWT_SECRET) {
     console.error("❌ FATAL: JWT_SECRET is not set in environment!");
     process.exit(1);
 }
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const GOOGLE_CLIENT_ID = (process.env.GOOGLE_CLIENT_ID || '').trim();
+const GOOGLE_CLIENT_SECRET = (process.env.GOOGLE_CLIENT_SECRET || '').trim();
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
 // SERVER_URL is auto-detected from the incoming request — no need to configure it manually.
 // This prevents redirect_uri_mismatch errors when Railway URL changes.
 const getServerUrl = (req) => {

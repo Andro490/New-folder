@@ -338,7 +338,7 @@ export default function Auth() {
                 <span style={{ margin: '0 12px', color: 'var(--text-muted)', fontSize: '12px' }}>{t('auth.or')}</span>
                 <div style={{ flex: 1, height: 1, backgroundColor: 'var(--border-color)' }} />
               </div>
-              <GoogleButton label={t('auth.googleContinue')} />
+              <GoogleButton apiBase={API_BASE} label={t('auth.googleContinue')} />
               <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
                 {isLogin ? t('auth.noAccount') : t('auth.haveAccount')}
                 <button
@@ -357,14 +357,9 @@ export default function Auth() {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-function GoogleButton({ label }: { label: string }) {
+function GoogleButton({ apiBase, label }: { apiBase: string, label: string }) {
   const handleGoogleLogin = () => {
-    // Always use the current site origin — works on Vercel, Railway, or localhost.
-    // This bypasses VITE_API_URL issues and always hits the correct server.
-    const base = window.location.hostname === 'localhost'
-      ? 'http://localhost:3001'
-      : window.location.origin;
-    window.location.href = `${base}/api/auth/google`;
+    window.location.href = `${apiBase}/api/auth/google`;
   };
   return (
     <button
