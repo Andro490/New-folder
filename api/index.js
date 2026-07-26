@@ -14,8 +14,8 @@ if (!JWT_SECRET) {
     process.exit(1);
 }
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_CLIENT_ID = (process.env.GOOGLE_CLIENT_ID || '').trim();
+const GOOGLE_CLIENT_SECRET = (process.env.GOOGLE_CLIENT_SECRET || '').trim();
 // In Vercel, SERVER_URL and CLIENT_URL will generally be the same origin.
 // We try to use process.env.VERCEL_PROJECT_PRODUCTION_URL if available, otherwise fallback.
 const getBaseUrl = (req) => {
